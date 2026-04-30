@@ -270,6 +270,67 @@
     .calc h2 { font-size: 32px; }
     .result .big { font-size: 56px; }
   }
+
+  /* ── Email gate modal ── */
+  .gate-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(15,14,12,.88);
+    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
+    backdrop-filter: blur(2px);
+  }
+  .gate-overlay.open { display: flex; }
+  .gate-card {
+    background: var(--paper); color: var(--ink);
+    border-radius: 16px; padding: 48px 40px; max-width: 480px; width: 100%;
+    position: relative; box-shadow: 0 32px 80px rgba(0,0,0,.4);
+  }
+  .gate-card h3 { font-family: "Fraunces", serif; font-size: 30px; font-weight: 500; margin: 0 0 10px; line-height: 1.1; }
+  .gate-card .gate-sub { font-size: 16px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+  .gate-email {
+    width: 100%; padding: 14px 16px; font-size: 16px; border: 1px solid var(--rule);
+    border-radius: 8px; font-family: "Inter", sans-serif; background: white;
+    margin-bottom: 12px; box-sizing: border-box; color: var(--ink);
+  }
+  .gate-email:focus { outline: none; border-color: var(--ink); }
+  .gate-submit {
+    width: 100%; padding: 15px; background: var(--ink); color: var(--paper);
+    border: none; border-radius: 999px; font-size: 16px; font-weight: 500;
+    cursor: pointer; font-family: "Inter", sans-serif; transition: background .15s;
+  }
+  .gate-submit:hover { background: var(--accent); }
+  .gate-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+  .gate-fine { font-size: 12px; color: var(--muted); margin-top: 14px; text-align: center; line-height: 1.5; }
+  .gate-close {
+    position: absolute; top: 16px; right: 20px; background: transparent;
+    border: none; font-size: 26px; color: var(--muted); cursor: pointer; line-height: 1; padding: 0;
+  }
+  .gate-close:hover { color: var(--ink); }
+  /* Score reveal inside result panel */
+  .score-reveal {
+    display: none; background: var(--accent); border-radius: 10px;
+    padding: 22px 24px; margin-bottom: 16px; color: var(--paper);
+    animation: revealIn .4s ease;
+  }
+  .score-reveal.visible { display: block; }
+  @keyframes revealIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .score-reveal .s-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; opacity: 0.8; }
+  .score-reveal .s-number { font-family: "Fraunces", serif; font-size: 68px; font-weight: 600; line-height: 1; margin: 6px 0 4px; letter-spacing: -0.02em; }
+  .score-reveal .s-sub { font-size: 13px; opacity: 0.85; line-height: 1.4; }
+  .btn-gate {
+    display: block; width: 100%; padding: 14px; background: var(--accent); color: var(--paper);
+    border: none; border-radius: 999px; font-size: 15px; font-weight: 500;
+    cursor: pointer; font-family: "Inter", sans-serif; text-align: center;
+    margin-top: 20px; border-bottom: none;
+  }
+  .btn-gate:hover { opacity: .88; }
+  .btn-gate:disabled { opacity: 0.4; cursor: default; }
+  .share-ghost {
+    background: transparent; color: #8f8778; border: none; border-bottom: none;
+    font-size: 13px; cursor: pointer; font-family: "Inter", sans-serif;
+    display: block; width: 100%; text-align: center; margin-top: 10px; padding: 4px;
+  }
+  .share-ghost:hover { color: var(--paper); }
+  @media (max-width: 640px) { .gate-card { padding: 36px 24px; } }
+
 </style>
 </head>
 <body>
@@ -444,9 +505,16 @@
           <div class="sub">Annual cost: $<span id="gap-dollars">—</span></div>
         </div>
 
+        <div class="score-reveal" id="scoreReveal">
+          <div class="s-label">Aspire Score</div>
+          <div class="s-number" id="scoreNumber">—</div>
+          <div class="s-sub" id="scoreMatch"></div>
+        </div>
+
         <div class="caption" id="caption" style="margin-top:18px;">Add goals and holdings to see your position.</div>
         <div class="total-warn" id="warn"></div>
-        <button class="share" onclick="shareRate()">Copy my share card</button>
+        <button class="btn-gate" id="gateBtn" onclick="openGate()">Get my Aspire Score →</button>
+        <button class="share-ghost" onclick="shareRate()">Copy share card</button>
       </div>
     </div>
   </div>
@@ -718,6 +786,83 @@
       setTimeout(() => b.textContent = orig, 1800);
     });
   }
+
+  // ── Email gate ──
+  function openGate() {
+    const frac = document.getElementById('fraction').textContent;
+    if (frac === '—') return;
+    document.getElementById('gateOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('gateEmail').focus(), 50);
+  }
+  function closeGate() {
+    document.getElementById('gateOverlay').classList.remove('open');
+  }
+  function closeGateIfOutside(e) {
+    if (e.target === document.getElementById('gateOverlay')) closeGate();
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGate(); });
+
+  async function submitGate() {
+    const emailEl = document.getElementById('gateEmail');
+    const email = emailEl.value.trim();
+    if (!email || !/.+@.+\..+/.test(email)) {
+      emailEl.style.borderColor = 'var(--accent)';
+      emailEl.focus();
+      return;
+    }
+    const btn = document.getElementById('gateSubmit');
+    btn.disabled = true;
+    btn.textContent = 'Calculating…';
+
+    const aspirationRate = parseFloat(document.getElementById('pi').textContent) || 0;
+    const portfolioRate  = parseFloat(document.getElementById('pp').textContent) || 0;
+    const fraction       = parseFloat(document.getElementById('fraction').textContent) || 0;
+    const gap            = parseFloat(document.getElementById('gap').textContent) || 0;
+
+    const basket = {
+      goals,
+      holdings,
+      computed: { aspirationRate, portfolioRate, fraction, gap }
+    };
+
+    try {
+      const res = await fetch('/api/score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, basket })
+      });
+      if (!res.ok) throw new Error('api error');
+      const data = await res.json();
+      closeGate();
+      document.getElementById('scoreNumber').textContent = data.score;
+      document.getElementById('scoreMatch').textContent =
+        data.dollarMatch
+          ? `To match 1995 middle-class, you'd need $${Number(data.dollarMatch).toLocaleString()} today`
+          : `Your score is on its way to ${email}`;
+      document.getElementById('scoreReveal').classList.add('visible');
+      document.getElementById('gateBtn').textContent = 'Score sent ✓';
+      document.getElementById('gateBtn').disabled = true;
+      if (typeof gtag !== 'undefined') gtag('event', 'aspire_score_captured', { method: 'email_gate' });
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Something went wrong — try again';
+    }
+  }
+
 </script>
+
+<!-- EMAIL GATE MODAL -->
+<div class="gate-overlay" id="gateOverlay" onclick="closeGateIfOutside(event)">
+  <div class="gate-card">
+    <button class="gate-close" onclick="closeGate()">×</button>
+    <h3>Your Aspire Score is ready.</h3>
+    <p class="gate-sub">Enter your email and we'll send it to your inbox — then recalculate it every month as inflation, markets, and home prices move.</p>
+    <input class="gate-email" type="email" id="gateEmail" placeholder="you@example.com"
+      onkeydown="if(event.key==='Enter') submitGate()" />
+    <button class="gate-submit" id="gateSubmit" onclick="submitGate()">Send my Aspire Score →</button>
+    <p class="gate-fine">We send your score, a monthly recalculation, and The Aspire Report.<br>Unsubscribe anytime.</p>
+  </div>
+</div>
+
 </body>
 </html>
