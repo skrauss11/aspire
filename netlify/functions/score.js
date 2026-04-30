@@ -4,7 +4,7 @@
 const BEEHIIV_PUB_ID = process.env.BEEHIIV_PUB_ID || 'pub_8ad9f164-9d8a-426e-b25a-e8e4cc3cf601';
 const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || 'score@send.aspirerate.com';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'score@news.aspirerate.com';
 const FROM_NAME = process.env.FROM_NAME || 'Aspire Score';
 
 // Compute 0–100 score from basket computed fields
