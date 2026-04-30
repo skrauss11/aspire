@@ -41,7 +41,7 @@
   a:hover { border-bottom-color: var(--accent); }
 
   .wrap { max-width: 720px; margin: 0 auto; padding: 0 28px; }
-  .wrap-wide { max-width: 980px; margin: 0 auto; padding: 0 28px; }
+  .wrap-wide { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
 
   nav {
     display: flex; justify-content: space-between; align-items: center;
@@ -140,17 +140,17 @@
   }
   .calc h2 { color: var(--paper); font-family: "Fraunces", serif; font-size: 42px; margin: 0 0 12px; font-weight: 500; }
   .calc .sub { color: #b8b0a2; font-size: 18px; margin-bottom: 40px; }
-  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-  @media (max-width: 760px) { .calc-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .calc-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(340px, .88fr); gap: 40px; align-items: start; }
+  @media (max-width: 1040px) { .calc-grid { grid-template-columns: 1fr; gap: 32px; } }
   .goals { }
   .goal-row {
-    display: grid; grid-template-columns: 1fr 1fr 120px 90px 30px; gap: 10px;
+    display: grid; grid-template-columns: minmax(140px, 1.25fr) minmax(120px, .9fr) 92px minmax(130px, 1fr) 28px; gap: 10px;
     align-items: center; padding: 12px 0; border-bottom: 1px solid #2a2824;
   }
   .goal-row input, .goal-row select {
     background: #1a1815; color: var(--paper); border: 1px solid #2a2824;
     border-radius: 6px; padding: 10px 12px; font-size: 14px;
-    font-family: "Inter", sans-serif; width: 100%;
+    font-family: "Inter", sans-serif; width: 100%; min-width: 0;
   }
   .goal-row input:focus, .goal-row select:focus { outline: none; border-color: var(--accent); }
   .goal-row .remove {
@@ -159,7 +159,7 @@
   }
   .goal-row .remove:hover { color: var(--accent); }
   .goal-head {
-    display: grid; grid-template-columns: 1fr 1fr 120px 90px 30px; gap: 10px;
+    display: grid; grid-template-columns: minmax(140px, 1.25fr) minmax(120px, .9fr) 92px minmax(130px, 1fr) 28px; gap: 10px;
     padding-bottom: 10px; font-size: 11px; text-transform: uppercase;
     letter-spacing: 0.14em; color: #8f8778;
   }
@@ -178,7 +178,7 @@
   .block-sub { font-size: 13px; color: #8f8778; margin-bottom: 18px; }
 
   .holding-head, .holding-row {
-    display: grid; grid-template-columns: 2fr 1fr 1fr 30px; gap: 10px;
+    display: grid; grid-template-columns: minmax(150px, 1.5fr) minmax(110px, .8fr) minmax(130px, 1fr) 28px; gap: 10px;
     align-items: center;
   }
   .holding-head {
@@ -189,7 +189,7 @@
   .holding-row input, .holding-row select {
     background: #1a1815; color: var(--paper); border: 1px solid #2a2824;
     border-radius: 6px; padding: 10px 12px; font-size: 14px;
-    font-family: "Inter", sans-serif; width: 100%;
+    font-family: "Inter", sans-serif; width: 100%; min-width: 0;
   }
   .holding-row input:focus, .holding-row select:focus { outline: none; border-color: var(--accent); }
   .holding-row .remove {
@@ -198,14 +198,21 @@
   }
   .holding-row .remove:hover { color: var(--accent); }
 
-  .fraction-hero { padding: 6px 0 22px; border-bottom: 1px solid #2a2824; margin-bottom: 6px; }
-  .fraction-hero .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #8f8778; }
-  .fraction-hero .n {
-    font-family: "Fraunces", serif; font-size: 88px; font-weight: 600; line-height: 0.95;
-    margin: 10px 0 6px; letter-spacing: -0.03em; color: var(--accent);
+  .buying-power-hero { padding: 6px 0 24px; border-bottom: 1px solid #2a2824; margin-bottom: 6px; }
+  .buying-power-hero .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #8f8778; }
+  .buying-power-hero .n {
+    font-family: "Fraunces", serif; font-size: 76px; font-weight: 600; line-height: 0.95;
+    margin: 10px 0 10px; letter-spacing: -0.04em; color: var(--accent);
   }
-  .fraction-hero .n.maxed { color: #7fb98a; }
-  .fraction-hero .sub { font-size: 14px; color: #b8b0a2; }
+  .buying-power-hero .n.maxed { color: #7fb98a; }
+  .buying-power-hero .sub { font-size: 14px; color: #b8b0a2; line-height: 1.45; }
+  .scenario-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 28px; }
+  .scenario-btn {
+    background: #1a1815; color: var(--paper); border: 1px solid #2a2824;
+    border-radius: 999px; padding: 10px 14px; cursor: pointer; font-family: "Inter", sans-serif;
+    font-size: 13px;
+  }
+  .scenario-btn:hover, .scenario-btn.active { border-color: var(--accent); color: var(--accent); }
 
 
   .rate-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px 0 18px; }
@@ -227,8 +234,15 @@
   }
   .basket-meta .v { font-family: "Fraunces", serif; font-size: 18px; color: var(--paper); }
   @media (max-width: 760px) {
-    .goal-row, .goal-head { grid-template-columns: 1fr 1fr; }
-    .goal-head .h-horizon, .goal-head .h-asset, .goal-head .h-remove { display: none; }
+    .goal-head, .holding-head { display: none; }
+    .goal-row, .holding-row { grid-template-columns: 1fr 1fr 34px; }
+    .goal-row input[data-f="label"], .holding-row input[data-f="label"] { grid-column: 1 / -1; }
+    .goal-row input[data-f="amount"], .holding-row input[data-f="amount"] { grid-column: 1; }
+    .goal-row .horizon { grid-column: 2; }
+    .goal-row select { grid-column: 1 / 3; }
+    .holding-row select { grid-column: 2; }
+    .goal-row .remove { grid-column: 3; grid-row: 2 / 4; align-self: stretch; }
+    .holding-row .remove { grid-column: 3; grid-row: 2; align-self: stretch; }
   }
 
   .result {
@@ -435,7 +449,12 @@
 <section class="calc" id="calculator">
   <div class="wrap-wide">
     <h2>Your number, in 60 seconds.</h2>
-    <div class="sub">Name what you're saving for, in dollars. We'll compute the rate.</div>
+    <div class="sub">Pick a scenario, adjust the numbers, and see what your money may actually buy.</div>
+
+    <div class="scenario-row">
+      <button class="scenario-btn active" data-scenario="home" onclick="setScenario('home')">Buying a home</button>
+      <button class="scenario-btn" data-scenario="family" onclick="setScenario('family')">Planning for the future</button>
+    </div>
 
     <div class="calc-grid">
       <div>
@@ -482,28 +501,29 @@
       </div>
 
       <div class="result">
-        <div class="fraction-hero">
-          <div class="label">You can afford</div>
-          <div class="n" id="fraction-n"><span id="fraction">—</span>%</div>
-          <div class="sub">of the life you want</div>
+        <div class="buying-power-hero">
+          <div class="label">Future Buying Power</div>
+          <div class="n" id="buying-power-n">$<span id="buying-power">—</span></div>
+          <div class="sub" id="buying-power-copy">Add goals and holdings to see what your money may actually buy.</div>
+        </div>
+
+        <div class="gap-hero" style="padding-top:14px;">
+          <div class="label">Aspire Gap</div>
+          <div class="n" id="gap-n" style="font-size:40px;"><span id="gap">—</span>% annually</div>
+          <div class="sub" id="gap-copy">Are you keeping up or falling behind?</div>
         </div>
 
         <div class="rate-duo">
           <div>
-            <div class="label">Your life</div>
+            <div class="label">Aspire Rate</div>
             <div class="n accent-n"><span id="pi">—</span>%</div>
           </div>
           <div>
-            <div class="label">Your portfolio</div>
+            <div class="label">Portfolio Rate</div>
             <div class="n"><span id="pp">—</span>%</div>
           </div>
         </div>
-
-        <div class="gap-hero" style="padding-top:14px;">
-          <div class="label">The Aspire Gap</div>
-          <div class="n" id="gap-n" style="font-size:40px;"><span id="gap">—</span> pts</div>
-          <div class="sub">Annual cost: $<span id="gap-dollars">—</span></div>
-        </div>
+        <div class="row"><span>Time horizon</span><span class="v"><span id="time-horizon">—</span> yrs</span></div>
 
         <div class="score-reveal" id="scoreReveal">
           <div class="s-label">Aspire Score</div>
@@ -511,7 +531,7 @@
           <div class="s-sub" id="scoreMatch"></div>
         </div>
 
-        <div class="caption" id="caption" style="margin-top:18px;">Add goals and holdings to see your position.</div>
+        <div class="caption" id="caption" style="margin-top:18px;">This gap compounds every year.</div>
         <div class="total-warn" id="warn"></div>
         <button class="btn-gate" id="gateBtn" onclick="openGate()">Get my Aspire Score →</button>
         <button class="share-ghost" onclick="shareRate()">Copy share card</button>
@@ -524,7 +544,7 @@
   <div class="wrap-wide">
     <div class="foot-row">
       <div class="logo">Aspire<span>.</span></div>
-      <div>© 2026 · <a href="#manifesto">Manifesto</a> · <a href="#calculator">Calculator</a> · <a href="mailto:hello@aspire.co">hello@aspire.co</a></div>
+      <div>© 2026 · <a href="#manifesto">Manifesto</a> · <a href="#calculator">Calculator</a> · <a href="mailto:hello@aspirerate.com">hello@aspirerate.com</a></div>
     </div>
     <div class="disclaimer" id="updated-stamp" style="margin-bottom:12px;">
       Rates reflect trailing 10-year CAGR. Sources: Yahoo Finance, FRED.
@@ -598,21 +618,34 @@
     } catch (e) {}
   }
 
-  const defaultGoals = [
-    { label: "House in Denver",      amount: 800000,  horizon: 5,  asset: "home_denver" },
-    { label: "Index fund portfolio", amount: 1000000, horizon: 15, asset: "sp500" },
-    { label: "Bitcoin stack",        amount: 100000,  horizon: 10, asset: "btc" },
-    { label: "Kids' tuition",        amount: 300000,  horizon: 18, asset: "tuition_private" },
-  ];
+  const scenarios = {
+    home: {
+      goals: [
+        { label: "Home in Denver", amount: 800000, horizon: 5, asset: "home_denver" }
+      ],
+      holdings: [
+        { label: "Cash / HYSA", amount: 120000, asset: "cash" },
+        { label: "Index funds", amount: 180000, asset: "sp500" }
+      ]
+    },
+    family: {
+      goals: [
+        { label: "Future home", amount: 900000, horizon: 7, asset: "home" },
+        { label: "Education fund", amount: 300000, horizon: 18, asset: "tuition_private" },
+        { label: "Index fund cushion", amount: 500000, horizon: 15, asset: "sp500" }
+      ],
+      holdings: [
+        { label: "Cash / HYSA", amount: 100000, asset: "cash" },
+        { label: "Index funds", amount: 250000, asset: "sp500" }
+      ]
+    }
+  };
 
-  const defaultHoldings = [
-    { label: "Cash / HYSA",  amount: 80000,  asset: "cash" },
-    { label: "Index funds",  amount: 150000, asset: "sp500" },
-    { label: "Bitcoin",      amount: 20000,  asset: "btc" },
-  ];
+  const defaultGoals = scenarios.home.goals;
+  const defaultHoldings = scenarios.home.holdings;
 
-  let goals = defaultGoals.slice();
-  let holdings = defaultHoldings.slice();
+  let goals = defaultGoals.map(x => ({ ...x }));
+  let holdings = defaultHoldings.map(x => ({ ...x }));
 
   function assetOptions(selected) {
     const groups = {};
@@ -686,6 +719,18 @@
   function addGoal()    { goals.push({ label: "", amount: 0, horizon: 10, asset: "sp500" }); renderGoals(); }
   function addHolding() { holdings.push({ label: "", amount: 0, asset: "sp500" }); renderHoldings(); }
 
+  function setScenario(name) {
+    const s = scenarios[name];
+    if (!s) return;
+    goals = s.goals.map(x => ({ ...x }));
+    holdings = s.holdings.map(x => ({ ...x }));
+    document.querySelectorAll('.scenario-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.scenario === name);
+    });
+    renderGoals();
+    renderHoldings();
+  }
+
   function fmt(n) {
     if (n >= 1e6) return (n/1e6).toFixed(n >= 1e7 ? 1 : 2) + 'M';
     if (n >= 1e3) return Math.round(n/1e3) + 'k';
@@ -711,7 +756,7 @@
       if (totalHoldings > 0) portfolioRate += (h.amount / totalHoldings) * a.rate;
     });
 
-    // Fraction of tomorrow: discount each goal's future cost by the portfolio's compound rate.
+    // Future buying power: discount each goal's future cost by the portfolio's compound rate.
     let requiredToday = 0;
     goals.forEach(g => {
       const a = assetTypes.find(x => x.key === g.asset) || { rate: 0 };
@@ -725,47 +770,57 @@
     document.getElementById('total-holdings').textContent = fmt(totalHoldings);
 
     const gapN = document.getElementById('gap-n');
-    const fractionEl = document.getElementById('fraction');
-    const fractionN = document.getElementById('fraction-n');
+    const buyingPowerEl = document.getElementById('buying-power');
+    const buyingPowerN = document.getElementById('buying-power-n');
+    const buyingPowerCopyEl = document.getElementById('buying-power-copy');
     const piEl = document.getElementById('pi');
     const ppEl = document.getElementById('pp');
     const gapEl = document.getElementById('gap');
-    const gapDollarsEl = document.getElementById('gap-dollars');
+    const gapCopyEl = document.getElementById('gap-copy');
+    const timeHorizonEl = document.getElementById('time-horizon');
     const captionEl = document.getElementById('caption');
 
     piEl.textContent = totalGoals > 0 ? aspirationRate.toFixed(1) : '—';
     ppEl.textContent = totalHoldings > 0 ? portfolioRate.toFixed(1) : '—';
 
     if (totalGoals === 0 || totalHoldings === 0) {
-      fractionEl.textContent = '—';
-      fractionN.classList.remove('maxed');
+      buyingPowerEl.textContent = '—';
+      buyingPowerN.classList.remove('maxed');
+      buyingPowerCopyEl.textContent = totalGoals === 0
+        ? 'Add a goal to see the inflation rate of the life you want.'
+        : 'Add at least one holding to see what your money may actually buy.';
       gapEl.textContent = '—';
-      gapDollarsEl.textContent = '—';
+      gapCopyEl.textContent = 'Are you keeping up or falling behind?';
+      timeHorizonEl.textContent = '—';
       gapN.classList.remove('ahead');
-      captionEl.textContent = totalGoals === 0
-        ? 'Add a goal to see your rate.'
-        : 'Add at least one holding to see your gap.';
+      captionEl.textContent = 'This gap compounds every year.';
       return;
     }
 
-    const gap = aspirationRate - portfolioRate;
-    const gapDollars = totalHoldings * (gap / 100);
+    const aspireGap = portfolioRate - aspirationRate;
     const fraction = requiredToday > 0 ? Math.min(999, 100 * totalHoldings / requiredToday) : 0;
+    const futureBuyingPower = totalGoals * (fraction / 100);
+    const weightedHorizon = totalGoals > 0
+      ? goals.reduce((s, g) => s + ((g.amount || 0) / totalGoals) * (g.horizon || 0), 0)
+      : 0;
 
-    fractionEl.textContent = fraction.toFixed(0);
-    fractionN.classList.toggle('maxed', fraction >= 100);
+    buyingPowerEl.textContent = fmt(futureBuyingPower);
+    buyingPowerN.classList.toggle('maxed', fraction >= 100);
+    const mainGoal = goals.length === 1 ? goals[0].label.toLowerCase() : 'basket';
+    buyingPowerCopyEl.textContent = `You're targeting a $${fmt(totalGoals)} ${mainGoal}. At your current pace, your future buying power may only cover $${fmt(futureBuyingPower)} in today's terms.`;
 
-    gapEl.textContent = (gap > 0 ? '+' : '') + gap.toFixed(1);
-    gapDollarsEl.textContent = fmt(Math.abs(gapDollars));
-    gapN.classList.toggle('ahead', gap < 0);
+    gapEl.textContent = (aspireGap > 0 ? '+' : '') + aspireGap.toFixed(1);
+    gapCopyEl.textContent = aspireGap >= 0 ? `You're keeping up, with ${aspireGap.toFixed(1)} points of annual margin.` : `You're falling behind by ${Math.abs(aspireGap).toFixed(1)} points a year. This gap compounds every year.`;
+    gapN.classList.toggle('ahead', aspireGap >= 0);
+    timeHorizonEl.textContent = weightedHorizon.toFixed(0);
 
     let caption = '';
-    if (fraction >= 200)      caption = `You can afford the basket twice over. Consider raising your ambitions.`;
-    else if (fraction >= 100) caption = `You can afford the full basket, with ${(fraction - 100).toFixed(0)} points of margin.`;
-    else if (fraction >= 75)  caption = `Within striking distance — priced into ${fraction.toFixed(0)}% of the life you want.`;
-    else if (fraction >= 40)  caption = `You can cover most of the basket but not all. The gap between ambition and portfolio is real.`;
-    else if (fraction >= 20)  caption = `Priced into ${fraction.toFixed(0)}% of your basket. Most of tomorrow is still unaffordable at today's allocation.`;
-    else                      caption = `You can afford less than a quarter of the life you're aiming at. The gap is structural.`;
+    if (fraction >= 200)      caption = `You can buy the future twice over. That's a rare problem.`;
+    else if (fraction >= 100) caption = `You're on pace to cover the full target, with ${(fraction - 100).toFixed(0)} points of margin.`;
+    else if (fraction >= 75)  caption = `You're close. The last quarter is where compounding starts to bite.`;
+    else if (fraction >= 40)  caption = `You can cover part of the life you want. The rest is drifting away.`;
+    else if (fraction >= 20)  caption = `Most of the target is still out of reach at this pace.`;
+    else                      caption = `You're saving for one future and compounding toward another.`;
     captionEl.textContent = caption;
   }
 
@@ -777,10 +832,10 @@
     const pi = document.getElementById('pi').textContent;
     const pp = document.getElementById('pp').textContent;
     const gap = document.getElementById('gap').textContent;
-    const fraction = document.getElementById('fraction').textContent;
-    const txt = `I can afford ${fraction}% of the life I want. My Aspire Gap is ${gap} points. What fraction of tomorrow can you afford? — aspire.co`;
+    const buyingPower = document.getElementById('buying-power').textContent;
+    const txt = `My future buying power is $${buyingPower} in today's terms. My Aspire Gap is ${gap}% annually. What will your money actually buy? — aspirerate.com`;
     navigator.clipboard.writeText(txt).then(() => {
-      const b = document.querySelector('.share');
+      const b = document.querySelector('.share-ghost');
       const orig = b.textContent;
       b.textContent = "Copied ✓";
       setTimeout(() => b.textContent = orig, 1800);
@@ -789,8 +844,8 @@
 
   // ── Email gate ──
   function openGate() {
-    const frac = document.getElementById('fraction').textContent;
-    if (frac === '—') return;
+    const buyingPower = document.getElementById('buying-power').textContent;
+    if (buyingPower === '—') return;
     document.getElementById('gateOverlay').classList.add('open');
     setTimeout(() => document.getElementById('gateEmail').focus(), 50);
   }
@@ -816,13 +871,13 @@
 
     const aspirationRate = parseFloat(document.getElementById('pi').textContent) || 0;
     const portfolioRate  = parseFloat(document.getElementById('pp').textContent) || 0;
-    const fraction       = parseFloat(document.getElementById('fraction').textContent) || 0;
+    const futureBuyingPower = document.getElementById('buying-power').textContent;
     const gap            = parseFloat(document.getElementById('gap').textContent) || 0;
 
     const basket = {
       goals,
       holdings,
-      computed: { aspirationRate, portfolioRate, fraction, gap }
+      computed: { aspirationRate, portfolioRate, futureBuyingPower, gap }
     };
 
     try {
