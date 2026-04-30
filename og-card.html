@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <title>AspireRate — OG Cards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,700;1,9..144,900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:     #f5f1ea;
+      --ink:    #0f0e0c;
+      --accent: #c8451f;
+      --muted:  #5a544b;
+      --rule:   #d6cec0;
+    }
+
+    html, body {
+      background: #c0b9b0;
+    }
+
+    body {
+      padding: 48px;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CARD LABEL  (above each card, not part of the image)
+    ═══════════════════════════════════════════════════════ */
+    .card-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #7a746c;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       OG CARD  —  1200 × 630
+    ═══════════════════════════════════════════════════════ */
+
+    .og {
+      position: relative;
+      width: 1200px;
+      height: 630px;
+      background: var(--bg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Terracotta top accent rule */
+    .og::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      z-index: 1;
+    }
+
+    /* ── main row ── */
+    .og__body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      padding: 60px 72px 36px;
+      gap: 56px;
+    }
+
+    /* left column: headlines + rule + body copy */
+    .og__left {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .og__h1 {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 700;
+      font-style: normal;
+      font-size: 76px;
+      line-height: 1.00;
+      color: var(--ink);
+      letter-spacing: -2px;
+    }
+
+    .og__h2 {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 700;
+      font-style: italic;
+      font-size: 76px;
+      line-height: 1.06;
+      color: var(--accent);
+      letter-spacing: -2px;
+    }
+
+    .og__rule {
+      flex-shrink: 0;
+      width: 44px;
+      height: 1.5px;
+      background: var(--rule);
+      border: none;
+      margin: 26px 0;
+    }
+
+    .og__copy {
+      font-family: 'Inter', sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--muted);
+      font-weight: 400;
+      max-width: 430px;
+    }
+
+    /* right column: wordmark (top) + sub-tagline (bottom) */
+    .og__right {
+      flex-shrink: 0;
+      width: 210px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .og__wordmark {
+      text-align: right;
+    }
+
+    .og__wordmark-name {
+      display: block;
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-size: 28px;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+    }
+
+    .og__wordmark-url {
+      display: block;
+      margin-top: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .og__tagline {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 300;
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* ── stats strip ── */
+    .og__stats {
+      flex-shrink: 0;
+      display: flex;
+      border-top: 1px solid var(--rule);
+      height: 112px;
+      padding: 0 72px;
+    }
+
+    .og__stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+      padding: 0 28px;
+    }
+
+    .og__stat:first-child { padding-left: 0; }
+    .og__stat:last-child  { padding-right: 0; }
+    .og__stat + .og__stat { border-left: 1px solid var(--rule); }
+
+    .og__stat-lbl {
+      font-family: 'Inter', sans-serif;
+      font-size: 9.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .og__stat-val {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .og__stat-val.accent { color: var(--accent); }
+
+    .og__stat-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════
+       SECTION DIVIDER  (renders between cards; not part of either image)
+    ═══════════════════════════════════════════════════════ */
+
+    .section-hr {
+      width: 1200px;
+      border: none;
+      border-top: 2px dashed #a8a19a;
+      margin: 64px 0 48px;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════
+       SQUARE CARD  —  1200 × 1200
+    ═══════════════════════════════════════════════════════ */
+
+    .sq {
+      position: relative;
+      width: 1200px;
+      height: 1200px;
+      background: var(--bg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sq::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--accent);
+      z-index: 1;
+    }
+
+    /* top bar: wordmark left, URL right */
+    .sq__top {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 60px 80px 0;
+    }
+
+    .sq__wordmark {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-size: 32px;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+    }
+
+    .sq__url {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* hero: large headline centered vertically */
+    .sq__hero {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 80px;
+    }
+
+    .sq__h1 {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 700;
+      font-style: normal;
+      font-size: 112px;
+      line-height: 0.97;
+      color: var(--ink);
+      letter-spacing: -3.5px;
+    }
+
+    .sq__h2 {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 700;
+      font-style: italic;
+      font-size: 112px;
+      line-height: 1.03;
+      color: var(--accent);
+      letter-spacing: -3.5px;
+    }
+
+    .sq__rule {
+      flex-shrink: 0;
+      width: 56px;
+      height: 2px;
+      background: var(--rule);
+      border: none;
+      margin: 36px 0 30px;
+    }
+
+    .sq__copy {
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      line-height: 1.6;
+      color: var(--muted);
+      font-weight: 400;
+      max-width: 640px;
+    }
+
+    .sq__tagline {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 300;
+      font-style: italic;
+      font-size: 20px;
+      color: var(--muted);
+      margin-top: 18px;
+    }
+
+    /* stats strip */
+    .sq__stats {
+      flex-shrink: 0;
+      display: flex;
+      border-top: 1px solid var(--rule);
+      height: 210px;
+      padding: 0 80px;
+    }
+
+    .sq__stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 36px;
+    }
+
+    .sq__stat:first-child { padding-left: 0; }
+    .sq__stat:last-child  { padding-right: 0; }
+    .sq__stat + .sq__stat { border-left: 1px solid var(--rule); }
+
+    .sq__stat-lbl {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .sq__stat-val {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-weight: 700;
+      font-size: 56px;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .sq__stat-val.accent { color: var(--accent); }
+
+    .sq__stat-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       OG CARD  1200 × 630
+       Screenshot at exactly this size for og:image
+  ═══════════════════════════════════════════════════════ -->
+  <p class="card-label">OG Image — 1200 × 630 (Twitter / LinkedIn / iMessage)</p>
+
+  <div class="og">
+
+    <div class="og__body">
+
+      <!-- LEFT: editorial headline + body copy -->
+      <div class="og__left">
+        <div class="og__h1">Inflation isn't a number.</div>
+        <div class="og__h2">It's a vector.</div>
+        <hr class="og__rule">
+        <p class="og__copy">The only inflation rate that matters is the rate for the things you want.</p>
+      </div>
+
+      <!-- RIGHT: wordmark + sub-tagline -->
+      <div class="og__right">
+        <div class="og__wordmark">
+          <span class="og__wordmark-name">AspireRate.</span>
+          <span class="og__wordmark-url">aspirerate.com</span>
+        </div>
+        <p class="og__tagline">How much of tomorrow<br>can you afford?</p>
+      </div>
+
+    </div>
+
+    <!-- STATS STRIP -->
+    <div class="og__stats">
+      <div class="og__stat">
+        <div class="og__stat-lbl">CPI — Official</div>
+        <div class="og__stat-val">3.3%</div>
+        <div class="og__stat-sub">What the Fed reports</div>
+      </div>
+      <div class="og__stat">
+        <div class="og__stat-lbl">Home Prices</div>
+        <div class="og__stat-val">6.5%</div>
+        <div class="og__stat-sub">If you're buying a house</div>
+      </div>
+      <div class="og__stat">
+        <div class="og__stat-lbl">Nasdaq</div>
+        <div class="og__stat-val accent">20.5%</div>
+        <div class="og__stat-sub">If you missed the rally</div>
+      </div>
+      <div class="og__stat">
+        <div class="og__stat-lbl">Bitcoin</div>
+        <div class="og__stat-val accent">64.4%</div>
+        <div class="og__stat-sub">If you stayed in cash</div>
+      </div>
+    </div>
+
+  </div><!-- /og -->
+
+  <hr class="section-hr">
+
+  <!-- ═══════════════════════════════════════════════════════
+       SQUARE CARD  1200 × 1200
+       Screenshot at exactly this size for Instagram
+  ═══════════════════════════════════════════════════════ -->
+  <p class="card-label">Square — 1200 × 1200 (Instagram)</p>
+
+  <div class="sq">
+
+    <!-- TOP BAR: wordmark + URL -->
+    <div class="sq__top">
+      <span class="sq__wordmark">AspireRate.</span>
+      <span class="sq__url">aspirerate.com</span>
+    </div>
+
+    <!-- HERO -->
+    <div class="sq__hero">
+      <div class="sq__h1">Inflation<br>isn't a number.</div>
+      <div class="sq__h2">It's a vector.</div>
+      <hr class="sq__rule">
+      <p class="sq__copy">The only inflation rate that matters is the rate for the things you want.</p>
+      <p class="sq__tagline">How much of tomorrow can you afford?</p>
+    </div>
+
+    <!-- STATS STRIP -->
+    <div class="sq__stats">
+      <div class="sq__stat">
+        <div class="sq__stat-lbl">CPI — Official</div>
+        <div class="sq__stat-val">3.3%</div>
+        <div class="sq__stat-sub">What the Fed reports</div>
+      </div>
+      <div class="sq__stat">
+        <div class="sq__stat-lbl">Home Prices</div>
+        <div class="sq__stat-val">6.5%</div>
+        <div class="sq__stat-sub">If you're buying a house</div>
+      </div>
+      <div class="sq__stat">
+        <div class="sq__stat-lbl">Nasdaq</div>
+        <div class="sq__stat-val accent">20.5%</div>
+        <div class="sq__stat-sub">If you missed the rally</div>
+      </div>
+      <div class="sq__stat">
+        <div class="sq__stat-lbl">Bitcoin</div>
+        <div class="sq__stat-val accent">64.4%</div>
+        <div class="sq__stat-sub">If you stayed in cash</div>
+      </div>
+    </div>
+
+  </div><!-- /sq -->
+
+</body>
+</html>

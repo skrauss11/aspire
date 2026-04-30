@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Aspire — How much of tomorrow can you afford?</title>
+<meta name="description" content="Inflation isn't a number. It's a vector pointing at the life you want. Aspire measures your personal inflation rate — the only one that matters." />
+<meta property="og:title" content="Aspire — Inflation is a vector." />
+<meta property="og:description" content="CPI is the average. Aspire is yours. Measure the real rate of inflation for the life you're trying to buy." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --paper: #f5f1ea;
+    --paper-2: #ebe5db;
+    --accent: #c8451f;
+    --muted: #5a544b;
+    --rule: #d6cec0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .serif {
+    font-family: "Fraunces", "Iowan Old Style", "Palatino", Georgia, serif;
+    font-weight: 600; letter-spacing: -0.01em;
+  }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(200,69,31,.3); }
+  a:hover { border-bottom-color: var(--accent); }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 28px; }
+  .wrap-wide { max-width: 980px; margin: 0 auto; padding: 0 28px; }
+
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 28px 0; border-bottom: 1px solid var(--rule);
+  }
+  .logo { font-family: "Fraunces", serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+  .logo span { color: var(--accent); }
+  nav .nav-cta { font-size: 14px; font-weight: 500; padding: 9px 16px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); }
+  nav .nav-cta:hover { background: var(--ink); color: var(--paper); }
+
+  .hero { padding: 88px 0 72px; border-bottom: 1px solid var(--rule); }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px;
+    font-weight: 600; color: var(--accent); margin-bottom: 28px;
+  }
+  h1.display {
+    font-size: clamp(42px, 7vw, 76px); line-height: 1.02;
+    margin: 0 0 28px; font-weight: 500;
+  }
+  h1.display em { font-style: italic; color: var(--accent); font-weight: 500; }
+  .lede {
+    font-size: 22px; line-height: 1.45; color: var(--muted);
+    max-width: 580px; margin-bottom: 40px;
+  }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    display: inline-block; padding: 14px 22px; border-radius: 999px;
+    font-size: 15px; font-weight: 500; border: 1px solid var(--ink);
+  }
+  .btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn-ghost { background: transparent; color: var(--ink); }
+  .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+  .btn { border-bottom: 1px solid var(--ink); }
+  .btn-primary { border-bottom-color: var(--ink); }
+
+  .proof-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; padding: 36px 0; border-bottom: 1px solid var(--rule);
+  }
+  .proof { text-align: center; padding: 10px; border-right: 1px solid var(--rule); }
+  .proof:last-child { border-right: none; }
+  .proof .n { font-family: "Fraunces", serif; font-size: 34px; font-weight: 600; letter-spacing: -0.02em; }
+  .proof .n .unit { color: var(--muted); font-size: 20px; }
+  .proof .l { font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); margin-top: 4px; }
+
+  article.manifesto { padding: 80px 0; }
+  article.manifesto h2 {
+    font-size: 32px; line-height: 1.15; margin: 56px 0 22px;
+    font-weight: 600;
+  }
+  article.manifesto h2 .num {
+    font-size: 14px; color: var(--accent); font-family: "Inter", sans-serif;
+    letter-spacing: 0.2em; text-transform: uppercase; display: block;
+    margin-bottom: 8px; font-weight: 600;
+  }
+  article.manifesto p { margin: 0 0 20px; }
+  article.manifesto ul { padding-left: 22px; margin: 0 0 24px; }
+  article.manifesto li { margin-bottom: 8px; }
+  article.manifesto strong { font-weight: 600; }
+  article.manifesto em { font-style: italic; }
+
+  .pullquote {
+    font-family: "Fraunces", serif; font-size: 32px; line-height: 1.25;
+    font-weight: 500; color: var(--ink); font-style: italic;
+    border-left: 3px solid var(--accent); padding: 8px 0 8px 24px;
+    margin: 40px 0;
+  }
+
+  .formula {
+    background: var(--paper-2); border: 1px solid var(--rule);
+    border-radius: 12px; padding: 28px; margin: 32px 0;
+    font-family: "Fraunces", serif; font-size: 26px; text-align: center;
+    letter-spacing: 0.01em;
+  }
+  .formula .sub { display: block; font-family: "Inter", sans-serif; font-size: 13px; color: var(--muted); margin-top: 12px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  table.reframe {
+    width: 100%; border-collapse: collapse; margin: 28px 0 36px;
+    font-size: 16px;
+  }
+  table.reframe th, table.reframe td {
+    padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  table.reframe th {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--muted); font-weight: 600;
+  }
+  table.reframe td:first-child { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--rule); }
+  table.reframe td:last-child { color: var(--ink); font-weight: 500; }
+
+  /* Calculator */
+  .calc {
+    background: var(--ink); color: var(--paper); padding: 80px 0;
+  }
+  .calc h2 { color: var(--paper); font-family: "Fraunces", serif; font-size: 42px; margin: 0 0 12px; font-weight: 500; }
+  .calc .sub { color: #b8b0a2; font-size: 18px; margin-bottom: 40px; }
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  @media (max-width: 760px) { .calc-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .goals { }
+  .goal-row {
+    display: grid; grid-template-columns: 1fr 1fr 120px 90px 30px; gap: 10px;
+    align-items: center; padding: 12px 0; border-bottom: 1px solid #2a2824;
+  }
+  .goal-row input, .goal-row select {
+    background: #1a1815; color: var(--paper); border: 1px solid #2a2824;
+    border-radius: 6px; padding: 10px 12px; font-size: 14px;
+    font-family: "Inter", sans-serif; width: 100%;
+  }
+  .goal-row input:focus, .goal-row select:focus { outline: none; border-color: var(--accent); }
+  .goal-row .remove {
+    background: transparent; border: none; color: #5a544b; cursor: pointer;
+    font-size: 20px; line-height: 1; padding: 0;
+  }
+  .goal-row .remove:hover { color: var(--accent); }
+  .goal-head {
+    display: grid; grid-template-columns: 1fr 1fr 120px 90px 30px; gap: 10px;
+    padding-bottom: 10px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.14em; color: #8f8778;
+  }
+  .add-goal {
+    margin-top: 16px; background: transparent; color: var(--paper);
+    border: 1px dashed #3a3832; padding: 12px 18px; border-radius: 8px;
+    font-size: 14px; cursor: pointer; width: 100%; font-family: "Inter", sans-serif;
+  }
+  .add-goal:hover { border-color: var(--accent); color: var(--accent); }
+  .block { margin-bottom: 36px; }
+  .block-title {
+    font-family: "Fraunces", serif; font-size: 22px;
+    margin: 0 0 4px; font-weight: 500; color: var(--paper);
+    letter-spacing: -0.01em;
+  }
+  .block-sub { font-size: 13px; color: #8f8778; margin-bottom: 18px; }
+
+  .holding-head, .holding-row {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 30px; gap: 10px;
+    align-items: center;
+  }
+  .holding-head {
+    padding-bottom: 10px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.14em; color: #8f8778;
+  }
+  .holding-row { padding: 12px 0; border-bottom: 1px solid #2a2824; }
+  .holding-row input, .holding-row select {
+    background: #1a1815; color: var(--paper); border: 1px solid #2a2824;
+    border-radius: 6px; padding: 10px 12px; font-size: 14px;
+    font-family: "Inter", sans-serif; width: 100%;
+  }
+  .holding-row input:focus, .holding-row select:focus { outline: none; border-color: var(--accent); }
+  .holding-row .remove {
+    background: transparent; border: none; color: #5a544b; cursor: pointer;
+    font-size: 20px; line-height: 1; padding: 0;
+  }
+  .holding-row .remove:hover { color: var(--accent); }
+
+  .fraction-hero { padding: 6px 0 22px; border-bottom: 1px solid #2a2824; margin-bottom: 6px; }
+  .fraction-hero .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #8f8778; }
+  .fraction-hero .n {
+    font-family: "Fraunces", serif; font-size: 88px; font-weight: 600; line-height: 0.95;
+    margin: 10px 0 6px; letter-spacing: -0.03em; color: var(--accent);
+  }
+  .fraction-hero .n.maxed { color: #7fb98a; }
+  .fraction-hero .sub { font-size: 14px; color: #b8b0a2; }
+
+
+  .rate-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px 0 18px; }
+  .rate-duo .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: #8f8778; }
+  .rate-duo .n { font-family: "Fraunces", serif; font-size: 34px; font-weight: 600; line-height: 1; margin-top: 6px; letter-spacing: -0.02em; color: var(--paper); }
+  .rate-duo .n.accent-n { color: var(--accent); }
+
+  .gap-hero { padding: 22px 0 6px; border-top: 1px solid #2a2824; margin-top: 6px; }
+  .gap-hero .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #8f8778; }
+  .gap-hero .n { font-family: "Fraunces", serif; font-size: 60px; font-weight: 600; line-height: 1; margin-top: 8px; letter-spacing: -0.02em; color: var(--accent); }
+  .gap-hero .n.ahead { color: #7fb98a; }
+  .gap-hero .sub { font-size: 14px; color: #b8b0a2; margin-top: 10px; }
+
+
+  .basket-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 20px; padding-top: 16px; border-top: 1px solid #2a2824;
+    font-size: 13px; color: #b8b0a2;
+  }
+  .basket-meta .v { font-family: "Fraunces", serif; font-size: 18px; color: var(--paper); }
+  @media (max-width: 760px) {
+    .goal-row, .goal-head { grid-template-columns: 1fr 1fr; }
+    .goal-head .h-horizon, .goal-head .h-asset, .goal-head .h-remove { display: none; }
+  }
+
+  .result {
+    background: #1a1815; border: 1px solid #2a2824;
+    border-radius: 12px; padding: 32px; position: sticky; top: 24px;
+  }
+  .result .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: #8f8778; }
+  .result .big {
+    font-family: "Fraunces", serif; font-size: 72px; font-weight: 600;
+    line-height: 1; margin: 12px 0 4px; letter-spacing: -0.02em;
+  }
+  .result .big .accent { color: var(--accent); }
+  .result .caption { font-size: 14px; color: #b8b0a2; margin-bottom: 24px; }
+  .result .row { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #2a2824; font-size: 14px; }
+  .result .row .v { font-family: "Fraunces", serif; font-size: 18px; }
+  .result .gap-row .v { color: var(--accent); }
+  .result .share {
+    margin-top: 24px; display: inline-block; background: var(--accent); color: var(--paper);
+    padding: 12px 20px; border-radius: 999px; font-size: 14px; font-weight: 500; border: none; cursor: pointer;
+    border-bottom: none;
+  }
+  .total-warn { font-size: 12px; color: var(--accent); margin-top: 12px; min-height: 16px; }
+
+  footer {
+    padding: 56px 0 40px; border-top: 1px solid var(--rule);
+    color: var(--muted); font-size: 14px;
+  }
+  footer .foot-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  footer a { color: var(--muted); border-bottom-color: var(--rule); }
+  .disclaimer { max-width: 560px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 640px) {
+    .proof-strip { grid-template-columns: repeat(2, 1fr); }
+    .proof:nth-child(2) { border-right: none; }
+    .proof:nth-child(1), .proof:nth-child(2) { border-bottom: 1px solid var(--rule); }
+    .hero { padding: 56px 0 48px; }
+    article.manifesto h2 { font-size: 26px; margin: 40px 0 18px; }
+    .pullquote { font-size: 24px; padding-left: 18px; }
+    .calc h2 { font-size: 32px; }
+    .result .big { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap-wide">
+  <nav>
+    <div class="logo">Aspire<span>.</span></div>
+    <a class="nav-cta" href="#calculator">Calculate yours</a>
+  </nav>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">A new way to measure your money</div>
+    <h1 class="display">Inflation isn't a number.<br />It's a <em>vector.</em></h1>
+    <p class="lede">CPI is the average. It describes no one. The only rate of inflation that matters is the rate for the life <em>you</em> are trying to buy.</p>
+    <div class="cta-row">
+      <a href="#calculator" class="btn btn-primary">Find your rate →</a>
+      <a href="#manifesto" class="btn btn-ghost">Read the manifesto</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF STRIP -->
+<div class="wrap-wide">
+  <div class="proof-strip">
+    <div class="proof"><div class="n" data-rate="cpi">3.3<span class="unit">%</span></div><div class="l">US CPI, 10yr</div></div>
+    <div class="proof"><div class="n" data-rate="home">6.5<span class="unit">%</span></div><div class="l">US home prices</div></div>
+    <div class="proof"><div class="n" data-rate="qqq">20.5<span class="unit">%</span></div><div class="l">Nasdaq 100, 10yr</div></div>
+    <div class="proof"><div class="n" data-rate="btc">64.4<span class="unit">%</span></div><div class="l">Bitcoin, 10yr</div></div>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<article class="manifesto" id="manifesto">
+  <div class="wrap">
+    <h2><span class="num">01 / The lie of the single number</span>One number, billions of lives</h2>
+    <p>Every month, the Bureau of Labor Statistics publishes a number. Last month it was 3.1%. The headlines say inflation is "cooling." Your uncle says he remembers when gas was a dollar. You nod, you refinance nothing, you keep saving.</p>
+    <p>That number — CPI — is an average. It's the price change of a basket of goods designed to represent the typical American household: some groceries, some rent, some gasoline, some medical care, some haircuts. It is a real number. It is also, for most ambitious people, a deeply misleading one.</p>
+    <p>Because <strong>the basket in the report is not your basket.</strong></p>
+
+    <h2><span class="num">02 / The basket you actually care about</span>What you're really trying to buy</h2>
+    <p>Make a list of the things you want your money to turn into over the next ten years. For most people reading this, it looks something like:</p>
+    <ul>
+      <li>A house. A specific one, in a specific zip code.</li>
+      <li>Equity in great companies. Index funds at minimum. Maybe a few names you have conviction about.</li>
+      <li>Maybe Bitcoin. Maybe gold.</li>
+      <li>Tuition — yours, or a child's.</li>
+      <li>Time — a year off, a slower career, a window to build something.</li>
+      <li>Healthcare that doesn't bankrupt you.</li>
+      <li>Experiences you can't get back — weddings, trips, your parents while they're still here.</li>
+    </ul>
+    <p>None of those things inflate at 3%.</p>
+
+    <h2><span class="num">03 / The thesis</span>Inflation is a vector</h2>
+    <p>A scalar is a number. A vector is a number with a direction. CPI is a scalar — it points nowhere in particular, because it points at everyone.</p>
+    <div class="pullquote">Your inflation is a vector. It points at the specific future you're trying to buy — and its magnitude depends entirely on which direction you're facing.</div>
+    <p>If the life you're aiming at is made of homes and blue-chip equity and ownership, your personal inflation rate isn't 3%. It's closer to 12%. Maybe 15%. Which means a 4% savings account isn't "beating inflation." It's losing <strong>eight to eleven points a year</strong> to the life you told yourself you were working toward.</p>
+
+    <h2><span class="num">04 / The consequence</span>The silent tax on ambition</h2>
+    <p>The further your aspirations are from the median American household's grocery bill, the less CPI has to do with you. A single mother in Toledo buying diapers and gasoline? CPI describes her life pretty well. A 32-year-old engineer in Austin trying to buy a house and own some Nvidia? CPI describes his life almost not at all.</p>
+    <p>We have built an entire retail financial system around the wrong benchmark — a benchmark that tells ambitious people they are safe while the things they want drift quietly out of reach.</p>
+    <p>Call it what it is: <strong>a silent tax on ambition.</strong> Paid in foregone ownership. Paid in "I'll buy next year." Paid in the slow, almost-invisible expansion of the gap between your savings balance and the down payment it used to almost be.</p>
+
+    <h2><span class="num">05 / A new number</span>The formula</h2>
+    <p>Aspire exists to give people a different number. Not a market forecast. Not a portfolio tip. A <em>measurement.</em></p>
+    <div class="formula">
+      π<sub>p</sub> = Σ ( w<sub>i</sub> · r<sub>i</sub> )
+      <span class="sub">Your personal inflation rate = the weighted rate of the basket you're building</span>
+    </div>
+    <p>Tell us your basket — how much of your future is home, how much is equity, how much is BTC, how much is tuition — and we'll hand you back the only inflation rate that matters to your life. And then we'll hand you the <strong>Aspire Gap</strong>: the distance between what your money is earning and what your future is costing.</p>
+    <p>Most people, when they see their real number for the first time, have the same reaction. It is not panic. It is recognition.</p>
+    <div class="pullquote">So that's what I've been feeling.</div>
+
+    <h2><span class="num">06 / The reframe</span>New questions, not new answers</h2>
+    <table class="reframe">
+      <thead><tr><th>The old question</th><th>The new question</th></tr></thead>
+      <tbody>
+        <tr><td>Am I beating inflation?</td><td>Am I beating <em>my</em> inflation?</td></tr>
+        <tr><td>What's the CPI?</td><td>What's the rate of the life I'm trying to buy?</td></tr>
+        <tr><td>Is my cash safe?</td><td>Is my cash keeping up with what I'm saving <em>for</em>?</td></tr>
+        <tr><td>Am I ahead?</td><td>Of what?</td></tr>
+      </tbody>
+    </table>
+    <p>The point is not to be anxious. The point is to be <strong>accurate.</strong> You cannot plan for a future you are mis-measuring. You cannot close a gap you cannot see.</p>
+
+    <h2><span class="num">07 / The playbook</span>What to do Monday morning</h2>
+    <p><strong>Name your basket.</strong> Ten minutes. Write what you are actually saving for, in rough weights. <em>50% a house in Denver. 30% index funds. 15% Bitcoin. 5% a year off in 2030.</em> Most people have never written this down. That alone is worth the exercise.</p>
+    <p><strong>Price each line.</strong> Use trailing 5- or 10-year rates. Don't project — just use what's already happened.</p>
+    <p><strong>Do the weighted average.</strong> That's your personal inflation rate. It is almost certainly between 8% and 15%.</p>
+    <p><strong>Find your gap.</strong> Subtract what your cash is earning, net of tax. That's the Aspire Gap — the number your life is quietly paying every year you keep the status quo.</p>
+    <p><strong>Ask the hard question.</strong> Is your allocation shaped like your basket? If your basket is 50% a house and 40% equity, and your net worth is 70% cash, you are not conservative. You are <em>aggressively short the life you want.</em></p>
+    <p><strong>Change one thing.</strong> Not everything. One. Small, irreversible moves compound faster than big plans you never execute.</p>
+    <p><strong>Re-run it every year.</strong> The point isn't to solve this once. The point is to stop flying blind.</p>
+
+    <div class="pullquote">The denominator is the whole argument.</div>
+  </div>
+</article>
+
+<!-- CALCULATOR -->
+<section class="calc" id="calculator">
+  <div class="wrap-wide">
+    <h2>Your number, in 60 seconds.</h2>
+    <div class="sub">Name what you're saving for, in dollars. We'll compute the rate.</div>
+
+    <div class="calc-grid">
+      <div>
+        <div class="block">
+          <h3 class="block-title">What you want</h3>
+          <div class="block-sub">The life you're pricing — in today's dollars.</div>
+          <div class="goal-head">
+            <div>Goal</div>
+            <div>Target (today's $)</div>
+            <div class="h-horizon">In (years)</div>
+            <div class="h-asset">Priced like</div>
+            <div class="h-remove"></div>
+          </div>
+          <div id="goals"></div>
+          <button class="add-goal" onclick="addGoal()">+ Add a goal</button>
+
+          <div class="basket-meta">
+            <div>Total basket in today's dollars</div>
+            <div class="v">$<span id="total-today">0</span></div>
+          </div>
+          <div class="basket-meta" style="border-top:none;padding-top:0;margin-top:8px;">
+            <div>What that basket will cost when you buy</div>
+            <div class="v">$<span id="total-future">0</span></div>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">What you own</h3>
+          <div class="block-sub">Your actual balances — cash, stocks, crypto, anything you already hold.</div>
+          <div class="holding-head">
+            <div>Holding</div>
+            <div>Balance ($)</div>
+            <div>Priced like</div>
+            <div></div>
+          </div>
+          <div id="holdings"></div>
+          <button class="add-goal" onclick="addHolding()">+ Add a holding</button>
+
+          <div class="basket-meta">
+            <div>Total net worth</div>
+            <div class="v">$<span id="total-holdings">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        <div class="fraction-hero">
+          <div class="label">You can afford</div>
+          <div class="n" id="fraction-n"><span id="fraction">—</span>%</div>
+          <div class="sub">of the life you want</div>
+        </div>
+
+        <div class="rate-duo">
+          <div>
+            <div class="label">Your life</div>
+            <div class="n accent-n"><span id="pi">—</span>%</div>
+          </div>
+          <div>
+            <div class="label">Your portfolio</div>
+            <div class="n"><span id="pp">—</span>%</div>
+          </div>
+        </div>
+
+        <div class="gap-hero" style="padding-top:14px;">
+          <div class="label">The Aspire Gap</div>
+          <div class="n" id="gap-n" style="font-size:40px;"><span id="gap">—</span> pts</div>
+          <div class="sub">Annual cost: $<span id="gap-dollars">—</span></div>
+        </div>
+
+        <div class="caption" id="caption" style="margin-top:18px;">Add goals and holdings to see your position.</div>
+        <div class="total-warn" id="warn"></div>
+        <button class="share" onclick="shareRate()">Copy my share card</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap-wide">
+    <div class="foot-row">
+      <div class="logo">Aspire<span>.</span></div>
+      <div>© 2026 · <a href="#manifesto">Manifesto</a> · <a href="#calculator">Calculator</a> · <a href="mailto:hello@aspire.co">hello@aspire.co</a></div>
+    </div>
+    <div class="disclaimer" id="updated-stamp" style="margin-bottom:12px;">
+      Rates reflect trailing 10-year CAGR. Sources: Yahoo Finance, FRED.
+    </div>
+    <div class="disclaimer">
+      Aspire is a measurement and planning tool. It is not investment advice. Past rates of return are not guarantees of future results. The rate of change for specific assets can be negative.
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Baseline rates (trailing 10-yr CAGR). Overwritten by rates.json at runtime.
+  const assetTypes = [
+    // Homes — national + metros
+    { key: "home",             name: "Home — US national",                 rate: 6.45,  group: "Home" },
+    { key: "home_nyc",         name: "Home — New York, NY",                rate: 5.18,  group: "Home" },
+    { key: "home_la",          name: "Home — Los Angeles, CA",             rate: 6.26,  group: "Home" },
+    { key: "home_sf",          name: "Home — San Francisco, CA",           rate: 3.73,  group: "Home" },
+    { key: "home_seattle",     name: "Home — Seattle, WA",                 rate: 6.87,  group: "Home" },
+    { key: "home_boston",      name: "Home — Boston, MA",                  rate: 5.84,  group: "Home" },
+    { key: "home_chicago",     name: "Home — Chicago, IL",                 rate: 5.19,  group: "Home" },
+    { key: "home_austin",      name: "Home — Austin, TX",                  rate: 4.24,  group: "Home" },
+    { key: "home_dallas",      name: "Home — Dallas, TX",                  rate: 6.03,  group: "Home" },
+    { key: "home_houston",     name: "Home — Houston, TX",                 rate: 4.48,  group: "Home" },
+    { key: "home_denver",      name: "Home — Denver, CO",                  rate: 5.19,  group: "Home" },
+    { key: "home_miami",       name: "Home — Miami, FL",                   rate: 7.00,  group: "Home" },
+    { key: "home_phoenix",     name: "Home — Phoenix, AZ",                 rate: 6.80,  group: "Home" },
+    { key: "home_nashville",   name: "Home — Nashville, TN",               rate: 7.10,  group: "Home" },
+    { key: "home_atlanta",     name: "Home — Atlanta, GA",                 rate: 7.09,  group: "Home" },
+    { key: "home_dc",          name: "Home — Washington, DC",              rate: 4.09,  group: "Home" },
+    // Equities & alternatives
+    { key: "sp500",            name: "S&P 500 / broad index",              rate: 14.85, group: "Markets" },
+    { key: "qqq",              name: "Nasdaq 100 / tech",                  rate: 20.48, group: "Markets" },
+    { key: "single",           name: "Single-name mega-cap (NVDA)",        rate: 68.40, group: "Markets" },
+    { key: "btc",              name: "Bitcoin",                            rate: 64.36, group: "Markets" },
+    { key: "gold",             name: "Gold",                               rate: 13.66, group: "Markets" },
+    // Tuition
+    { key: "tuition_private",  name: "Tuition — Private 4-year",           rate: 4.20,  group: "Tuition" },
+    { key: "tuition_public_in",name: "Tuition — Public 4-year (in-state)", rate: 3.10,  group: "Tuition" },
+    { key: "tuition_public_out",name: "Tuition — Public 4-year (out-of-state)", rate: 3.70, group: "Tuition" },
+    // Life costs
+    { key: "health",           name: "Healthcare",                         rate: 2.60,  group: "Life costs" },
+    { key: "car",              name: "New car",                            rate: 1.98,  group: "Life costs" },
+    { key: "cpi",              name: "Cost of living (CPI)",               rate: 3.33,  group: "Life costs" },
+    // Cash
+    { key: "cash",             name: "Cash / HYSA",                        rate: 4.00,  group: "Cash" },
+    { key: "checking",         name: "Checking (no yield)",                rate: 0.50,  group: "Cash" },
+  ];
+
+  async function hydrateRates() {
+    try {
+      const r = await fetch('rates.json', { cache: 'no-store' });
+      if (!r.ok) return;
+      const data = await r.json();
+      (data.rates || []).forEach(live => {
+        const a = assetTypes.find(x => x.key === live.key);
+        if (a && typeof live.cagr === 'number') a.rate = live.cagr;
+      });
+      document.querySelectorAll('[data-rate]').forEach(el => {
+        const k = el.getAttribute('data-rate');
+        const live = (data.rates || []).find(r => r.key === k);
+        if (live) el.innerHTML = live.cagr.toFixed(1) + '<span class="unit">%</span>';
+      });
+      const stamp = document.getElementById('updated-stamp');
+      if (stamp && data.updated) {
+        const d = new Date(data.updated);
+        stamp.textContent = `Rates last refreshed ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}. Sources: Yahoo Finance, FRED.`;
+      }
+      renderGoals();
+      renderHoldings();
+    } catch (e) {}
+  }
+
+  const defaultGoals = [
+    { label: "House in Denver",      amount: 800000,  horizon: 5,  asset: "home_denver" },
+    { label: "Index fund portfolio", amount: 1000000, horizon: 15, asset: "sp500" },
+    { label: "Bitcoin stack",        amount: 100000,  horizon: 10, asset: "btc" },
+    { label: "Kids' tuition",        amount: 300000,  horizon: 18, asset: "tuition_private" },
+  ];
+
+  const defaultHoldings = [
+    { label: "Cash / HYSA",  amount: 80000,  asset: "cash" },
+    { label: "Index funds",  amount: 150000, asset: "sp500" },
+    { label: "Bitcoin",      amount: 20000,  asset: "btc" },
+  ];
+
+  let goals = defaultGoals.slice();
+  let holdings = defaultHoldings.slice();
+
+  function assetOptions(selected) {
+    const groups = {};
+    for (const a of assetTypes) {
+      const g = a.group || 'Other';
+      (groups[g] = groups[g] || []).push(
+        `<option value="${a.key}" ${a.key===selected?'selected':''}>${a.name} (${a.rate.toFixed(1)}%)</option>`
+      );
+    }
+    return Object.entries(groups).map(([g, opts]) =>
+      `<optgroup label="${g}">${opts.join('')}</optgroup>`
+    ).join('');
+  }
+
+  function renderGoals() {
+    const el = document.getElementById('goals');
+    el.innerHTML = '';
+    goals.forEach((g, idx) => {
+      const row = document.createElement('div');
+      row.className = 'goal-row';
+      row.innerHTML = `
+        <input type="text" value="${g.label}" data-i="${idx}" data-f="label" data-list="goals" placeholder="e.g. House in Austin" />
+        <input type="number" value="${g.amount}" data-i="${idx}" data-f="amount" data-list="goals" min="0" step="1000" />
+        <input type="number" class="horizon" value="${g.horizon}" data-i="${idx}" data-f="horizon" data-list="goals" min="1" max="50" step="1" />
+        <select data-i="${idx}" data-f="asset" data-list="goals">${assetOptions(g.asset)}</select>
+        <button class="remove" data-i="${idx}" data-list="goals" title="Remove">×</button>
+      `;
+      el.appendChild(row);
+    });
+    attach(el);
+    recompute();
+  }
+
+  function renderHoldings() {
+    const el = document.getElementById('holdings');
+    el.innerHTML = '';
+    holdings.forEach((h, idx) => {
+      const row = document.createElement('div');
+      row.className = 'holding-row';
+      row.innerHTML = `
+        <input type="text" value="${h.label}" data-i="${idx}" data-f="label" data-list="holdings" placeholder="e.g. Vanguard brokerage" />
+        <input type="number" value="${h.amount}" data-i="${idx}" data-f="amount" data-list="holdings" min="0" step="1000" />
+        <select data-i="${idx}" data-f="asset" data-list="holdings">${assetOptions(h.asset)}</select>
+        <button class="remove" data-i="${idx}" data-list="holdings" title="Remove">×</button>
+      `;
+      el.appendChild(row);
+    });
+    attach(el);
+    recompute();
+  }
+
+  function attach(container) {
+    container.querySelectorAll('input,select').forEach(el => {
+      el.addEventListener('input', e => {
+        const i = parseInt(e.target.dataset.i);
+        const f = e.target.dataset.f;
+        const list = e.target.dataset.list === 'goals' ? goals : holdings;
+        list[i][f] = (f === 'label' || f === 'asset') ? e.target.value : parseFloat(e.target.value) || 0;
+        recompute();
+      });
+    });
+    container.querySelectorAll('.remove').forEach(b => {
+      b.addEventListener('click', e => {
+        const i = parseInt(e.target.dataset.i);
+        if (e.target.dataset.list === 'goals') { goals.splice(i, 1); renderGoals(); }
+        else { holdings.splice(i, 1); renderHoldings(); }
+      });
+    });
+  }
+
+  function addGoal()    { goals.push({ label: "", amount: 0, horizon: 10, asset: "sp500" }); renderGoals(); }
+  function addHolding() { holdings.push({ label: "", amount: 0, asset: "sp500" }); renderHoldings(); }
+
+  function fmt(n) {
+    if (n >= 1e6) return (n/1e6).toFixed(n >= 1e7 ? 1 : 2) + 'M';
+    if (n >= 1e3) return Math.round(n/1e3) + 'k';
+    return Math.round(n).toLocaleString();
+  }
+
+  function recompute() {
+    // Aspiration basket — weighted rate + future cost
+    const totalGoals = goals.reduce((s, g) => s + (g.amount || 0), 0);
+    let aspirationRate = 0;
+    let totalFuture = 0;
+    goals.forEach(g => {
+      const a = assetTypes.find(x => x.key === g.asset) || { rate: 0 };
+      if (totalGoals > 0) aspirationRate += (g.amount / totalGoals) * a.rate;
+      totalFuture += (g.amount || 0) * Math.pow(1 + a.rate/100, g.horizon || 0);
+    });
+
+    // Current portfolio — weighted rate
+    const totalHoldings = holdings.reduce((s, h) => s + (h.amount || 0), 0);
+    let portfolioRate = 0;
+    holdings.forEach(h => {
+      const a = assetTypes.find(x => x.key === h.asset) || { rate: 0 };
+      if (totalHoldings > 0) portfolioRate += (h.amount / totalHoldings) * a.rate;
+    });
+
+    // Fraction of tomorrow: discount each goal's future cost by the portfolio's compound rate.
+    let requiredToday = 0;
+    goals.forEach(g => {
+      const a = assetTypes.find(x => x.key === g.asset) || { rate: 0 };
+      const futureCost = (g.amount || 0) * Math.pow(1 + a.rate/100, g.horizon || 0);
+      const discount = Math.pow(1 + Math.max(portfolioRate, 0)/100, g.horizon || 0);
+      requiredToday += futureCost / discount;
+    });
+
+    document.getElementById('total-today').textContent = fmt(totalGoals);
+    document.getElementById('total-future').textContent = fmt(totalFuture);
+    document.getElementById('total-holdings').textContent = fmt(totalHoldings);
+
+    const gapN = document.getElementById('gap-n');
+    const fractionEl = document.getElementById('fraction');
+    const fractionN = document.getElementById('fraction-n');
+    const piEl = document.getElementById('pi');
+    const ppEl = document.getElementById('pp');
+    const gapEl = document.getElementById('gap');
+    const gapDollarsEl = document.getElementById('gap-dollars');
+    const captionEl = document.getElementById('caption');
+
+    piEl.textContent = totalGoals > 0 ? aspirationRate.toFixed(1) : '—';
+    ppEl.textContent = totalHoldings > 0 ? portfolioRate.toFixed(1) : '—';
+
+    if (totalGoals === 0 || totalHoldings === 0) {
+      fractionEl.textContent = '—';
+      fractionN.classList.remove('maxed');
+      gapEl.textContent = '—';
+      gapDollarsEl.textContent = '—';
+      gapN.classList.remove('ahead');
+      captionEl.textContent = totalGoals === 0
+        ? 'Add a goal to see your rate.'
+        : 'Add at least one holding to see your gap.';
+      return;
+    }
+
+    const gap = aspirationRate - portfolioRate;
+    const gapDollars = totalHoldings * (gap / 100);
+    const fraction = requiredToday > 0 ? Math.min(999, 100 * totalHoldings / requiredToday) : 0;
+
+    fractionEl.textContent = fraction.toFixed(0);
+    fractionN.classList.toggle('maxed', fraction >= 100);
+
+    gapEl.textContent = (gap > 0 ? '+' : '') + gap.toFixed(1);
+    gapDollarsEl.textContent = fmt(Math.abs(gapDollars));
+    gapN.classList.toggle('ahead', gap < 0);
+
+    let caption = '';
+    if (fraction >= 200)      caption = `You can afford the basket twice over. Consider raising your ambitions.`;
+    else if (fraction >= 100) caption = `You can afford the full basket, with ${(fraction - 100).toFixed(0)} points of margin.`;
+    else if (fraction >= 75)  caption = `Within striking distance — priced into ${fraction.toFixed(0)}% of the life you want.`;
+    else if (fraction >= 40)  caption = `You can cover most of the basket but not all. The gap between ambition and portfolio is real.`;
+    else if (fraction >= 20)  caption = `Priced into ${fraction.toFixed(0)}% of your basket. Most of tomorrow is still unaffordable at today's allocation.`;
+    else                      caption = `You can afford less than a quarter of the life you're aiming at. The gap is structural.`;
+    captionEl.textContent = caption;
+  }
+
+  renderGoals();
+  renderHoldings();
+  hydrateRates();
+
+  function shareRate() {
+    const pi = document.getElementById('pi').textContent;
+    const pp = document.getElementById('pp').textContent;
+    const gap = document.getElementById('gap').textContent;
+    const fraction = document.getElementById('fraction').textContent;
+    const txt = `I can afford ${fraction}% of the life I want. My Aspire Gap is ${gap} points. What fraction of tomorrow can you afford? — aspire.co`;
+    navigator.clipboard.writeText(txt).then(() => {
+      const b = document.querySelector('.share');
+      const orig = b.textContent;
+      b.textContent = "Copied ✓";
+      setTimeout(() => b.textContent = orig, 1800);
+    });
+  }
+</script>
+</body>
+</html>
