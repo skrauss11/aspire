@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0YTMP6NYVB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0YTMP6NYVB');
+</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Inflation Is a Vector — The Aspire Manifesto</title>
+<meta name="description" content="Inflation has quietly eroded the ability of millions of Americans to afford the life they want. You have goals. Those goals have an inflation rate. Aspire Rate shows whether your money is keeping up." />
+<meta property="og:title" content="Inflation Is a Vector — The Aspire Manifesto" />
+<meta property="og:description" content="You have goals. Those goals have an inflation rate. Aspire Rate shows whether your money is keeping up." />
+<meta property="og:url" content="https://aspirerate.com/manifesto" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,0,600;9..144,1,400;9..144,1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --paper: #f5f1ea;
+    --paper-2: #ebe5db;
+    --accent: #c8451f;
+    --muted: #5a544b;
+    --rule: #d6cec0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .serif {
+    font-family: "Fraunces", "Iowan Old Style", "Palatino", Georgia, serif;
+    font-weight: 600; letter-spacing: -0.01em;
+  }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(200,69,31,.3); }
+  a:hover { border-bottom-color: var(--accent); }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 28px; }
+  .wrap-wide { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 28px 0; border-bottom: 1px solid var(--rule);
+  }
+  .logo { font-family: "Fraunces", serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; font-style: italic; border-bottom: none; color: var(--ink); }
+  .logo span { color: var(--accent); font-style: normal; font-weight: 700; margin-left: 3px; }
+  nav .nav-cta { font-size: 14px; font-weight: 500; padding: 9px 16px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); }
+  nav .nav-cta:hover { background: var(--ink); color: var(--paper); border-bottom: 1px solid var(--ink); }
+
+  .manifesto-hero {
+    padding: 80px 0 56px; border-bottom: 1px solid var(--rule);
+  }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px;
+    font-weight: 600; color: var(--accent); margin-bottom: 20px;
+  }
+  h1.manifesto-title {
+    font-family: "Fraunces", serif; font-size: clamp(40px, 6vw, 68px);
+    line-height: 1.04; margin: 0 0 24px; font-weight: 500;
+  }
+  h1.manifesto-title em { font-style: italic; color: var(--accent); }
+  .manifesto-deck {
+    font-size: 19px; line-height: 1.5; color: var(--muted);
+    max-width: 560px; margin: 0;
+  }
+
+  .manifesto-intro {
+    padding: 40px 0 0;
+    border-top: none;
+  }
+  .manifesto-intro p {
+    font-size: 18px; line-height: 1.65; color: var(--muted);
+    max-width: 640px; margin: 0 0 16px;
+  }
+  .manifesto-intro p.anchor {
+    font-size: 18px; font-weight: 600; color: var(--ink); margin-top: 8px;
+  }
+
+  article.manifesto { padding: 56px 0 80px; }
+  article.manifesto h2 {
+    font-size: 30px; line-height: 1.15; margin: 64px 0 20px;
+    font-weight: 600;
+  }
+  article.manifesto h2:first-of-type { margin-top: 0; }
+  article.manifesto h2 .num {
+    font-size: 13px; color: var(--accent); font-family: "Inter", sans-serif;
+    letter-spacing: 0.2em; text-transform: uppercase; display: block;
+    margin-bottom: 8px; font-weight: 600;
+  }
+  article.manifesto p { margin: 0 0 20px; }
+  article.manifesto ul, article.manifesto ol { padding-left: 22px; margin: 0 0 24px; }
+  article.manifesto li { margin-bottom: 8px; }
+  article.manifesto strong { font-weight: 600; }
+  article.manifesto em { font-style: italic; }
+
+  .pullquote {
+    font-family: "Fraunces", serif; font-size: 30px; line-height: 1.25;
+    font-weight: 500; color: var(--ink); font-style: italic;
+    border-left: 3px solid var(--accent); padding: 8px 0 8px 24px;
+    margin: 40px 0;
+  }
+
+  .formula {
+    background: var(--paper-2); border: 1px solid var(--rule);
+    border-radius: 12px; padding: 28px; margin: 32px 0;
+    font-family: "Fraunces", serif; font-size: 26px; text-align: center;
+    letter-spacing: 0.01em;
+  }
+  .formula .sub { display: block; font-family: "Inter", sans-serif; font-size: 13px; color: var(--muted); margin-top: 12px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  table.reframe {
+    width: 100%; border-collapse: collapse; margin: 28px 0 36px;
+    font-size: 16px;
+  }
+  table.reframe th, table.reframe td {
+    padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  table.reframe th {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--muted); font-weight: 600;
+  }
+  table.reframe td:first-child { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--rule); }
+  table.reframe td:last-child { color: var(--ink); font-weight: 500; }
+
+  .divider { border: none; border-top: 1px solid var(--rule); margin: 0; }
+
+  .cta-block {
+    background: var(--ink); color: var(--paper);
+    border-radius: 16px; padding: 48px 40px; margin: 64px 0;
+    text-align: center;
+  }
+  .cta-block h3 {
+    font-family: "Fraunces", serif; font-size: 34px; font-weight: 500;
+    margin: 0 0 12px; color: var(--paper); line-height: 1.1;
+  }
+  .cta-block p { color: #b8b0a2; font-size: 17px; margin: 0 0 28px; }
+  .cta-block a {
+    display: inline-block; padding: 14px 28px; background: var(--accent);
+    color: var(--paper); border-radius: 999px; font-size: 16px; font-weight: 500;
+    border-bottom: none;
+  }
+  .cta-block a:hover { opacity: .88; }
+
+  .sig {
+    padding: 40px 0 16px;
+    font-family: "Fraunces", serif; font-style: italic;
+    font-size: 18px; color: var(--muted);
+  }
+
+  footer {
+    padding: 40px 0; border-top: 1px solid var(--rule);
+    color: var(--muted); font-size: 14px;
+  }
+  footer .foot-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  footer a { color: var(--muted); border-bottom-color: var(--rule); }
+  .disclaimer { max-width: 560px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 640px) {
+    .manifesto-hero { padding: 56px 0 40px; }
+    article.manifesto h2 { font-size: 24px; margin: 48px 0 16px; }
+    .pullquote { font-size: 22px; padding-left: 18px; }
+    .cta-block { padding: 36px 24px; }
+    .cta-block h3 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap-wide">
+  <nav>
+    <a class="logo" href="/" style="border-bottom:none;">Aspire<span aria-hidden="true">Δ</span></a>
+    <a class="nav-cta" href="/#calculator">Calculate yours</a>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <div class="manifesto-hero">
+    <div class="eyebrow">The Aspire Manifesto</div>
+    <h1 class="manifesto-title">Inflation isn't a number.<br>It's a <em>vector.</em></h1>
+    <p class="manifesto-deck">CPI is the average. It describes no one. The only rate that matters is the rate for the life you are trying to build.</p>
+  </div>
+
+  <div class="manifesto-intro">
+    <p>Inflation has quietly eroded the ability of millions of Americans to afford the life they want — not because they aren't working hard, but because nobody ever gave them the honest numbers. This site is dedicated to fixing that: explaining how personal inflation works, giving you tools to measure your own rate, and helping you build a plan for the future you're working toward.</p>
+    <p class="anchor">You have goals. Those goals have an inflation rate. Aspire Rate shows whether your money is keeping up.</p>
+  </div>
+
+  <hr class="divider" style="margin: 48px 0 0;" />
+
+  <article class="manifesto">
+
+    <h2><span class="num">01 / The lie of the single number</span>One number, billions of lives</h2>
+    <p>Every month, the Bureau of Labor Statistics publishes a number. Last month it was 3.1%. The headlines say inflation is "cooling." Your uncle says he remembers when gas was a dollar. You nod, you refinance nothing, you keep saving.</p>
+    <p>That number — CPI — is an average. It's the price change of a basket of goods designed to represent the typical American household: some groceries, some rent, some gasoline, some medical care, some haircuts.</p>
+    <p>It is a real number. It is also, for most people working toward something specific, a deeply misleading one.</p>
+    <p>Because <strong>the basket in the report is not your basket.</strong></p>
+
+    <h2><span class="num">02 / The basket you actually care about</span>What you're really trying to buy</h2>
+    <p>Make a list of the things you want your money to turn into over the next ten years. For most people reading this, it looks something like:</p>
+    <ul>
+      <li>A house. A specific one, in a specific zip code.</li>
+      <li>Equity in great companies. Index funds at minimum. Maybe a few names you have conviction about.</li>
+      <li>Maybe Bitcoin. Maybe gold.</li>
+      <li>Tuition — yours, or a child's.</li>
+      <li>Time — a year off, a slower career, a window to build something.</li>
+      <li>Healthcare that doesn't bankrupt you.</li>
+      <li>Experiences you can't get back — weddings, trips, your parents while they're still here.</li>
+    </ul>
+    <p>None of those things inflate at 3%.</p>
+    <ul>
+      <li>US home prices have compounded at roughly <strong>9–11% a year</strong> for a decade.</li>
+      <li>The S&amp;P 500 has compounded at roughly <strong>10%</strong>. The Nasdaq at <strong>14%</strong>.</li>
+      <li>Private four-year tuition, <strong>5%</strong> — every year, forever.</li>
+      <li>The years your parents have left: <strong>denominated in a currency that only deflates.</strong></li>
+    </ul>
+    <p>So when a policymaker tells you inflation is 3%, and a bank offers you 4% in a savings account, and you feel like you are winning — you should ask a harder question.</p>
+    <div class="pullquote">Winning against what?</div>
+
+    <h2><span class="num">03 / The thesis</span>Inflation is a vector</h2>
+    <p>CPI is just a number — no direction, no destination. It measures an imaginary average family. Your inflation is a vector. It's aimed directly at the life you actually want.</p>
+    <div class="pullquote">Your inflation is a vector. It points at the specific future you're trying to buy — and its magnitude depends entirely on which direction you're facing.</div>
+    <p>If the life you're aiming at is made of homes and blue-chip equity and ownership, your personal inflation rate isn't 3%. It's closer to 12%. Maybe 15%. Which means a 4% savings account isn't "beating inflation." It's losing <strong>eight to eleven points a year</strong> to the life you told yourself you were working toward.</p>
+
+    <h2><span class="num">04 / The consequence</span>The gap hiding in plain sight</h2>
+    <p>CPI doesn't know what you're saving for. A parent trying to fund a college education. Someone working toward homeownership in their city. A person who just wants their money to keep pace with the future they have in mind. These goals all have their own inflation rates — and for most people, those rates are higher than whatever's in the news.</p>
+    <p>We have built an entire retail financial system around the wrong benchmark — one that tells people they are keeping up while the things they actually want drift quietly out of reach.</p>
+    <p>Call it what it is: <strong>a silent gap between your money and your future.</strong> Paid in foregone ownership. Paid in "I'll buy next year." Paid in the slow, almost-invisible widening of the distance between your savings balance and the life you were actually building toward.</p>
+    <p>Nobody set out to design it. It is an emergent property of measuring the wrong thing and then acting as if you measured the right thing.</p>
+
+    <h2><span class="num">05 / A new number</span>The formula</h2>
+    <p>Aspire exists to give people a different number. Not a market forecast. Not a portfolio tip. A <em>measurement.</em></p>
+    <div class="formula">
+      π<sub>p</sub> = Σ ( w<sub>i</sub> · r<sub>i</sub> )
+      <span class="sub">Your personal inflation rate = the weighted rate of the basket you're building</span>
+    </div>
+    <p>Tell us your basket — how much of your future is home, how much is equity, how much is BTC, how much is tuition — and we'll hand you back the only inflation rate that matters to your life. And then we'll hand you the <strong>Aspire Gap</strong>: the distance between what your money is earning and what your future is costing.</p>
+    <p>Most people, when they see their real number for the first time, have the same reaction. It is not panic. It is recognition.</p>
+    <div class="pullquote">So that's what I've been feeling.</div>
+
+    <h2><span class="num">06 / The reframe</span>New questions, not new answers</h2>
+    <table class="reframe">
+      <thead><tr><th>The old question</th><th>The new question</th></tr></thead>
+      <tbody>
+        <tr><td>Am I beating inflation?</td><td>Am I beating <em>my</em> inflation?</td></tr>
+        <tr><td>What's the CPI?</td><td>What's the rate of the life I'm trying to buy?</td></tr>
+        <tr><td>Is my cash safe?</td><td>Is my cash keeping up with what I'm saving <em>for</em>?</td></tr>
+        <tr><td>Am I ahead?</td><td>Of what?</td></tr>
+      </tbody>
+    </table>
+    <p>The point is not to be anxious. The point is to be <strong>accurate.</strong> You cannot plan for a future you are mis-measuring. You cannot close a gap you cannot see.</p>
+
+    <h2><span class="num">07 / The playbook</span>What to do Monday morning</h2>
+    <p>If the argument landed, you probably want to do something with it. Not advice — just arithmetic and a few honest questions.</p>
+    <p><strong>Name your basket.</strong> Ten minutes. Write what you are actually saving for, in rough weights. <em>50% a house in Denver. 30% index funds. 15% Bitcoin. 5% a year off in 2030.</em> Most people have never written this down. That alone is worth the exercise.</p>
+    <p><strong>Price each line.</strong> Use trailing 5- or 10-year rates. Don't project — just use what's already happened.</p>
+    <p><strong>Do the weighted average.</strong> That's your personal inflation rate. It is almost certainly between 8% and 15%.</p>
+    <p><strong>Find your gap.</strong> Subtract what your cash is earning, net of tax. That's the Aspire Gap — the number your life is quietly paying every year you keep the status quo.</p>
+    <p><strong>Ask the hard question.</strong> Is your allocation shaped like your basket? If your basket is 50% a house and 40% equity, and your net worth is 70% cash, you are not conservative. You are <em>aggressively short the life you want.</em></p>
+    <p><strong>Change one thing.</strong> Not everything. One. Small, irreversible moves compound faster than big plans you never execute.</p>
+    <p><strong>Re-run it every year.</strong> The point isn't to solve this once. The point is to stop flying blind.</p>
+    <div class="pullquote">The denominator is the whole argument.</div>
+
+    <h2><span class="num">08 / The invitation</span>Tell us your basket</h2>
+    <p>Inflation is not 3%. Inflation is the rate at which your tomorrow is getting more expensive — and only you know what your tomorrow looks like.</p>
+    <p>Tell us, and we'll show you the number. From there, the rest is just math, discipline, and time.</p>
+
+    <div class="sig">— Aspire</div>
+    <p style="color:var(--muted);font-style:italic;">None of this is investment advice. All of it is something your financial planner should have done with you ten years ago, using the right denominator.</p>
+
+    <div class="cta-block">
+      <h3>Find your number in 60 seconds.</h3>
+      <p>Build your personal basket. See your real inflation rate and whether your money is keeping up.</p>
+      <a href="/#calculator">Calculate your Aspire Rate →</a>
+    </div>
+
+  </article>
+</div>
+
+<footer>
+  <div class="wrap-wide">
+    <div class="foot-row">
+      <a class="logo" href="/" style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;font-style:italic;letter-spacing:-0.02em;color:var(--ink);border-bottom:none;">Aspire<span style="color:var(--accent);font-style:normal;font-weight:700;margin-left:3px;" aria-hidden="true">Δ</span></a>
+      <div>© 2026 · <a href="/">Home</a> · <a href="/#calculator">Calculator</a> · <a href="mailto:hello@aspirerate.com">hello@aspirerate.com</a></div>
+    </div>
+    <div class="disclaimer" style="margin-top:12px;">
+      Aspire is a measurement and planning tool. It is not investment advice. Past rates of return are not guarantees of future results.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
