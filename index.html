@@ -47,8 +47,8 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 28px 0; border-bottom: 1px solid var(--rule);
   }
-  .logo { font-family: "Fraunces", serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
-  .logo span { color: var(--accent); }
+  .logo { font-family: "Fraunces", serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; font-style: italic; }
+  .logo span { color: var(--accent); font-style: normal; font-weight: 700; margin-left: 3px; }
   nav .nav-cta { font-size: 14px; font-weight: 500; padding: 9px 16px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); }
   nav .nav-cta:hover { background: var(--ink); color: var(--paper); }
 
@@ -351,9 +351,13 @@
 <body>
 
 <div class="wrap-wide">
+<div class="wrap-wide">
   <nav>
-    <div class="logo">Aspire<span>.</span></div>
-    <a class="nav-cta" href="#calculator">Calculate yours</a>
+    <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
+    <div style="display:flex;align-items:center;gap:24px;">
+      <a href="/manifesto" style="font-size:14px;font-weight:500;color:var(--ink);border-bottom:1px solid var(--rule);">Manifesto</a>
+      <a class="nav-cta" href="#calculator">Calculate yours</a>
+    </div>
   </nav>
 </div>
 
@@ -383,9 +387,11 @@
 <!-- MANIFESTO -->
 <article class="manifesto" id="manifesto">
   <div class="wrap">
+    <p style="font-size:18px;line-height:1.6;color:var(--muted);max-width:600px;margin:0 0 40px;padding-top:8px;">Inflation has quietly eroded the ability of millions of Americans to afford the life they want — not because they aren't working hard, but because nobody ever gave them the honest numbers. Aspire is dedicated to that. Understanding how personal inflation works. Measuring your own rate. Planning for the future you're working toward.</p>
+    <p style="font-size:18px;font-weight:600;color:var(--ink);max-width:600px;margin:0 0 56px;">You have goals. Those goals have an inflation rate. Aspire Rate shows whether your money is keeping up.</p>
     <h2><span class="num">01 / The lie of the single number</span>One number, billions of lives</h2>
     <p>Every month, the Bureau of Labor Statistics publishes a number. Last month it was 3.1%. The headlines say inflation is "cooling." Your uncle says he remembers when gas was a dollar. You nod, you refinance nothing, you keep saving.</p>
-    <p>That number — CPI — is an average. It's the price change of a basket of goods designed to represent the typical American household: some groceries, some rent, some gasoline, some medical care, some haircuts. It is a real number. It is also, for most ambitious people, a deeply misleading one.</p>
+    <p>That number — CPI — is an average. It's the price change of a basket of goods designed to represent the typical American household: some groceries, some rent, some gasoline, some medical care, some haircuts. It is a real number. It is also, for most people working toward something specific, a deeply misleading one.</p>
     <p>Because <strong>the basket in the report is not your basket.</strong></p>
 
     <h2><span class="num">02 / The basket you actually care about</span>What you're really trying to buy</h2>
@@ -402,14 +408,14 @@
     <p>None of those things inflate at 3%.</p>
 
     <h2><span class="num">03 / The thesis</span>Inflation is a vector</h2>
-    <p>A scalar is a number. A vector is a number with a direction. CPI is a scalar — it points nowhere in particular, because it points at everyone.</p>
+    <p>CPI is just a number — no direction, no destination. It measures an imaginary average family. Your inflation is a vector. It's aimed directly at the life you actually want.</p>
     <div class="pullquote">Your inflation is a vector. It points at the specific future you're trying to buy — and its magnitude depends entirely on which direction you're facing.</div>
     <p>If the life you're aiming at is made of homes and blue-chip equity and ownership, your personal inflation rate isn't 3%. It's closer to 12%. Maybe 15%. Which means a 4% savings account isn't "beating inflation." It's losing <strong>eight to eleven points a year</strong> to the life you told yourself you were working toward.</p>
 
-    <h2><span class="num">04 / The consequence</span>The silent tax on ambition</h2>
-    <p>The further your aspirations are from the median American household's grocery bill, the less CPI has to do with you. A single mother in Toledo buying diapers and gasoline? CPI describes her life pretty well. A 32-year-old engineer in Austin trying to buy a house and own some Nvidia? CPI describes his life almost not at all.</p>
-    <p>We have built an entire retail financial system around the wrong benchmark — a benchmark that tells ambitious people they are safe while the things they want drift quietly out of reach.</p>
-    <p>Call it what it is: <strong>a silent tax on ambition.</strong> Paid in foregone ownership. Paid in "I'll buy next year." Paid in the slow, almost-invisible expansion of the gap between your savings balance and the down payment it used to almost be.</p>
+    <h2><span class="num">04 / The consequence</span>The gap hiding in plain sight</h2>
+    <p>CPI doesn't know what you're saving for. A parent trying to fund a college education. Someone working toward homeownership in their city. A person who just wants their money to keep pace with the future they have in mind. These goals all have their own inflation rates — and for most people, those rates are higher than whatever's in the news.</p>
+    <p>We have built an entire retail financial system around the wrong benchmark — one that tells people they are keeping up while the things they actually want drift quietly out of reach.</p>
+    <p>Call it what it is: <strong>a silent gap between your money and your future.</strong> Paid in foregone ownership. Paid in "I'll buy next year." Paid in the slow, almost-invisible widening of the distance between your savings balance and the life you were actually building toward.</p>
 
     <h2><span class="num">05 / A new number</span>The formula</h2>
     <p>Aspire exists to give people a different number. Not a market forecast. Not a portfolio tip. A <em>measurement.</em></p>
@@ -544,7 +550,7 @@
 <footer>
   <div class="wrap-wide">
     <div class="foot-row">
-      <div class="logo">Aspire<span>.</span></div>
+      <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
       <div>© 2026 · <a href="#manifesto">Manifesto</a> · <a href="#calculator">Calculator</a> · <a href="mailto:hello@aspirerate.com">hello@aspirerate.com</a></div>
     </div>
     <div class="disclaimer" id="updated-stamp" style="margin-bottom:12px;">
