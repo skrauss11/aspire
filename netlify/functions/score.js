@@ -4,29 +4,18 @@
 const BEEHIIV_PUB_ID = process.env.BEEHIIV_PUB_ID || 'pub_8ad9f164-9d8a-426e-b25a-e8e4cc3cf601';
 const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || 'score@news.aspirerate.com';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'score@send.aspirerate.com';
 const FROM_NAME = process.env.FROM_NAME || 'Aspire Score';
 
-// Compute 0–100 score from basket computed fields
-// fraction = % of the life they can afford (already computed client-side)
-// We map that to a 0–100 Aspire Score and add a 1995 dollar translation
+// Score = fraction of the basket the user can afford (0–100).
+// 42 = you can cover 42% of the life you're building toward.
 function computeScore(basket) {
-  const fraction = basket.computed?.fraction || 0;
+  const fraction       = basket.computed?.fraction       || 0;
   const aspirationRate = basket.computed?.aspirationRate || 0;
-  const portfolioRate = basket.computed?.portfolioRate || 0;
-
-  // Score = how well your portfolio keeps up with your ambition basket
-  // 100 = fully funded and keeping pace. 0 = structurally behind.
-  const score = Math.max(0, Math.min(100, Math.round(fraction)));
-
-  // Dollar translation: what 1995 middle-class costs today
-  // Median HH income ~$35k in 1995, weighted by their aspiration rate
-  const baselineIncome = 35000;
-  const yearsSince1995 = 31;
-  const inflationFactor = Math.pow(1 + aspirationRate / 100, yearsSince1995);
-  const dollarMatch = Math.round(baselineIncome * inflationFactor);
-
-  return { score, dollarMatch };
+  const portfolioRate  = basket.computed?.portfolioRate  || 0;
+  const gap            = parseFloat(basket.computed?.gap) || (portfolioRate - aspirationRate);
+  const score          = Math.max(0, Math.min(100, Math.round(fraction)));
+  return { score, aspirationRate, portfolioRate, gap };
 }
 
 async function upsertBeehiiv(email, basket, score) {
@@ -42,38 +31,67 @@ async function upsertBeehiiv(email, basket, score) {
       send_welcome_email: false,
       utm_source: 'calculator',
       custom_fields: [
-        { name: 'basket_json', value: JSON.stringify(basket) },
-        { name: 'last_score', value: String(score) },
+        { name: 'basket_json',   value: JSON.stringify(basket) },
+        { name: 'last_score',    value: String(score) },
         { name: 'signup_source', value: 'calculator' },
-        { name: 'last_recalc', value: new Date().toISOString().split('T')[0] }
+        { name: 'last_recalc',   value: new Date().toISOString().split('T')[0] }
       ]
     })
   });
   return res.ok;
 }
 
-async function sendResend(email, score, dollarMatch) {
+async function sendResend(email, score, aspirationRate, portfolioRate, gap) {
+  const ahead   = gap >= 0;
+  const gapAbs  = Math.abs(gap).toFixed(1);
+
+  // Score interpretation line
+  const scoreLine = score >= 100
+    ? `Your portfolio fully covers the life you're building toward — and then some.`
+    : score >= 75
+    ? `Your money covers <strong style="color:#0f0e0c">${score}%</strong> of the life you're building toward. You're close — the last stretch is where compounding bites hardest.`
+    : score >= 40
+    ? `Your money covers <strong style="color:#0f0e0c">${score}%</strong> of the life you're building toward. The rest is drifting away unless something changes.`
+    : `Your money covers <strong style="color:#c8451f">${score}%</strong> of the life you're building toward. Most of the target is still out of reach at this pace.`;
+
+  // Gap narrative line
+  const gapLine = ahead
+    ? `Your portfolio grows <strong style="color:#0f0e0c">${gapAbs}% faster per year</strong> than the life you're targeting inflates. You're compounding in the right direction.`
+    : `The life you're targeting inflates <strong style="color:#c8451f">${gapAbs}% faster per year</strong> than your portfolio grows. That gap compounds against you every year it goes unaddressed.`;
+
   const html = `
     <div style="font-family: Georgia, serif; max-width: 580px; margin: 0 auto; padding: 40px 24px; background: #f5f1ea; color: #0f0e0c;">
+
       <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: #c8451f; margin: 0 0 16px; font-family: system-ui, sans-serif;">Your Aspire Score</p>
-      <h1 style="font-family: Georgia, serif; font-size: 72px; font-weight: 600; margin: 0 0 8px; line-height: 1; letter-spacing: -0.02em;">${score}</h1>
-      <p style="font-size: 20px; color: #5a544b; margin: 0 0 20px; font-family: Georgia, serif;">To match 1995 middle-class life today, you'd need <strong style="color: #0f0e0c;">$${dollarMatch.toLocaleString()}</strong>.</p>
-      <p style="font-size: 15px; color: #5a544b; line-height: 1.65; margin: 0 0 32px; font-family: system-ui, sans-serif;">Your score reflects how well your money keeps pace with the specific future you're building toward — not some average basket that describes no one.</p>
+      <h1 style="font-family: Georgia, serif; font-size: 80px; font-weight: 600; margin: 0 0 12px; line-height: 1; letter-spacing: -0.02em;">${score}</h1>
+      <p style="font-size: 18px; color: #5a544b; margin: 0 0 32px; font-family: system-ui, sans-serif; line-height: 1.55;">${scoreLine}</p>
 
-      <hr style="border: none; border-top: 1px solid #d6cec0; margin: 32px 0;" />
+      <hr style="border: none; border-top: 1px solid #d6cec0; margin: 0 0 28px;" />
 
-      <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: #c8451f; margin: 0 0 16px; font-family: system-ui, sans-serif;">The Aspire Manifesto</p>
-      <p style="font-family: Georgia, serif; font-size: 21px; color: #0f0e0c; line-height: 1.35; margin: 0 0 20px; font-style: italic;">CPI is just a number — no direction, no destination. It measures an imaginary average family. Your inflation is a vector. It's aimed directly at the life you actually want.</p>
-      <p style="font-size: 15px; color: #5a544b; line-height: 1.65; margin: 0 0 24px; font-family: system-ui, sans-serif;">Inflation has quietly eroded the ability of millions of Americans to afford the life they want. Not because they aren't working hard. Because nobody ever showed them the honest numbers. This is where that changes.</p>
-      <p style="margin: 0 0 32px;">
-        <a href="https://aspirerate.com/manifesto" style="color: #c8451f; font-size: 15px; font-family: system-ui, sans-serif; text-decoration: underline;">Read the full manifesto →</a>
-      </p>
+      <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: #c8451f; margin: 0 0 16px; font-family: system-ui, sans-serif;">Your Rates</p>
 
-      <hr style="border: none; border-top: 1px solid #d6cec0; margin: 32px 0;" />
+      <table style="width:100%; border-collapse: collapse; margin-bottom: 24px;">
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; font-family: system-ui, sans-serif; font-size: 14px; color: #5a544b;">Your Aspire Rate</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; text-align: right; font-family: Georgia, serif; font-size: 22px; font-weight: 600; color: #c8451f;">${aspirationRate.toFixed(1)}%/yr</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; font-family: system-ui, sans-serif; font-size: 14px; color: #5a544b;">Your Portfolio Rate</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; text-align: right; font-family: Georgia, serif; font-size: 22px; font-weight: 600; color: #0f0e0c;">${portfolioRate.toFixed(1)}%/yr</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px 0; font-family: system-ui, sans-serif; font-size: 14px; color: #5a544b;">Annual gap</td>
+          <td style="padding: 12px 0; text-align: right; font-family: Georgia, serif; font-size: 22px; font-weight: 600; color: ${ahead ? '#2a7a3b' : '#c8451f'};">${ahead ? '+' : ''}${gap.toFixed(1)}%</td>
+        </tr>
+      </table>
 
-      <p style="font-size: 15px; color: #5a544b; line-height: 1.6; font-family: system-ui, sans-serif; margin: 0 0 28px;">Your score recalculates every month as inflation, home prices, and markets move. Watch it change.</p>
+      <p style="font-size: 15px; color: #5a544b; line-height: 1.65; margin: 0 0 32px; font-family: system-ui, sans-serif;">${gapLine}</p>
+
+      <hr style="border: none; border-top: 1px solid #d6cec0; margin: 0 0 28px;" />
+
+      <p style="font-size: 15px; color: #5a544b; line-height: 1.6; font-family: system-ui, sans-serif; margin: 0 0 24px;">Your score recalculates every month as inflation, home prices, and markets move. The gap doesn't sit still.</p>
       <p style="margin: 0 0 40px;">
-        <a href="https://aspirerate.com" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">Return to Aspire →</a>
+        <a href="https://aspirerate.com" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">Run the Close the Gap Simulator →</a>
       </p>
       <p style="font-size: 12px; color: #8f8778; margin: 0; font-family: system-ui, sans-serif;">You're receiving this because you calculated your Aspire Score at aspirerate.com.</p>
     </div>
@@ -88,7 +106,7 @@ async function sendResend(email, score, dollarMatch) {
     body: JSON.stringify({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: [email],
-      subject: `Your Aspire Score: ${score} — you'd need $${dollarMatch.toLocaleString()} to live like 1995`,
+      subject: `Your Aspire Score: ${score} — ${score >= 100 ? "you're fully funded" : `your money covers ${score}% of the life you're building`}`,
       html
     })
   });
@@ -123,11 +141,11 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'email and basket required' }) };
   }
 
-  const { score, dollarMatch } = computeScore(basket);
+  const { score, aspirationRate, portfolioRate, gap } = computeScore(basket);
 
   const [beehiivOk, resendResult] = await Promise.all([
     upsertBeehiiv(email, basket, score),
-    sendResend(email, score, dollarMatch)
+    sendResend(email, score, aspirationRate, portfolioRate, gap)
   ]);
 
   console.log('beehiiv:', beehiivOk, 'resend:', resendResult.ok, resendResult.body);
@@ -135,6 +153,6 @@ exports.handler = async (event) => {
   return {
     statusCode: 200,
     headers,
-    body: JSON.stringify({ score, dollarMatch })
+    body: JSON.stringify({ score })
   };
 };
