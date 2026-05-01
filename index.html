@@ -1120,11 +1120,15 @@
     const portfolioRate  = parseFloat(document.getElementById('pp').textContent) || 0;
     const futureBuyingPower = document.getElementById('buying-power').textContent;
     const gap            = parseFloat(document.getElementById('gap').textContent) || 0;
+    const fraction       = parseFloat(document.getElementById('buying-power-pct').textContent) || 0;
+    const portfolioRate  = parseFloat(document.getElementById('pp').textContent) || 0;
+    const futureBuyingPower = document.getElementById('buying-power').textContent;
+    const gap            = parseFloat(document.getElementById('gap').textContent) || 0;
 
     const basket = {
       goals,
       holdings,
-      computed: { aspirationRate, portfolioRate, futureBuyingPower, gap }
+      computed: { aspirationRate, portfolioRate, futureBuyingPower, fraction, gap }
     };
 
     try {
@@ -1138,6 +1142,7 @@
       closeGate();
       document.getElementById('scoreNumber').textContent = data.score;
       document.getElementById('scoreMatch').textContent =
+        `Your money covers ${data.score}% of the life you’re building toward.`;
         data.dollarMatch
           ? `To match 1995 middle-class, you'd need $${Number(data.dollarMatch).toLocaleString()} today`
           : `Your score is on its way to ${email}`;
