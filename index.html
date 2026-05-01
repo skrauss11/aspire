@@ -346,7 +346,163 @@
     display: block; width: 100%; text-align: center; margin-top: 10px; padding: 4px;
   }
   .share-ghost:hover { color: var(--paper); }
+  .share-ghost:hover { color: var(--paper); }
   @media (max-width: 640px) { .gate-card { padding: 36px 24px; } }
+
+  /* ── Close the Gap Simulator ── */
+  .sim-section {
+    display: none;
+    padding: 64px 0;
+    border-top: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .sim-section.open { display: block; }
+  .sim-section h2 {
+    font-family: "Fraunces", serif;
+    font-size: 36px;
+    font-weight: 500;
+    margin: 0 0 8px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .sim-section .sim-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin: 0 0 48px;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+  .sim-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  @media (max-width: 840px) { .sim-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .sim-inputs-col h3,
+  .sim-outputs-col h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    margin: 0 0 20px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+  }
+  .sim-lever {
+    margin-bottom: 24px;
+  }
+  .sim-lever label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .sim-lever .lever-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .sim-lever input[type="number"],
+  .sim-lever input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 15px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    font-family: "Inter", sans-serif;
+    background: white;
+    box-sizing: border-box;
+    color: var(--ink);
+    transition: border-color .15s;
+  }
+  .sim-lever input:focus { outline: none; border-color: var(--ink); }
+  .sim-out {
+    background: #f0ebe3;
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .sim-out .out-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    margin: 0 0 4px;
+    font-family: "Inter", sans-serif;
+  }
+  .sim-out .out-value {
+    font-family: "Fraunces", serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+  }
+  .sim-out.positive .out-value { color: #2a7a3b; }
+  .sim-out.negative .out-value { color: var(--accent); }
+  .sim-out .out-sub {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .sim-improvement {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .sim-improvement .out-label { color: rgba(245,241,234,0.65); }
+  .sim-improvement .out-value { color: var(--paper); font-size: 26px; }
+  .sim-improvement .out-sub { color: rgba(245,241,234,0.75); }
+  .sim-cta-strip {
+    display: none;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+  }
+  .sim-cta-strip.show { display: block; }
+  .sim-cta-strip p {
+    font-size: 15px;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .sim-cta-strip a {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--paper);
+    padding: 13px 28px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: "Inter", sans-serif;
+    text-decoration: none;
+    border-bottom: none;
+  }
+  .sim-cta-strip a:hover { opacity: .88; }
+  .btn-sim-trigger {
+    display: none;
+    width: 100%;
+    margin-top: 14px;
+    padding: 13px;
+    background: transparent;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    font-family: "Inter", sans-serif;
+    text-align: center;
+    transition: background .15s, color .15s;
+  }
+  .btn-sim-trigger.show { display: block; }
+  .btn-sim-trigger:hover { background: var(--ink); color: var(--paper); }
 
 </style>
 </head>
@@ -544,11 +700,95 @@
         <div class="total-warn" id="warn"></div>
         <button class="btn-gate" id="gateBtn" onclick="openGate()">Get my Aspire Score →</button>
         <button class="share-ghost" onclick="shareRate()">Copy share card</button>
+        <button class="btn-sim-trigger" id="simTriggerBtn" onclick="openSimulator()">See What Closes the Gap →</button>
       </div>
     </div>
   </div>
 </section>
 
+
+<!-- CLOSE THE GAP SIMULATOR -->
+<section class="sim-section" id="simSection">
+  <div class="wrap-wide">
+    <h2>Close the Gap Simulator</h2>
+    <p class="sim-sub">Adjust a few assumptions to see how your Future Buying Power and Aspire Gap could change. Educational scenario modeling — not financial advice.</p>
+
+    <div class="sim-grid">
+      <div class="sim-inputs-col">
+        <h3>Adjust the Scenario</h3>
+
+        <div class="sim-lever">
+          <label for="simSavings">Additional monthly savings</label>
+          <div class="lever-hint">How much more could you put toward this goal each month?</div>
+          <input type="number" id="simSavings" min="0" step="100" value="0" oninput="runSim()" />
+        </div>
+
+        <div class="sim-lever">
+          <label for="simReturn">Expected portfolio return (%)</label>
+          <div class="lever-hint">What annual growth rate should we use for your money?</div>
+          <input type="number" id="simReturn" min="0" max="50" step="0.1" oninput="runSim()" />
+        </div>
+
+        <div class="sim-lever">
+          <label for="simYears">Years until goal</label>
+          <div class="lever-hint">How long do you have until you want to reach this goal?</div>
+          <input type="number" id="simYears" min="1" max="40" step="1" oninput="runSim()" />
+        </div>
+
+        <div class="sim-lever">
+          <label for="simTarget">Target goal value (today’s dollars)</label>
+          <div class="lever-hint">What does this goal cost in today’s dollars?</div>
+          <input type="number" id="simTarget" min="0" step="1000" oninput="runSim()" />
+        </div>
+
+        <div class="sim-lever">
+          <label for="simAspireRate">Aspire Rate (%)</label>
+          <div class="lever-hint">What annual inflation rate should we assume for the life you’re targeting?</div>
+          <input type="number" id="simAspireRate" min="0" max="20" step="0.1" oninput="runSim()" />
+        </div>
+      </div>
+
+      <div class="sim-outputs-col">
+        <h3>Updated Projections</h3>
+
+        <div class="sim-out" id="simOutBP">
+          <div class="out-label">Future Buying Power</div>
+          <div class="out-value" id="simBP">—</div>
+          <div class="out-sub" id="simBPSub">Adjust the inputs to see your projection.</div>
+        </div>
+
+        <div class="sim-out" id="simOutGap">
+          <div class="out-label">Aspire Gap</div>
+          <div class="out-value" id="simGap">—</div>
+          <div class="out-sub">Annual difference between your portfolio growth and the inflation rate of your goal.</div>
+        </div>
+
+        <div class="sim-improvement" id="simOutImprove">
+          <div class="out-label">Gap Improvement</div>
+          <div class="out-value" id="simImprove">—</div>
+          <div class="out-sub" id="simImproveSub">—</div>
+        </div>
+
+        <div class="sim-out" id="simOutReqReturn">
+          <div class="out-label">Required annual return to fully close the gap</div>
+          <div class="out-value" id="simReqReturn">—</div>
+          <div class="out-sub">Annual return needed for your current assets and savings to fully match the future cost of your goal. This is a benchmark, not a recommendation.</div>
+        </div>
+
+        <div class="sim-out" id="simOutReqSavings">
+          <div class="out-label">Required monthly savings to fully close the gap</div>
+          <div class="out-value" id="simReqSavings">—</div>
+          <div class="out-sub">Estimated additional monthly savings needed to fully match the future cost of your goal, at the selected return rate.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-cta-strip" id="simCTAStrip">
+      <p>Your gap compounds every month you wait. The Aspire Tracker monitors it automatically.</p>
+      <a href="#calculator">Get early access to the Tracker →</a>
+    </div>
+  </div>
+</section>
 <footer>
   <div class="wrap-wide">
     <div class="foot-row">
@@ -902,6 +1142,7 @@
           ? `To match 1995 middle-class, you'd need $${Number(data.dollarMatch).toLocaleString()} today`
           : `Your score is on its way to ${email}`;
       document.getElementById('scoreReveal').classList.add('visible');
+      document.getElementById('simTriggerBtn').classList.add('show');
       document.getElementById('gateBtn').textContent = 'Score sent ✓';
       document.getElementById('gateBtn').disabled = true;
       if (typeof gtag !== 'undefined') gtag('event', 'aspire_score_captured', { method: 'email_gate' });
@@ -909,6 +1150,124 @@
       btn.disabled = false;
       btn.textContent = 'Something went wrong — try again';
     }
+  }
+
+
+  // ── Close the Gap Simulator ──
+
+  // Snapshot of original calculator values; set when score is revealed
+  let simOriginal = null;
+
+  function openSimulator() {
+    const totalGoals = goals.reduce((s, g) => s + (g.amount || 0), 0);
+    const totalHoldings = holdings.reduce((s, h) => s + (h.amount || 0), 0);
+    if (!totalGoals || !totalHoldings) return;
+
+    const aspirationRate = parseFloat(document.getElementById('pi').textContent) || 0;
+    const portfolioRate  = parseFloat(document.getElementById('pp').textContent) || 0;
+    const weightedHorizon = goals.length > 0
+      ? goals.reduce((s, g) => s + ((g.amount || 0) / totalGoals) * (g.horizon || 0), 0)
+      : 10;
+
+    simOriginal = { aspirationRate, portfolioRate, weightedHorizon, totalGoals, totalHoldings };
+
+    // Pre-populate inputs from calculator
+    document.getElementById('simReturn').value      = portfolioRate.toFixed(1);
+    document.getElementById('simYears').value       = Math.round(weightedHorizon);
+    document.getElementById('simTarget').value      = Math.round(totalGoals);
+    document.getElementById('simAspireRate').value  = aspirationRate.toFixed(1);
+    document.getElementById('simSavings').value     = 0;
+
+    document.getElementById('simSection').classList.add('open');
+    document.getElementById('simSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    runSim();
+  }
+
+  function simFmt(n) {
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return '$' + Math.round(n).toLocaleString();
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  // Binary search: find annual return p that closes the gap
+  function solveRequiredReturn(A, m, n, FGV) {
+    // FPV(p) = A*(1+p)^n + m*12*((1+p)^n - 1)/p = FGV
+    let lo = 0.0001, hi = 5.0; // 0.01% to 500%
+    for (let i = 0; i < 60; i++) {
+      const mid = (lo + hi) / 2;
+      const growth = Math.pow(1 + mid, n);
+      const fv = A * growth + (mid > 0.00001 ? m * 12 * (growth - 1) / mid : m * 12 * n);
+      if (fv < FGV) lo = mid; else hi = mid;
+    }
+    const p = (lo + hi) / 2;
+    return p * 100; // return as %
+  }
+
+  function runSim() {
+    if (!simOriginal) return;
+
+    const m  = parseFloat(document.getElementById('simSavings').value)    || 0;
+    const p  = (parseFloat(document.getElementById('simReturn').value)     || 0) / 100;
+    const n  = parseFloat(document.getElementById('simYears').value)       || simOriginal.weightedHorizon;
+    const T  = parseFloat(document.getElementById('simTarget').value)      || simOriginal.totalGoals;
+    const a  = (parseFloat(document.getElementById('simAspireRate').value) || 0) / 100;
+    const A  = simOriginal.totalHoldings;
+
+    // Future cost of goal
+    const FGV = T * Math.pow(1 + a, n);
+
+    // Future portfolio value
+    const growth = Math.pow(1 + p, n);
+    const FPV = A * growth + (p > 0.00001 ? m * 12 * (growth - 1) / p : m * 12 * n);
+
+    // Updated buying power
+    const bpPct = FPV / FGV * 100;
+    document.getElementById('simBP').textContent = simFmt(FPV);
+    document.getElementById('simBPSub').textContent =
+      `At these assumptions, your money may cover ${bpPct.toFixed(0)}% of your target in today’s dollars.`;
+    const simOutBP = document.getElementById('simOutBP');
+    simOutBP.classList.toggle('positive', bpPct >= 100);
+    simOutBP.classList.toggle('negative', bpPct < 60);
+
+    // Updated gap
+    const newGap = (p - a) * 100;
+    document.getElementById('simGap').textContent = (newGap >= 0 ? '+' : '') + newGap.toFixed(1) + '% annually';
+    const simOutGap = document.getElementById('simOutGap');
+    simOutGap.classList.toggle('positive', newGap >= 0);
+    simOutGap.classList.toggle('negative', newGap < 0);
+
+    // Gap improvement vs original
+    const origGap = simOriginal.portfolioRate - simOriginal.aspirationRate;
+    const improvement = newGap - origGap;
+    document.getElementById('simImprove').textContent = (improvement >= 0 ? '+' : '') + improvement.toFixed(1) + ' pts';
+    document.getElementById('simImproveSub').textContent =
+      `Your Aspire Gap moves from ${(origGap >= 0 ? '+' : '') + origGap.toFixed(1)}% to ${(newGap >= 0 ? '+' : '') + newGap.toFixed(1)}%.`;
+
+    // Required return to fully close the gap
+    const reqReturn = solveRequiredReturn(A, m, n, FGV);
+    document.getElementById('simReqReturn').textContent =
+      reqReturn > 200 ? 'Not achievable at these inputs' : reqReturn.toFixed(1) + '%';
+
+    // Required monthly savings to fully close the gap
+    let reqSavings = 0;
+    if (p > 0.00001) {
+      const g = Math.pow(1 + p, n);
+      const deficit = FGV - A * g;
+      reqSavings = deficit > 0 ? deficit * p / (12 * (g - 1)) : 0;
+    } else {
+      reqSavings = Math.max(0, (FGV - A) / (n * 12));
+    }
+    document.getElementById('simReqSavings').textContent =
+      reqSavings <= 0 ? 'Already on track' : simFmt(reqSavings) + '/mo';
+
+    // Show CTA once simulation has been touched
+    document.getElementById('simCTAStrip').classList.add('show');
+
+    // GA event
+    if (typeof gtag !== 'undefined') gtag('event', 'sim_run', {
+      gap_improvement: improvement.toFixed(1),
+      req_return: reqReturn.toFixed(1)
+    });
   }
 
 </script>
