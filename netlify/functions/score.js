@@ -55,15 +55,27 @@ async function upsertBeehiiv(email, basket, score) {
 async function sendResend(email, score, dollarMatch) {
   const html = `
     <div style="font-family: Georgia, serif; max-width: 580px; margin: 0 auto; padding: 40px 24px; background: #f5f1ea; color: #0f0e0c;">
-      <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: #c8451f; margin: 0 0 16px;">Your Aspire Score</p>
-      <h1 style="font-size: 64px; font-weight: 600; margin: 0 0 8px; line-height: 1; letter-spacing: -0.02em;">${score}</h1>
-      <p style="font-size: 20px; color: #5a544b; margin: 0 0 32px;">To match 1995 middle-class life today, you'd need <strong style="color: #0f0e0c;">$${dollarMatch.toLocaleString()}</strong>.</p>
-      <hr style="border: 1px solid #d6cec0; margin: 32px 0;" />
-      <p style="font-size: 15px; color: #5a544b; line-height: 1.6;">Your score recalculates every month as inflation, home prices, and markets move. Watch it change.</p>
-      <p style="margin-top: 28px;">
-        <a href="https://aspirerate.com" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">Read The Aspire Report →</a>
+      <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: #c8451f; margin: 0 0 16px; font-family: system-ui, sans-serif;">Your Aspire Score</p>
+      <h1 style="font-family: Georgia, serif; font-size: 72px; font-weight: 600; margin: 0 0 8px; line-height: 1; letter-spacing: -0.02em;">${score}</h1>
+      <p style="font-size: 20px; color: #5a544b; margin: 0 0 20px; font-family: Georgia, serif;">To match 1995 middle-class life today, you'd need <strong style="color: #0f0e0c;">$${dollarMatch.toLocaleString()}</strong>.</p>
+      <p style="font-size: 15px; color: #5a544b; line-height: 1.65; margin: 0 0 32px; font-family: system-ui, sans-serif;">Your score reflects how well your money keeps pace with the specific future you're building toward — not some average basket that describes no one.</p>
+
+      <hr style="border: none; border-top: 1px solid #d6cec0; margin: 32px 0;" />
+
+      <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: #c8451f; margin: 0 0 16px; font-family: system-ui, sans-serif;">The Aspire Manifesto</p>
+      <p style="font-family: Georgia, serif; font-size: 21px; color: #0f0e0c; line-height: 1.35; margin: 0 0 20px; font-style: italic;">CPI is just a number — no direction, no destination. It measures an imaginary average family. Your inflation is a vector. It's aimed directly at the life you actually want.</p>
+      <p style="font-size: 15px; color: #5a544b; line-height: 1.65; margin: 0 0 24px; font-family: system-ui, sans-serif;">Inflation has quietly eroded the ability of millions of Americans to afford the life they want. Not because they aren't working hard. Because nobody ever showed them the honest numbers. This is where that changes.</p>
+      <p style="margin: 0 0 32px;">
+        <a href="https://aspirerate.com/manifesto" style="color: #c8451f; font-size: 15px; font-family: system-ui, sans-serif; text-decoration: underline;">Read the full manifesto →</a>
       </p>
-      <p style="font-size: 12px; color: #8f8778; margin-top: 40px; font-family: system-ui, sans-serif;">You subscribed at aspirerate.com.</p>
+
+      <hr style="border: none; border-top: 1px solid #d6cec0; margin: 32px 0;" />
+
+      <p style="font-size: 15px; color: #5a544b; line-height: 1.6; font-family: system-ui, sans-serif; margin: 0 0 28px;">Your score recalculates every month as inflation, home prices, and markets move. Watch it change.</p>
+      <p style="margin: 0 0 40px;">
+        <a href="https://aspirerate.com" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">Return to Aspire →</a>
+      </p>
+      <p style="font-size: 12px; color: #8f8778; margin: 0; font-family: system-ui, sans-serif;">You're receiving this because you calculated your Aspire Score at aspirerate.com.</p>
     </div>
   `;
 
