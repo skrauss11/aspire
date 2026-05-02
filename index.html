@@ -785,7 +785,7 @@
 
     <div class="sim-cta-strip" id="simCTAStrip">
       <p>Your gap compounds every month you wait. The Aspire Tracker monitors it automatically.</p>
-      <a href="#calculator">Get early access to the Tracker →</a>
+      <a href="#" onclick="openGate('tracker'); return false;" style="display:inline-block;background:#c8451f;color:#f5f1ea;padding:13px 28px;border-radius:999px;font-size:15px;font-weight:500;font-family:'Inter',sans-serif;text-decoration:none;border-bottom:none;">Get early access to the Tracker →</a>
     </div>
   </div>
 </section>
@@ -1090,7 +1090,24 @@
   }
 
   // ── Email gate ──
-  function openGate() {
+  let gateSource = 'calculator';
+  function openGate(source) {
+    source = source || 'calculator';
+    gateSource = source;
+    const buyingPower = document.getElementById('buying-power').textContent;
+    if (buyingPower === '—') return;
+    if (source === 'tracker') {
+      document.getElementById('gateHeading').textContent = 'Get early access to the Aspire Tracker.';
+      document.getElementById('gateSub').textContent = 'Enter your email and we’ll add you to the early access list — and send your monthly Aspire Score while you wait.';
+      document.getElementById('gateSubmit').textContent = 'Join the waitlist →';
+    } else {
+      document.getElementById('gateHeading').textContent = 'Your Aspire Score is ready.';
+      document.getElementById('gateSub').textContent = 'Enter your email and we’ll send it to your inbox — then recalculate it every month as inflation, markets, and home prices move.';
+      document.getElementById('gateSubmit').textContent = 'Send my Aspire Score →';
+    }
+    document.getElementById('gateOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('gateEmail').focus(), 50);
+  }
     const buyingPower = document.getElementById('buying-power').textContent;
     if (buyingPower === '—') return;
     document.getElementById('gateOverlay').classList.add('open');
@@ -1126,6 +1143,11 @@
     const gap            = parseFloat(document.getElementById('gap').textContent) || 0;
 
     const basket = {
+      goals,
+      holdings,
+      computed: { aspirationRate, portfolioRate, futureBuyingPower, fraction, gap },
+      source: gateSource
+    };
       goals,
       holdings,
       computed: { aspirationRate, portfolioRate, futureBuyingPower, fraction, gap }
@@ -1281,8 +1303,8 @@
 <div class="gate-overlay" id="gateOverlay" onclick="closeGateIfOutside(event)">
   <div class="gate-card">
     <button class="gate-close" onclick="closeGate()">×</button>
-    <h3>Your Aspire Score is ready.</h3>
-    <p class="gate-sub">Enter your email and we'll send it to your inbox — then recalculate it every month as inflation, markets, and home prices move.</p>
+    <h3 id="gateHeading">Your Aspire Score is ready.</h3>
+    <p class="gate-sub" id="gateSub">Enter your email and we’ll send it to your inbox — then recalculate it every month as inflation, markets, and home prices move.</p>
     <input class="gate-email" type="email" id="gateEmail" placeholder="you@example.com"
       onkeydown="if(event.key==='Enter') submitGate()" />
     <button class="gate-submit" id="gateSubmit" onclick="submitGate()">Send my Aspire Score →</button>
