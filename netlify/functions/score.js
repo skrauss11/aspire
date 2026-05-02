@@ -41,7 +41,19 @@ async function upsertBeehiiv(email, basket, score) {
   return res.ok;
 }
 
-async function sendResend(email, score, aspirationRate, portfolioRate, gap) {
+// Build a deep-link URL that opens the simulator with the user's basket pre-loaded.
+// base64url (URL-safe) so it travels through email clients cleanly.
+function simulatorUrl(basket) {
+  const minimal = {
+    goals: (basket.goals || []).map(g => ({ label: g.label, amount: g.amount, horizon: g.horizon, asset: g.asset })),
+    holdings: (basket.holdings || []).map(h => ({ label: h.label, amount: h.amount, asset: h.asset }))
+  };
+  const b64 = Buffer.from(JSON.stringify(minimal)).toString('base64')
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return `https://aspirerate.com/?b=${b64}#simulator`;
+}
+
+async function sendResend(email, score, aspirationRate, portfolioRate, gap, basket) {
   const ahead   = gap >= 0;
   const gapAbs  = Math.abs(gap).toFixed(1);
 
@@ -91,7 +103,7 @@ async function sendResend(email, score, aspirationRate, portfolioRate, gap) {
 
       <p style="font-size: 15px; color: #5a544b; line-height: 1.6; font-family: system-ui, sans-serif; margin: 0 0 24px;">Your score recalculates every month as inflation, home prices, and markets move. The gap doesn't sit still.</p>
       <p style="margin: 0 0 40px;">
-        <a href="https://aspirerate.com" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">Run the Close the Gap Simulator →</a>
+        <a href="${simulatorUrl(basket)}" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">Run the Close the Gap Simulator →</a>
       </p>
       <p style="font-size: 12px; color: #8f8778; margin: 0; font-family: system-ui, sans-serif;">You're receiving this because you calculated your Aspire Score at aspirerate.com.</p>
     </div>
@@ -145,7 +157,7 @@ exports.handler = async (event) => {
 
   const [beehiivOk, resendResult] = await Promise.all([
     upsertBeehiiv(email, basket, score),
-    sendResend(email, score, aspirationRate, portfolioRate, gap)
+    sendResend(email, score, aspirationRate, portfolioRate, gap, basket)
   ]);
 
   console.log('beehiiv:', beehiivOk, 'resend:', resendResult.ok, resendResult.body);
