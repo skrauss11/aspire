@@ -1108,11 +1108,6 @@
     document.getElementById('gateOverlay').classList.add('open');
     setTimeout(() => document.getElementById('gateEmail').focus(), 50);
   }
-    const buyingPower = document.getElementById('buying-power').textContent;
-    if (buyingPower === '—') return;
-    document.getElementById('gateOverlay').classList.add('open');
-    setTimeout(() => document.getElementById('gateEmail').focus(), 50);
-  }
   function closeGate() {
     document.getElementById('gateOverlay').classList.remove('open');
   }
