@@ -1133,19 +1133,12 @@
     const futureBuyingPower = document.getElementById('buying-power').textContent;
     const gap            = parseFloat(document.getElementById('gap').textContent) || 0;
     const fraction       = parseFloat(document.getElementById('buying-power-pct').textContent) || 0;
-    const portfolioRate  = parseFloat(document.getElementById('pp').textContent) || 0;
-    const futureBuyingPower = document.getElementById('buying-power').textContent;
-    const gap            = parseFloat(document.getElementById('gap').textContent) || 0;
 
     const basket = {
       goals,
       holdings,
       computed: { aspirationRate, portfolioRate, futureBuyingPower, fraction, gap },
       source: gateSource
-    };
-      goals,
-      holdings,
-      computed: { aspirationRate, portfolioRate, futureBuyingPower, fraction, gap }
     };
 
     try {
