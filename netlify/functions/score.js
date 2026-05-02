@@ -29,11 +29,11 @@ async function upsertBeehiiv(email, basket, score) {
       email,
       reactivate_existing: true,
       send_welcome_email: false,
-      utm_source: 'calculator',
+      utm_source: basket.source || 'calculator',
       custom_fields: [
         { name: 'basket_json',   value: JSON.stringify(basket) },
         { name: 'last_score',    value: String(score) },
-        { name: 'signup_source', value: 'calculator' },
+        { name: 'signup_source', value: basket.source || 'calculator' },
         { name: 'last_recalc',   value: new Date().toISOString().split('T')[0] }
       ]
     })
