@@ -1074,6 +1074,48 @@
   renderHoldings();
   hydrateRates();
 
+  // ── Deep-link support: load basket from URL ──
+  // ?b=<base64-json> populates the calculator.
+  // #simulator auto-opens the simulator once the basket is loaded and scored.
+  (function loadFromURL() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const b = params.get('b');
+      if (b) {
+        const json = atob(b.replace(/-/g, '+').replace(/_/g, '/'));
+        const parsed = JSON.parse(json);
+        if (Array.isArray(parsed.goals) && parsed.goals.length) {
+          goals.length = 0;
+          parsed.goals.forEach(g => goals.push({
+            label:   String(g.label   || ''),
+            amount:  Number(g.amount  || 0),
+            horizon: Number(g.horizon || 10),
+            asset:   String(g.asset   || 'sp500')
+          }));
+        }
+        if (Array.isArray(parsed.holdings) && parsed.holdings.length) {
+          holdings.length = 0;
+          parsed.holdings.forEach(h => holdings.push({
+            label:  String(h.label  || ''),
+            amount: Number(h.amount || 0),
+            asset:  String(h.asset  || 'sp500')
+          }));
+        }
+        renderGoals();
+        renderHoldings();
+      }
+    } catch (err) { console.warn('deep-link parse failed', err); }
+
+    // Auto-open simulator if #simulator in URL hash
+    if (window.location.hash === '#simulator') {
+      // Wait one tick so rates + recompute finish
+      setTimeout(() => {
+        try { openSimulator(); } catch (e) { console.warn('auto-open simulator failed', e); }
+      }, 300);
+    }
+  })();
+
+
   function shareRate() {
     const pi = document.getElementById('pi').textContent;
     const pp = document.getElementById('pp').textContent;
