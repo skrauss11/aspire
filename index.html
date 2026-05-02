@@ -419,6 +419,46 @@
     transition: border-color .15s;
   }
   .sim-lever input:focus { outline: none; border-color: var(--ink); }
+  .return-presets {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .return-preset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 10px 4px;
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .12s, border-color .12s, color .12s;
+    line-height: 1.2;
+  }
+  .return-preset span {
+    font-family: "Fraunces", serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .return-preset:hover { border-color: var(--ink); }
+  .return-preset.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  @media (max-width: 640px) {
+    .return-presets { grid-template-columns: repeat(2, 1fr); }
+    .return-preset { padding: 12px 8px; }
+  }
   .sim-out {
     background: #f0ebe3;
     border-radius: 12px;
@@ -725,8 +765,14 @@
 
         <div class="sim-lever">
           <label for="simReturn">Expected portfolio return (%)</label>
-          <div class="lever-hint">What annual growth rate should we use for your money?</div>
-          <input type="number" id="simReturn" min="0" max="50" step="0.1" oninput="runSim()" />
+          <div class="lever-hint">Pick a benchmark or enter your own assumption.</div>
+          <div class="return-presets" id="returnPresets">
+            <button type="button" class="return-preset" data-rate="5"  onclick="setReturnPreset(5, this)">Conservative<span>5%</span></button>
+            <button type="button" class="return-preset" data-rate="10" onclick="setReturnPreset(10, this)">Market avg<span>10%</span></button>
+            <button type="button" class="return-preset" data-rate="15" onclick="setReturnPreset(15, this)">Aggressive<span>15%</span></button>
+            <button type="button" class="return-preset" data-rate="custom" onclick="setReturnPreset('custom', this)">Custom</button>
+          </div>
+          <input type="number" id="simReturn" min="0" max="50" step="0.1" oninput="onReturnInput()" style="margin-top:10px;" />
         </div>
 
         <div class="sim-lever">
@@ -1230,6 +1276,7 @@
 
     // Pre-populate inputs from calculator
     document.getElementById('simReturn').value      = portfolioRate.toFixed(1);
+    selectNearestPreset(portfolioRate);
     document.getElementById('simYears').value       = Math.round(weightedHorizon);
     document.getElementById('simTarget').value      = Math.round(totalGoals);
     document.getElementById('simAspireRate').value  = aspirationRate.toFixed(1);
@@ -1238,6 +1285,46 @@
     document.getElementById('simSection').classList.add('open');
     document.getElementById('simSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
     runSim();
+  }
+
+  // Return-rate presets
+  function setReturnPreset(rate, btn) {
+    document.querySelectorAll('.return-preset').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const input = document.getElementById('simReturn');
+    if (rate === 'custom') {
+      input.style.display = 'block';
+      input.focus();
+      input.select();
+    } else {
+      input.value = rate;
+      input.style.display = 'none';
+      runSim();
+    }
+  }
+  function onReturnInput() {
+    // If user types, mark Custom as active
+    document.querySelectorAll('.return-preset').forEach(b => b.classList.remove('active'));
+    const customBtn = document.querySelector('.return-preset[data-rate="custom"]');
+    if (customBtn) customBtn.classList.add('active');
+    runSim();
+  }
+  function selectNearestPreset(rate) {
+    // Match exactly to a preset if close (within 0.5pp), else mark Custom
+    const presets = [5, 10, 15];
+    const match = presets.find(p => Math.abs(p - rate) < 0.5);
+    document.querySelectorAll('.return-preset').forEach(b => b.classList.remove('active'));
+    const input = document.getElementById('simReturn');
+    if (match !== undefined) {
+      const btn = document.querySelector(`.return-preset[data-rate="${match}"]`);
+      if (btn) btn.classList.add('active');
+      input.value = match;
+      input.style.display = 'none';
+    } else {
+      const customBtn = document.querySelector('.return-preset[data-rate="custom"]');
+      if (customBtn) customBtn.classList.add('active');
+      input.style.display = 'block';
+    }
   }
 
   function simFmt(n) {
