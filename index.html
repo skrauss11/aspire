@@ -657,53 +657,53 @@
 <!-- CALCULATOR -->
 <section class="calc" id="calculator">
   <div class="wrap-wide">
-    <h2>Your number, in 60 seconds.</h2>
-    <div class="sub">Pick a scenario, adjust the numbers, and see what your money may actually buy.</div>
+    <h2>See what your life will actually cost in the future</h2>
+    <div class="sub">Tell us what you’re planning for, and we’ll show what it may cost — and how close you are.</div>
 
     <div class="scenario-row">
-      <button class="scenario-btn active" data-scenario="home" onclick="setScenario('home')">Buying a home</button>
-      <button class="scenario-btn" data-scenario="family" onclick="setScenario('family')">Planning for the future</button>
+      <button class="scenario-btn active" data-scenario="home" onclick="setScenario('home')">Buy a home</button>
+      <button class="scenario-btn" data-scenario="family" onclick="setScenario('family')">Plan your future</button>
     </div>
 
     <div class="calc-grid">
       <div>
         <div class="block">
-          <h3 class="block-title">What you want</h3>
-          <div class="block-sub">The life you're pricing — in today's dollars.</div>
+          <h3 class="block-title">What are you planning for?</h3>
+          <div class="block-sub">What it costs today</div>
           <div class="goal-head">
-            <div>Goal</div>
-            <div>Target (today's $)</div>
-            <div class="h-horizon">In (years)</div>
-            <div class="h-asset">Priced like</div>
+            <div>What</div>
+            <div>Cost today</div>
+            <div class="h-horizon">When</div>
+            <div class="h-asset">Grows like</div>
             <div class="h-remove"></div>
           </div>
           <div id="goals"></div>
           <button class="add-goal" onclick="addGoal()">+ Add a goal</button>
 
           <div class="basket-meta">
-            <div>Total basket in today's dollars</div>
+            <div>Total cost today</div>
             <div class="v">$<span id="total-today">0</span></div>
           </div>
           <div class="basket-meta" style="border-top:none;padding-top:0;margin-top:8px;">
-            <div>What that basket will cost when you buy</div>
+            <div>Estimated future cost</div>
             <div class="v">$<span id="total-future">0</span></div>
           </div>
         </div>
 
         <div class="block">
-          <h3 class="block-title">What you own</h3>
-          <div class="block-sub">Your actual balances — cash, stocks, crypto, anything you already hold.</div>
+          <h3 class="block-title">What do you already have saved?</h3>
+          <div class="block-sub">Your current savings and investments</div>
           <div class="holding-head">
-            <div>Holding</div>
-            <div>Balance ($)</div>
-            <div>Priced like</div>
+            <div>Account or asset</div>
+            <div>Amount today</div>
+            <div>Money grows like</div>
             <div></div>
           </div>
           <div id="holdings"></div>
           <button class="add-goal" onclick="addHolding()">+ Add a holding</button>
 
           <div class="basket-meta">
-            <div>Total net worth</div>
+            <div>Total available today</div>
             <div class="v">$<span id="total-holdings">0</span></div>
           </div>
         </div>
@@ -711,28 +711,28 @@
 
       <div class="result">
         <div class="buying-power-hero">
-          <div class="label">Future Buying Power</div>
+          <div class="label">What you’re on track to afford</div>
           <div class="n" id="buying-power-n">$<span id="buying-power">—</span> <span class="pct">(<span id="buying-power-pct">—</span>)</span></div>
           <div class="sub" id="buying-power-copy">Add goals and holdings to see what your money may actually buy.</div>
         </div>
 
         <div class="gap-hero" style="padding-top:14px;">
-          <div class="label">Aspire Gap</div>
-          <div class="n" id="gap-n" style="font-size:40px;"><span id="gap">—</span>% annually</div>
+          <div class="label">Your gap</div>
+          <div class="n" id="gap-n" style="font-size:40px;"><span id="gap-prefix">You need to improve by </span><span id="gap">—</span>% per year</div>
           <div class="sub" id="gap-copy">Are you keeping up or falling behind?</div>
         </div>
 
         <div class="rate-duo">
           <div>
-            <div class="label">Aspire Rate</div>
+            <div class="label">Cost growth</div>
             <div class="n accent-n"><span id="pi">—</span>%</div>
           </div>
           <div>
-            <div class="label">Portfolio Rate</div>
+            <div class="label">Money growth</div>
             <div class="n"><span id="pp">—</span>%</div>
           </div>
         </div>
-        <div class="row"><span>Time horizon</span><span class="v"><span id="time-horizon">—</span> yrs</span></div>
+        <div class="row"><span>You have</span><span class="v"><span id="time-horizon">—</span> years</span></div>
 
         <div class="score-reveal" id="scoreReveal">
           <div class="s-label">Aspire Score</div>
@@ -742,8 +742,8 @@
 
         <div class="caption" id="caption" style="margin-top:18px;">This gap compounds every year.</div>
         <div class="total-warn" id="warn"></div>
-        <button class="btn-gate" id="gateBtn" onclick="openGate()">Get my Aspire Score →</button>
-        <button class="share-ghost" onclick="shareRate()">Copy share card</button>
+        <button class="btn-gate" id="gateBtn" onclick="openGate()">See how to close the gap →</button>
+        <button class="share-ghost" onclick="shareRate()">Share this result</button>
         <button class="btn-sim-trigger" id="simTriggerBtn" onclick="openSimulator()">See What Closes the Gap →</button>
       </div>
     </div>
@@ -755,11 +755,11 @@
 <section class="sim-section" id="simSection">
   <div class="wrap-wide">
     <h2>Close the Gap Simulator</h2>
-    <p class="sim-sub">Adjust a few assumptions to see how your Future Buying Power and Aspire Gap could change. Educational scenario modeling — not financial advice.</p>
+    <p class="sim-sub">Adjust a few assumptions to see how your numbers could change. Educational planning, not financial advice.</p>
 
     <div class="sim-grid">
       <div class="sim-inputs-col">
-        <h3>Adjust the Scenario</h3>
+        <h3>Adjust the Plan</h3>
 
         <div class="sim-lever">
           <label for="simSavings">Additional monthly savings</label>
@@ -792,8 +792,8 @@
         </div>
 
         <div class="sim-lever">
-          <label for="simAspireRate">Aspire Rate (%)</label>
-          <div class="lever-hint">What annual inflation rate should we assume for the life you’re targeting?</div>
+          <label for="simAspireRate">Cost growth (%)</label>
+          <div class="lever-hint">How fast do we assume your goal’s cost grows each year?</div>
           <input type="number" id="simAspireRate" min="0" max="20" step="0.1" oninput="runSim()" />
         </div>
       </div>
@@ -802,13 +802,13 @@
         <h3>Updated Projections</h3>
 
         <div class="sim-out" id="simOutBP">
-          <div class="out-label">Future Buying Power</div>
+          <div class="out-label">What you’re on track to afford</div>
           <div class="out-value" id="simBP">—</div>
           <div class="out-sub" id="simBPSub">Adjust the inputs to see your projection.</div>
         </div>
 
         <div class="sim-out" id="simOutGap">
-          <div class="out-label">Aspire Gap</div>
+          <div class="out-label">Your gap</div>
           <div class="out-value" id="simGap">—</div>
           <div class="out-sub">Annual difference between your portfolio growth and the inflation rate of your goal.</div>
         </div>
@@ -839,6 +839,68 @@
     </div>
   </div>
 </section>
+<!-- POST-SUBMIT EXTRAS: Aspire Index card + footer reassurance -->
+<section id="postSubmitExtras" style="display:none;">
+  <style>
+    #postSubmitExtras.show { display:block; }
+    .index-section { background:#efe9df; padding:80px 0 60px; border-top:1px solid rgba(15,14,12,0.08); }
+    .index-section h2 { font-family:'Fraunces',Georgia,serif; font-style:italic; font-weight:500; font-size:34px; line-height:1.15; margin:0 0 8px; color:var(--ink); letter-spacing:-0.01em; }
+    .index-section .lede { font-size:16px; line-height:1.6; color:var(--muted); max-width:560px; margin:0 0 36px; }
+    .index-card { display:grid; grid-template-columns: 1fr; gap:0; background:var(--paper); border:1px solid rgba(15,14,12,0.10); border-radius:16px; overflow:hidden; max-width:760px; }
+    @media (min-width:680px){ .index-card { grid-template-columns: 280px 1fr; } }
+    .index-card .meta { padding:28px 28px 24px; }
+    .index-card .badge { font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); font-weight:600; margin:0 0 10px; }
+    .index-card h3 { font-family:'Fraunces',Georgia,serif; font-style:italic; font-weight:500; font-size:24px; margin:0 0 6px; color:var(--ink); }
+    .index-card .year { font-size:13px; color:var(--muted); margin:0 0 18px; }
+    .index-card .row-then-now { display:flex; gap:24px; margin:0 0 14px; }
+    .index-card .row-then-now > div { flex:1; }
+    .index-card .row-then-now .label { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 4px; }
+    .index-card .row-then-now .value { font-family:'Fraunces',Georgia,serif; font-size:22px; color:var(--ink); }
+    .index-card .delta { font-size:14px; color:var(--accent); font-weight:500; margin:8px 0 0; }
+    .index-card .image { background:linear-gradient(135deg,#c8451f 0%,#8a2c12 100%); display:flex; align-items:center; justify-content:center; min-height:180px; color:#f5f1ea; font-family:'Fraunces',Georgia,serif; font-style:italic; font-size:42px; }
+    .reassure { padding:40px 0 80px; text-align:center; }
+    .reassure p { font-size:15px; color:var(--muted); max-width:560px; margin:0 auto 14px; line-height:1.6; }
+    .reassure .links a { color:var(--ink); text-decoration:none; border-bottom:1px solid rgba(15,14,12,0.2); margin:0 10px; font-size:14px; }
+    .reassure .links a:hover { border-bottom-color:var(--accent); color:var(--accent); }
+  </style>
+
+  <div class="index-section">
+    <div class="wrap-wide">
+      <h2>Inflation hides in the things you grew up watching.</h2>
+      <p class="lede">The Aspire Index measures how the life of an average movie character has inflated. Here’s one.</p>
+      <div class="index-card">
+        <div class="image">Δ</div>
+        <div class="meta">
+          <p class="badge">The Aspire Index — Vol. 1</p>
+          <h3>The McCallister House, Home Alone</h3>
+          <p class="year">Winnetka, IL · 1990 → today</p>
+          <div class="row-then-now">
+            <div>
+              <div class="label">Then (1990)</div>
+              <div class="value">$875,000</div>
+            </div>
+            <div>
+              <div class="label">Today (2026)</div>
+              <div class="value">$2.4M</div>
+            </div>
+          </div>
+          <p class="delta">Δ Up 4.7% per year — well above CPI.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reassure">
+    <div class="wrap-wide">
+      <p>Your Aspire Score recalculates the 1st of every month. Watch your inbox.</p>
+      <div class="links">
+        <a href="#manifesto">Manifesto</a>
+        <a href="https://x.com/aspirerate" target="_blank" rel="noopener">Follow on X</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap-wide">
     <div class="foot-row">
@@ -1128,13 +1190,13 @@
       buyingPowerPctEl.textContent = '—';
       buyingPowerN.classList.remove('maxed');
       buyingPowerCopyEl.textContent = totalGoals === 0
-        ? 'Add a goal to see the inflation rate of the life you want.'
-        : 'Add at least one holding to see what your money may actually buy.';
+        ? 'Add a goal to see what it’ll cost.'
+        : 'Add what you already have saved to see what you’re on track to afford.';
       gapEl.textContent = '—';
-      gapCopyEl.textContent = 'Are you keeping up or falling behind?';
+      gapCopyEl.textContent = 'How big is your gap?';
       timeHorizonEl.textContent = '—';
       gapN.classList.remove('ahead');
-      captionEl.textContent = 'This gap compounds every year.';
+      captionEl.textContent = 'This gap gets bigger every year if nothing changes.';
       return;
     }
 
@@ -1151,10 +1213,19 @@
     buyingPowerPctEl.textContent = `${fraction.toFixed(0)}%`; 
     buyingPowerN.classList.toggle('maxed', fraction >= 100);
     const mainGoal = goals.length === 1 ? goals[0].label.toLowerCase() : 'basket';
-    buyingPowerCopyEl.textContent = `You're targeting a $${fmt(totalGoals)} ${mainGoal}. At your current pace, your projected holdings may cover $${fmt(futureBuyingPower)} in today's terms.`;
+    buyingPowerCopyEl.textContent = `At your current pace, you’re on track to afford about ${fmt(futureBuyingPower)} of your goal (in today’s dollars).`;
 
-    gapEl.textContent = (aspireGap > 0 ? '+' : '') + aspireGap.toFixed(1);
-    gapCopyEl.textContent = 'This gap compounds every year.';
+    // New format: positive gap means ahead (no improvement needed). Negative gap means improve by abs(value)%.
+    const gapPrefixEl = document.getElementById('gap-prefix');
+    if (aspireGap >= 0) {
+      if (gapPrefixEl) gapPrefixEl.textContent = 'You\u2019re growing ';
+      gapEl.textContent = aspireGap.toFixed(1);
+      // Replace trailing text by tweaking the gap-n element: handled by sibling text; for now, keep "% per year"
+    } else {
+      if (gapPrefixEl) gapPrefixEl.textContent = 'You need to improve by ';
+      gapEl.textContent = Math.abs(aspireGap).toFixed(1);
+    }
+    gapCopyEl.textContent = 'This gap gets bigger every year if nothing changes.';
     gapN.classList.toggle('ahead', aspireGap >= 0);
     timeHorizonEl.textContent = weightedHorizon.toFixed(0);
 
@@ -1162,8 +1233,8 @@
     if (fraction >= 200)      caption = `You can buy the future twice over. That's a rare problem.`;
     else if (fraction >= 100) caption = `You're on pace to cover the full target, with ${(fraction - 100).toFixed(0)} points of margin.`;
     else if (fraction >= 75)  caption = `You're close. The last quarter is where compounding starts to bite.`;
-    else if (fraction >= 40)  caption = `You can cover part of the life you want. The rest is drifting away.`;
-    else if (fraction >= 20)  caption = `Most of the target is still out of reach at this pace.`;
+    else if (fraction >= 40)  caption = `You’re on track to afford part of your plan. The rest is slipping out of reach.`;
+    else if (fraction >= 20)  caption = `Most of your plan is still out of reach at this pace.`;
     else                      caption = `You're saving for one future and compounding toward another.`;
     captionEl.textContent = caption;
   }
@@ -1220,7 +1291,7 @@
     const gap = document.getElementById('gap').textContent;
     const buyingPower = document.getElementById('buying-power').textContent;
     const buyingPowerPct = document.getElementById('buying-power-pct').textContent;
-    const txt = `My future buying power is $${buyingPower} (${buyingPowerPct}) in today's terms. My Aspire Gap is ${gap}% annually. What will your money actually buy? — aspirerate.com`;
+    const txt = `I can afford ${buyingPowerPct} of the life I’m building toward (about ${buyingPower} of my goal in today’s dollars). What’s your Aspire Score? — aspirerate.com`;
     navigator.clipboard.writeText(txt).then(() => {
       const b = document.querySelector('.share-ghost');
       const orig = b.textContent;
@@ -1292,15 +1363,19 @@
       lastSimulatorUrl = data.simulatorUrl || null;
       closeGate();
       document.getElementById('scoreNumber').textContent = data.score;
-      document.getElementById('scoreMatch').textContent =
+      document.getElementById('scoreMatch').innerHTML =
         data.dollarMatch
           ? `To match 1995 middle-class, you'd need $${Number(data.dollarMatch).toLocaleString()} today`
-          : `Your money covers ${data.score}% of the life you’re building toward. Your score is on its way to ${email}.`;
+          : `You can afford <strong>${data.score}%</strong> of your plan. Average Aspire Score is <strong>38</strong>. Your score is on its way to ${email}.`;
       document.getElementById('scoreReveal').classList.add('visible');
       document.getElementById('simTriggerBtn').classList.add('show');
       document.getElementById('simTriggerBtn').textContent = 'Open your Close the Gap Simulator →';
       document.getElementById('gateBtn').textContent = 'Score sent ✓';
       document.getElementById('gateBtn').disabled = true;
+      // Auto-open the inline simulator and reveal post-submit sections
+      setTimeout(() => { try { openSimulator(); } catch(e){} }, 600);
+      const _extras = document.getElementById('postSubmitExtras');
+      if (_extras) _extras.classList.add('show');
       if (typeof gtag !== 'undefined') gtag('event', 'aspire_score_captured', { method: 'email_gate' });
     } catch (err) {
       btn.disabled = false;
