@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Aspire — Close the Gap Simulator</title>
+<meta name="description" content="Model educational scenarios for your Aspire Gap using your saved Aspire Score, goal basket, and current holdings." />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<link rel="apple-touch-icon" sizes="512x512" href="/favicon-512.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --paper: #f5f1ea;
+    --paper-2: #ebe5db;
+    --paper-3: #ddd4c6;
+    --accent: #c8451f;
+    --green: #2f7d44;
+    --muted: #5a544b;
+    --soft: #8a8074;
+    --rule: #d6cec0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .serif {
+    font-family: "Fraunces", "Iowan Old Style", "Palatino", Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(200,69,31,.3); }
+  a:hover { border-bottom-color: var(--accent); }
+  button, input { font: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .logo { font-family: "Fraunces", serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; font-style: italic; color: var(--ink); border-bottom: none; }
+  .logo span { color: var(--accent); font-style: normal; font-weight: 700; margin-left: 3px; }
+  .nav-links { display: flex; gap: 20px; align-items: center; font-size: 14px; font-weight: 500; }
+  .nav-cta { color: var(--ink); border: 1px solid var(--ink); border-radius: 999px; padding: 9px 15px; }
+  .nav-cta:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+    gap: 42px;
+    align-items: end;
+    padding: 64px 0 42px;
+  }
+  .eyebrow {
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  h1 { font-size: clamp(42px, 7vw, 78px); line-height: 1.02; margin: 0 0 22px; font-weight: 500; }
+  .lede { max-width: 640px; margin: 0; color: var(--muted); font-size: 20px; line-height: 1.45; }
+  .score-card {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 8px;
+    padding: 28px;
+    min-height: 280px;
+  }
+  .score-card .label, .metric .label, .panel-label {
+    color: var(--soft);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+    font-weight: 600;
+  }
+  .score-number {
+    font-family: "Fraunces", serif;
+    font-size: 92px;
+    line-height: .95;
+    margin: 12px 0 10px;
+    color: var(--accent);
+  }
+  .score-copy { color: #b8b0a2; margin: 0 0 22px; }
+  .score-meta { border-top: 1px solid #2a2824; padding-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .score-meta .v { color: var(--paper); font-family: "Fraunces", serif; font-size: 25px; line-height: 1.1; margin-top: 5px; }
+  .score-meta .v.good { color: #7fb98a; }
+  .page-grid { display: grid; grid-template-columns: minmax(300px, .85fr) minmax(0, 1.15fr); gap: 36px; align-items: start; padding: 30px 0 70px; }
+  .panel {
+    border-top: 1px solid var(--rule);
+    padding-top: 22px;
+    margin-bottom: 28px;
+  }
+  .panel h2 { font-size: 30px; line-height: 1.1; margin: 0 0 18px; font-weight: 500; }
+  .list { display: grid; gap: 10px; }
+  .item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: baseline;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 13px 14px;
+  }
+  .item .name { font-weight: 600; }
+  .item .meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .item .amount { font-family: "Fraunces", serif; font-size: 20px; white-space: nowrap; }
+  .sim-panel {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 8px;
+    padding: 28px;
+    position: sticky;
+    top: 20px;
+  }
+  .sim-panel h2 { color: var(--paper); font-size: 34px; margin: 0 0 8px; font-weight: 500; }
+  .sim-panel .intro { color: #b8b0a2; margin: 0 0 24px; }
+  .mode-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 22px; }
+  .mode-btn {
+    border: 1px solid #3a3832;
+    background: #1a1815;
+    color: var(--paper);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+  }
+  .mode-btn:hover, .mode-btn.active { color: var(--accent); border-color: var(--accent); }
+  .mode-btn strong { display: block; color: inherit; margin-bottom: 3px; }
+  .mode-btn span { display: block; color: #8f8778; font-size: 12px; line-height: 1.3; }
+  .mode-btn.active span { color: #b8b0a2; }
+  .decision-control { margin: 0 0 22px; }
+  .decision-control .control { max-width: 360px; }
+  .assumption-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 0 0 22px;
+  }
+  .assumption-pill {
+    border: 1px solid #2a2824;
+    background: #171511;
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .assumption-pill .k {
+    color: #8f8778;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+  }
+  .assumption-pill .v {
+    font-family: "Fraunces", serif;
+    font-size: 22px;
+    margin-top: 4px;
+  }
+  .control label {
+    display: block;
+    color: #b8b0a2;
+    font-size: 12px;
+    margin-bottom: 7px;
+  }
+  .control input {
+    width: 100%;
+    background: #1a1815;
+    color: var(--paper);
+    border: 1px solid #2a2824;
+    border-radius: 6px;
+    padding: 11px 12px;
+  }
+  .control input:focus { outline: none; border-color: var(--accent); }
+  .coverage-shift {
+    background: #171511;
+    border: 1px solid #2a2824;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 0 0 14px;
+  }
+  .coverage-shift .label {
+    color: #8f8778;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+  }
+  .coverage-shift .big {
+    font-family: "Fraunces", serif;
+    font-size: clamp(46px, 7vw, 78px);
+    line-height: .96;
+    margin: 10px 0;
+    color: var(--paper);
+  }
+  .coverage-shift .big span:last-child { color: var(--accent); }
+  .coverage-shift.positive .big span:last-child { color: #7fb98a; }
+  .coverage-shift .sub { color: #b8b0a2; font-size: 14px; }
+  .results { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 18px 0; }
+  .metric {
+    background: #1a1815;
+    border: 1px solid #2a2824;
+    border-radius: 8px;
+    padding: 16px;
+    min-height: 128px;
+  }
+  .metric .value {
+    font-family: "Fraunces", serif;
+    font-size: 32px;
+    line-height: 1.05;
+    margin: 8px 0;
+  }
+  .metric .sub { color: #b8b0a2; font-size: 12px; }
+  .metric.positive .value { color: #7fb98a; }
+  .metric.negative .value { color: var(--accent); }
+  .bar {
+    height: 16px;
+    background: #1a1815;
+    border: 1px solid #2a2824;
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 10px 0 18px;
+  }
+  .bar span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s ease; }
+  .bar span.full { background: #7fb98a; }
+  .summary {
+    color: #d7d0c5;
+    background: #171511;
+    border: 1px solid #2a2824;
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin: 0;
+  }
+  .share-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .tracker-cta {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid #2a2824;
+  }
+  .tracker-cta p {
+    color: #b8b0a2;
+    font-size: 14px;
+    margin: 0 0 12px;
+  }
+  .btn {
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--paper);
+    border-radius: 999px;
+    padding: 11px 17px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  .btn.secondary { background: transparent; border-color: #4a463f; color: #b8b0a2; }
+  .btn.secondary:hover { color: var(--paper); border-color: var(--paper); }
+  .assumptions {
+    color: var(--muted);
+    font-size: 13px;
+    border-top: 1px solid var(--rule);
+    padding-top: 18px;
+  }
+  .empty {
+    display: none;
+    max-width: 680px;
+    padding: 80px 0;
+  }
+  .empty.visible { display: block; }
+  .empty h1 { font-size: clamp(38px, 6vw, 64px); }
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 34px 0 44px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  @media (max-width: 900px) {
+    .hero, .page-grid { grid-template-columns: 1fr; }
+    .sim-panel { position: static; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 0 20px; }
+    nav { align-items: flex-start; gap: 16px; }
+    .nav-links { gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+    .hero { padding-top: 44px; }
+    .score-meta, .mode-row, .assumption-strip, .results { grid-template-columns: 1fr; }
+    .item { grid-template-columns: 1fr; }
+    .item .amount { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="logo" href="/">Aspire<span aria-hidden="true">Δ</span></a>
+    <div class="nav-links">
+      <a href="/manifesto">Manifesto</a>
+      <a class="nav-cta" href="/">Calculate another</a>
+    </div>
+  </nav>
+
+  <main id="loaded" hidden>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Close the Gap Simulator</div>
+        <h1>Now make the assumptions move.</h1>
+        <p class="lede">Your score is the measurement. This page is the planning lens: change savings, timing, target cost, and return assumptions to see how the gap responds.</p>
+      </div>
+      <aside class="score-card">
+        <div class="label">Saved Aspire Score</div>
+        <div class="score-number" id="score">—</div>
+        <p class="score-copy" id="scoreCopy">Loading your saved scenario.</p>
+        <div class="score-meta">
+          <div><div class="label">Aspire Rate</div><div class="v" id="aspireRate">—</div></div>
+          <div><div class="label">Portfolio Rate</div><div class="v" id="portfolioRate">—</div></div>
+          <div><div class="label">Gap</div><div class="v" id="gap">—</div></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="page-grid">
+      <div>
+        <div class="panel">
+          <div class="panel-label">Your Target Basket</div>
+          <h2>What you were pricing</h2>
+          <div class="list" id="goalsList"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-label">Current Holdings</div>
+          <h2>What you brought into the model</h2>
+          <div class="list" id="holdingsList"></div>
+        </div>
+
+        <div class="assumptions" id="assumptions"></div>
+      </div>
+
+      <section class="sim-panel">
+        <h2>Choose one path to test</h2>
+        <p class="intro">Your Aspire Rate stays fixed because it was calculated from your saved basket. Change a real-world lever and see what moves.</p>
+
+        <div class="mode-row">
+          <button class="mode-btn active" data-mode="save"><strong>Save more</strong><span>Add monthly savings</span></button>
+          <button class="mode-btn" data-mode="date"><strong>Move date</strong><span>Give the goal more time</span></button>
+          <button class="mode-btn" data-mode="target"><strong>Change target</strong><span>Resize the basket</span></button>
+        </div>
+
+        <div class="decision-control">
+          <div class="control">
+            <label id="decisionLabel" for="decisionInput">Additional monthly savings</label>
+            <input id="decisionInput" type="number" min="0" step="100" value="500" />
+          </div>
+        </div>
+
+        <div class="assumption-strip">
+          <div class="assumption-pill"><div class="k">Aspire Rate</div><div class="v" id="lockedAspireRate">—</div></div>
+          <div class="assumption-pill"><div class="k">Portfolio Rate</div><div class="v" id="lockedPortfolioRate">—</div></div>
+          <div class="assumption-pill"><div class="k">Starting Assets</div><div class="v" id="lockedAssets">—</div></div>
+        </div>
+
+        <div class="coverage-shift" id="coverageShift">
+          <div class="label">Modeled Coverage</div>
+          <div class="big"><span id="fromCoverage">—</span> → <span id="toCoverage">—</span></div>
+          <div class="sub" id="coverageSub">—</div>
+        </div>
+
+        <div class="results">
+          <div class="metric" id="gapMetric">
+            <div class="label">Gap Movement</div>
+            <div class="value" id="simGap">—</div>
+            <div class="sub" id="gapSub">—</div>
+          </div>
+          <div class="metric">
+            <div class="label">What Fully Closes It</div>
+            <div class="value" id="requiredSavings">—</div>
+            <div class="sub">Estimated additional monthly savings at your saved return assumption.</div>
+          </div>
+        </div>
+
+        <div class="label">Progress toward target</div>
+        <div class="bar"><span id="coverageBar"></span></div>
+        <p class="summary" id="summary">Adjust the assumptions to see what changes.</p>
+
+        <div class="share-row">
+          <button class="btn" id="copyLink">Copy simulator link</button>
+          <button class="btn secondary" id="copySummary">Copy summary</button>
+        </div>
+
+        <div class="tracker-cta">
+          <p>The Aspire Tracker can monitor this saved scenario as rates, markets, and home prices move.</p>
+          <button class="btn" id="trackerOptIn">Turn on tracker updates</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <section class="empty" id="empty">
+    <div class="eyebrow">No saved scenario found</div>
+    <h1>Start with your Aspire Score.</h1>
+    <p class="lede">The simulator needs a saved score link so it can pull through your basket, holdings, and current gap. Run the calculator first, then open the simulator from your score confirmation or follow-up email.</p>
+    <p style="margin-top:28px;"><a class="nav-cta" href="/">Calculate yours</a></p>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    Aspire Rate is an educational planning tool. It does not provide investment, tax, legal, or insurance advice and does not recommend any security or financial product.
+  </div>
+</footer>
+
+<script>
+  let scenario = null;
+  let original = null;
+  let ratesByKey = {};
+  let activeMode = 'save';
+
+  function scenarioToken() {
+    return new URLSearchParams(window.location.search).get('t');
+  }
+
+  async function fetchScenarioByToken(token) {
+    const res = await fetch(`/api/scenario?t=${encodeURIComponent(token)}`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return res.json();
+  }
+
+  async function optIntoTracker(button) {
+    const token = scenarioToken();
+    if (!token) return;
+    button.disabled = true;
+    button.textContent = 'Turning on tracker…';
+
+    try {
+      const res = await fetch('/api/tracker', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+      if (!res.ok) throw new Error('tracker opt-in failed');
+      button.textContent = 'Tracker updates are on';
+      button.classList.add('secondary');
+    } catch (e) {
+      button.disabled = false;
+      button.textContent = 'Try again';
+    }
+  }
+
+  function decodeScenario() {
+    const token = new URLSearchParams(window.location.search).get('s');
+    if (!token) return null;
+    try {
+      const normalized = token.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = normalized + '='.repeat((4 - normalized.length % 4) % 4);
+      const json = decodeURIComponent(escape(atob(padded)));
+      return JSON.parse(json);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function money(n) {
+    const value = Number(n) || 0;
+    if (value >= 1e6) return '$' + (value / 1e6).toFixed(value >= 1e7 ? 1 : 2) + 'M';
+    if (value >= 1e3) return '$' + Math.round(value).toLocaleString();
+    return '$' + Math.round(value).toLocaleString();
+  }
+
+  function pct(n) {
+    const value = Number(n) || 0;
+    return (value >= 0 ? '+' : '') + value.toFixed(1) + '%';
+  }
+
+  function assetLabel(key) {
+    return ratesByKey[key]?.label || key || 'User assumption';
+  }
+
+  function rateFor(key) {
+    return Number(ratesByKey[key]?.cagr) || 0;
+  }
+
+  function total(items) {
+    return (items || []).reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+  }
+
+  function weightedHorizon(goals, totalGoals) {
+    if (!totalGoals) return 10;
+    return goals.reduce((sum, goal) => sum + ((Number(goal.amount) || 0) / totalGoals) * (Number(goal.horizon) || 0), 0);
+  }
+
+  function renderList(id, items, type) {
+    const el = document.getElementById(id);
+    el.innerHTML = '';
+    (items || []).forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'item';
+
+      const text = document.createElement('div');
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = item.label || (type === 'goal' ? 'Untitled goal' : 'Untitled holding');
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.textContent = type === 'goal'
+        ? `${Number(item.horizon || 0).toFixed(0)} years · priced like ${assetLabel(item.asset)}`
+        : `modeled like ${assetLabel(item.asset)}`;
+      text.append(name, meta);
+
+      const amount = document.createElement('div');
+      amount.className = 'amount';
+      amount.textContent = money(item.amount);
+
+      row.append(text, amount);
+      el.appendChild(row);
+    });
+  }
+
+  function hydrate() {
+    const basket = scenario.basket || {};
+    const computed = basket.computed || {};
+    const goals = basket.goals || [];
+    const holdings = basket.holdings || [];
+    const totalGoals = total(goals);
+    const totalHoldings = total(holdings);
+    const horizon = Number(computed.timeHorizon) || weightedHorizon(goals, totalGoals);
+    const aspirationRate = Number(computed.aspirationRate) || 0;
+    const portfolioRate = Number(computed.portfolioRate) || 0;
+    const gap = Number(computed.gap) || (portfolioRate - aspirationRate);
+    const score = Number(scenario.score) || Math.max(0, Math.min(100, Math.round(Number(computed.fraction) || 0)));
+
+    original = { totalGoals, totalHoldings, horizon, aspirationRate, portfolioRate, gap, score };
+
+    document.getElementById('score').textContent = score;
+    document.getElementById('scoreCopy').textContent = score >= 100
+      ? 'At the saved assumptions, your resources cover the target basket.'
+      : `At the saved assumptions, your resources cover about ${score}% of the target basket.`;
+    document.getElementById('aspireRate').textContent = aspirationRate.toFixed(1) + '%';
+    document.getElementById('portfolioRate').textContent = portfolioRate.toFixed(1) + '%';
+    document.getElementById('gap').textContent = pct(gap);
+    document.getElementById('gap').classList.toggle('good', gap >= 0);
+
+    renderList('goalsList', goals, 'goal');
+    renderList('holdingsList', holdings, 'holding');
+    document.getElementById('assumptions').textContent =
+      `Saved ${new Date(scenario.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}. Values are educational estimates based on user-entered goals, current holdings, and trailing-rate assumptions.`;
+
+    document.getElementById('lockedAspireRate').textContent = aspirationRate.toFixed(1) + '%';
+    document.getElementById('lockedPortfolioRate').textContent = portfolioRate.toFixed(1) + '%';
+    document.getElementById('lockedAssets').textContent = money(totalHoldings);
+    setMode(activeMode);
+    runSimulation();
+  }
+
+  function futureValueOfSavings(monthly, annualRate, years) {
+    if (annualRate <= 0.00001) return monthly * 12 * years;
+    const growth = Math.pow(1 + annualRate, years);
+    return monthly * 12 * (growth - 1) / annualRate;
+  }
+
+  function requiredMonthlySavings(startingAssets, targetFutureValue, annualRate, years) {
+    const growth = Math.pow(1 + annualRate, years);
+    const deficit = targetFutureValue - startingAssets * growth;
+    if (deficit <= 0) return 0;
+    if (annualRate <= 0.00001) return deficit / (years * 12);
+    return deficit * annualRate / (12 * (growth - 1));
+  }
+
+  function runSimulation() {
+    if (!original) return;
+    const value = Number(document.getElementById('decisionInput').value) || 0;
+    const monthly = activeMode === 'save' ? value : 0;
+    const returnRate = original.portfolioRate / 100;
+    const years = activeMode === 'date' ? Math.max(1, value) : original.horizon;
+    const target = activeMode === 'target' ? Math.max(0, value) : original.totalGoals;
+    const aspireRate = original.aspirationRate / 100;
+    const startingAssets = original.totalHoldings;
+
+    const targetFutureValue = target * Math.pow(1 + aspireRate, years);
+    const portfolioFutureValue = startingAssets * Math.pow(1 + returnRate, years) + futureValueOfSavings(monthly, returnRate, years);
+    const coverage = targetFutureValue > 0 ? portfolioFutureValue / targetFutureValue * 100 : 0;
+    const simGap = (returnRate - aspireRate) * 100;
+    const required = requiredMonthlySavings(startingAssets, targetFutureValue, returnRate, years);
+
+    document.getElementById('fromCoverage').textContent = original.score + '%';
+    document.getElementById('toCoverage').textContent = Math.round(coverage) + '%';
+    document.getElementById('coverageSub').textContent = `${money(portfolioFutureValue)} projected against ${money(targetFutureValue)} future target cost.`;
+    document.getElementById('simGap').textContent = pct(simGap);
+    document.getElementById('gapSub').textContent = `Your Aspire Rate remains locked at ${original.aspirationRate.toFixed(1)}%.`;
+    document.getElementById('requiredSavings').textContent = required <= 0 ? 'On track' : money(required) + '/mo';
+
+    const coverageShift = document.getElementById('coverageShift');
+    const gapMetric = document.getElementById('gapMetric');
+    coverageShift.classList.toggle('positive', coverage >= original.score);
+    gapMetric.classList.toggle('positive', simGap >= 0);
+    gapMetric.classList.toggle('negative', simGap < 0);
+
+    const bar = document.getElementById('coverageBar');
+    bar.style.width = Math.min(100, Math.max(0, coverage)) + '%';
+    bar.classList.toggle('full', coverage >= 100);
+
+    const movement = coverage - original.score;
+    const direction = movement >= 0 ? 'raises' : 'lowers';
+    const modeCopy = activeMode === 'save'
+      ? `adding ${money(monthly)} per month`
+      : activeMode === 'date'
+      ? `moving the target to ${Math.round(years)} years`
+      : `changing the target to ${money(target)}`;
+    document.getElementById('summary').textContent =
+      `By ${modeCopy}, this scenario ${direction} modeled coverage by ${Math.abs(movement).toFixed(0)} points, from ${original.score}% to ${Math.round(coverage)}%.`;
+  }
+
+  function setMode(mode) {
+    if (!original) {
+      activeMode = mode;
+      return;
+    }
+    activeMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(button => {
+      button.classList.toggle('active', button.dataset.mode === mode);
+    });
+
+    const label = document.getElementById('decisionLabel');
+    const input = document.getElementById('decisionInput');
+    if (mode === 'save') {
+      label.textContent = 'Additional monthly savings';
+      input.min = '0';
+      input.step = '100';
+      input.value = 500;
+    } else if (mode === 'date') {
+      label.textContent = 'Years until target';
+      input.min = '1';
+      input.step = '1';
+      input.value = Math.max(1, Math.round(original.horizon + 2));
+    } else {
+      label.textContent = "Target basket in today's dollars";
+      input.min = '0';
+      input.step = '1000';
+      input.value = Math.round(original.totalGoals * 0.9);
+    }
+    runSimulation();
+  }
+
+  async function copyText(text, button) {
+    await navigator.clipboard.writeText(text);
+    const originalText = button.textContent;
+    button.textContent = 'Copied';
+    setTimeout(() => { button.textContent = originalText; }, 1400);
+  }
+
+  async function loadRates() {
+    try {
+      const res = await fetch('/rates.json', { cache: 'no-store' });
+      const data = await res.json();
+      ratesByKey = Object.fromEntries((data.rates || []).map(rate => [rate.key, rate]));
+    } catch (e) {
+      ratesByKey = {};
+    }
+  }
+
+  document.getElementById('decisionInput').addEventListener('input', runSimulation);
+  document.querySelectorAll('.mode-btn').forEach(button => {
+    button.addEventListener('click', () => setMode(button.dataset.mode));
+  });
+  document.getElementById('copyLink').addEventListener('click', e => copyText(window.location.href, e.target));
+  document.getElementById('copySummary').addEventListener('click', e => copyText(document.getElementById('summary').textContent, e.target));
+  document.getElementById('trackerOptIn').addEventListener('click', e => optIntoTracker(e.target));
+
+  (async function init() {
+    const token = scenarioToken();
+    scenario = token ? await fetchScenarioByToken(token) : decodeScenario();
+    if (!scenario || !scenario.basket) {
+      document.getElementById('empty').classList.add('visible');
+      return;
+    }
+    await loadRates();
+    document.getElementById('loaded').hidden = false;
+    hydrate();
+  })();
+</script>
+</body>
+</html>

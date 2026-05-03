@@ -554,7 +554,6 @@
 <body>
 
 <div class="wrap-wide">
-<div class="wrap-wide">
   <nav>
     <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
     <div style="display:flex;align-items:center;gap:24px;">
@@ -966,13 +965,24 @@
     goals.forEach((g, idx) => {
       const row = document.createElement('div');
       row.className = 'goal-row';
-      row.innerHTML = `
-        <input type="text" value="${g.label}" data-i="${idx}" data-f="label" data-list="goals" placeholder="e.g. House in Austin" />
-        <input type="number" value="${g.amount}" data-i="${idx}" data-f="amount" data-list="goals" min="0" step="1000" />
-        <input type="number" class="horizon" value="${g.horizon}" data-i="${idx}" data-f="horizon" data-list="goals" min="1" max="50" step="1" />
-        <select data-i="${idx}" data-f="asset" data-list="goals">${assetOptions(g.asset)}</select>
-        <button class="remove" data-i="${idx}" data-list="goals" title="Remove">×</button>
-      `;
+
+      const label = makeInput('text', g.label, idx, 'label', 'goals');
+      label.placeholder = 'e.g. House in Austin';
+
+      const amount = makeInput('number', g.amount, idx, 'amount', 'goals');
+      amount.min = '0';
+      amount.step = '1000';
+
+      const horizon = makeInput('number', g.horizon, idx, 'horizon', 'goals');
+      horizon.className = 'horizon';
+      horizon.min = '1';
+      horizon.max = '50';
+      horizon.step = '1';
+
+      const asset = makeAssetSelect(g.asset, idx, 'goals');
+      const remove = makeRemoveButton(idx, 'goals');
+
+      row.append(label, amount, horizon, asset, remove);
       el.appendChild(row);
     });
     attach(el);
@@ -985,16 +995,52 @@
     holdings.forEach((h, idx) => {
       const row = document.createElement('div');
       row.className = 'holding-row';
-      row.innerHTML = `
-        <input type="text" value="${h.label}" data-i="${idx}" data-f="label" data-list="holdings" placeholder="e.g. Vanguard brokerage" />
-        <input type="number" value="${h.amount}" data-i="${idx}" data-f="amount" data-list="holdings" min="0" step="1000" />
-        <select data-i="${idx}" data-f="asset" data-list="holdings">${assetOptions(h.asset)}</select>
-        <button class="remove" data-i="${idx}" data-list="holdings" title="Remove">×</button>
-      `;
+
+      const label = makeInput('text', h.label, idx, 'label', 'holdings');
+      label.placeholder = 'e.g. Vanguard brokerage';
+
+      const amount = makeInput('number', h.amount, idx, 'amount', 'holdings');
+      amount.min = '0';
+      amount.step = '1000';
+
+      const asset = makeAssetSelect(h.asset, idx, 'holdings');
+      const remove = makeRemoveButton(idx, 'holdings');
+
+      row.append(label, amount, asset, remove);
       el.appendChild(row);
     });
     attach(el);
     recompute();
+  }
+
+  function makeInput(type, value, idx, field, list) {
+    const input = document.createElement('input');
+    input.type = type;
+    input.value = value ?? '';
+    input.dataset.i = idx;
+    input.dataset.f = field;
+    input.dataset.list = list;
+    return input;
+  }
+
+  function makeAssetSelect(selected, idx, list) {
+    const select = document.createElement('select');
+    select.dataset.i = idx;
+    select.dataset.f = 'asset';
+    select.dataset.list = list;
+    select.innerHTML = assetOptions(selected);
+    return select;
+  }
+
+  function makeRemoveButton(idx, list) {
+    const button = document.createElement('button');
+    button.className = 'remove';
+    button.dataset.i = idx;
+    button.dataset.list = list;
+    button.title = 'Remove';
+    button.type = 'button';
+    button.textContent = '×';
+    return button;
   }
 
   function attach(container) {
@@ -1056,7 +1102,7 @@
       if (totalHoldings > 0) portfolioRate += (h.amount / totalHoldings) * a.rate;
     });
 
-    // Future Buying Power = T × [(1 + Portfolio Rate) / (1 + Aspire Rate)]^Years
+    // Future Buying Power projects current holdings forward, then discounts coverage back into today's target dollars.
 
     document.getElementById('total-today').textContent = fmt(totalGoals);
     document.getElementById('total-future').textContent = fmt(totalFuture);
@@ -1096,15 +1142,16 @@
     const weightedHorizon = totalGoals > 0
       ? goals.reduce((s, g) => s + ((g.amount || 0) / totalGoals) * (g.horizon || 0), 0)
       : 0;
-    const buyingPowerRatio = Math.pow((1 + portfolioRate/100) / (1 + aspirationRate/100), weightedHorizon);
-    const fraction = 100 * buyingPowerRatio;
-    const futureBuyingPower = totalGoals * buyingPowerRatio;
+    const futurePortfolioValue = totalHoldings * Math.pow(1 + portfolioRate/100, weightedHorizon);
+    const coverageRatio = totalFuture > 0 ? futurePortfolioValue / totalFuture : 0;
+    const fraction = 100 * coverageRatio;
+    const futureBuyingPower = totalGoals * coverageRatio;
 
     buyingPowerEl.textContent = fmt(futureBuyingPower);
     buyingPowerPctEl.textContent = `${fraction.toFixed(0)}%`; 
     buyingPowerN.classList.toggle('maxed', fraction >= 100);
     const mainGoal = goals.length === 1 ? goals[0].label.toLowerCase() : 'basket';
-    buyingPowerCopyEl.textContent = `You're targeting a $${fmt(totalGoals)} ${mainGoal}. At your current pace, your future buying power may only cover $${fmt(futureBuyingPower)} in today's terms.`;
+    buyingPowerCopyEl.textContent = `You're targeting a $${fmt(totalGoals)} ${mainGoal}. At your current pace, your projected holdings may cover $${fmt(futureBuyingPower)} in today's terms.`;
 
     gapEl.textContent = (aspireGap > 0 ? '+' : '') + aspireGap.toFixed(1);
     gapCopyEl.textContent = 'This gap compounds every year.';
@@ -1242,15 +1289,16 @@
       });
       if (!res.ok) throw new Error('api error');
       const data = await res.json();
+      lastSimulatorUrl = data.simulatorUrl || null;
       closeGate();
       document.getElementById('scoreNumber').textContent = data.score;
       document.getElementById('scoreMatch').textContent =
-        `Your money covers ${data.score}% of the life you’re building toward.`;
         data.dollarMatch
           ? `To match 1995 middle-class, you'd need $${Number(data.dollarMatch).toLocaleString()} today`
-          : `Your score is on its way to ${email}`;
+          : `Your money covers ${data.score}% of the life you’re building toward. Your score is on its way to ${email}.`;
       document.getElementById('scoreReveal').classList.add('visible');
       document.getElementById('simTriggerBtn').classList.add('show');
+      document.getElementById('simTriggerBtn').textContent = 'Open your Close the Gap Simulator →';
       document.getElementById('gateBtn').textContent = 'Score sent ✓';
       document.getElementById('gateBtn').disabled = true;
       if (typeof gtag !== 'undefined') gtag('event', 'aspire_score_captured', { method: 'email_gate' });
@@ -1265,8 +1313,14 @@
 
   // Snapshot of original calculator values; set when score is revealed
   let simOriginal = null;
+  let lastSimulatorUrl = null;
 
   function openSimulator() {
+    if (lastSimulatorUrl) {
+      window.location.href = lastSimulatorUrl;
+      return;
+    }
+
     const totalGoals = goals.reduce((s, g) => s + (g.amount || 0), 0);
     const totalHoldings = holdings.reduce((s, h) => s + (h.amount || 0), 0);
     if (!totalGoals || !totalHoldings) return;

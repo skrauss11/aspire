@@ -1,11 +1,13 @@
 // netlify/functions/score.js — Netlify Functions v1 (CommonJS)
-// POST /api/score → compute Aspire Score, upsert Beehiiv, send Resend email
+// POST /api/score → compute Aspire Score, save scenario, upsert Beehiiv, send Resend email
 
 const BEEHIIV_PUB_ID = process.env.BEEHIIV_PUB_ID || 'pub_8ad9f164-9d8a-426e-b25a-e8e4cc3cf601';
 const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = process.env.FROM_EMAIL || 'score@send.aspirerate.com';
 const FROM_NAME = process.env.FROM_NAME || 'Aspire Score';
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Score = fraction of the basket the user can afford (0–100).
 // 42 = you can cover 42% of the life you're building toward.
@@ -18,7 +20,7 @@ function computeScore(basket) {
   return { score, aspirationRate, portfolioRate, gap };
 }
 
-async function upsertBeehiiv(email, basket, score) {
+async function upsertBeehiiv(email, basket, score, simulatorUrl) {
   const res = await fetch(`https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`, {
     method: 'POST',
     headers: {
@@ -33,6 +35,7 @@ async function upsertBeehiiv(email, basket, score) {
       custom_fields: [
         { name: 'basket_json',   value: JSON.stringify(basket) },
         { name: 'last_score',    value: String(score) },
+        { name: 'simulator_url', value: simulatorUrl },
         { name: 'signup_source', value: basket.source || 'calculator' },
         { name: 'last_recalc',   value: new Date().toISOString().split('T')[0] }
       ]
@@ -41,19 +44,45 @@ async function upsertBeehiiv(email, basket, score) {
   return res.ok;
 }
 
-// Build a deep-link URL that opens the simulator with the user's basket pre-loaded.
-// base64url (URL-safe) so it travels through email clients cleanly.
-function simulatorUrl(basket) {
-  const minimal = {
-    goals: (basket.goals || []).map(g => ({ label: g.label, amount: g.amount, horizon: g.horizon, asset: g.asset })),
-    holdings: (basket.holdings || []).map(h => ({ label: h.label, amount: h.amount, asset: h.asset }))
-  };
-  const b64 = Buffer.from(JSON.stringify(minimal)).toString('base64')
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  return `https://aspirerate.com/?b=${b64}#simulator`;
+function getBaseUrl(event) {
+  const proto = event.headers['x-forwarded-proto'] || event.headers['X-Forwarded-Proto'] || 'https';
+  const host = event.headers.host || event.headers.Host || 'aspirerate.com';
+  return `${proto}://${host}`;
 }
 
-async function sendResend(email, score, aspirationRate, portfolioRate, gap, basket) {
+async function saveScenario(email, basket, score, aspirationRate, portfolioRate, gap) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('Supabase env vars are not configured');
+  }
+
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/scenarios?select=id,access_token`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=representation'
+    },
+    body: JSON.stringify({
+      email,
+      basket,
+      score,
+      aspiration_rate: aspirationRate,
+      portfolio_rate: portfolioRate,
+      gap,
+      rate_snapshot: basket.rateSnapshot || null
+    })
+  });
+
+  const body = await res.json().catch(() => null);
+  if (!res.ok) {
+    console.error('supabase scenario insert failed:', body);
+    throw new Error('Unable to save scenario');
+  }
+  return Array.isArray(body) ? body[0] : body;
+}
+
+async function sendResend(email, score, aspirationRate, portfolioRate, gap, simulatorUrl) {
   const ahead   = gap >= 0;
   const gapAbs  = Math.abs(gap).toFixed(1);
 
@@ -103,7 +132,7 @@ async function sendResend(email, score, aspirationRate, portfolioRate, gap, bask
 
       <p style="font-size: 15px; color: #5a544b; line-height: 1.6; font-family: system-ui, sans-serif; margin: 0 0 24px;">Your score recalculates every month as inflation, home prices, and markets move. The gap doesn't sit still.</p>
       <p style="margin: 0 0 40px;">
-        <a href="${simulatorUrl(basket)}" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">Run the Close the Gap Simulator →</a>
+        <a href="${simulatorUrl}" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">Run the Close the Gap Simulator →</a>
       </p>
       <p style="font-size: 12px; color: #8f8778; margin: 0; font-family: system-ui, sans-serif;">You're receiving this because you calculated your Aspire Score at aspirerate.com.</p>
     </div>
@@ -154,17 +183,35 @@ exports.handler = async (event) => {
   }
 
   const { score, aspirationRate, portfolioRate, gap } = computeScore(basket);
+  let scenario;
+  try {
+    scenario = await saveScenario(email, basket, score, aspirationRate, portfolioRate, gap);
+  } catch (err) {
+    console.error(err);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Unable to save scenario' }) };
+  }
+  const simulatorUrl = `${getBaseUrl(event)}/simulator/index.html?t=${scenario.access_token}`;
 
-  const [beehiivOk, resendResult] = await Promise.all([
-    upsertBeehiiv(email, basket, score),
-    sendResend(email, score, aspirationRate, portfolioRate, gap, basket)
+  const [beehiivResult, resendResult] = await Promise.allSettled([
+    upsertBeehiiv(email, basket, score, simulatorUrl),
+    sendResend(email, score, aspirationRate, portfolioRate, gap, simulatorUrl)
   ]);
 
-  console.log('beehiiv:', beehiivOk, 'resend:', resendResult.ok, resendResult.body);
+  console.log(
+    'beehiiv:',
+    beehiivResult.status === 'fulfilled' ? beehiivResult.value : beehiivResult.reason,
+    'resend:',
+    resendResult.status === 'fulfilled' ? resendResult.value : resendResult.reason
+  );
 
   return {
     statusCode: 200,
     headers,
-    body: JSON.stringify({ score })
+    body: JSON.stringify({
+      score,
+      scenarioId: scenario.id,
+      simulatorUrl,
+      emailSent: resendResult.status === 'fulfilled' && resendResult.value.ok === true
+    })
   };
 };
