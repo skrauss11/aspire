@@ -1,46 +1,60 @@
 # TECHNICAL_CONTEXT.md
 
-_Last updated: 2026-05-02. This file is the authoritative reference for Codex and other AI agents working on Aspire Rate._
+_Last updated: 2026-05-03. This file is the authoritative technical reference for Codex and other AI agents working on Aspire Rate._
+
+---
+
+## Maintenance Rule
+
+Any future change that alters architecture, routes, Netlify Functions, Supabase schema usage, environment variables, external integrations, data flow, calculator logic, simulator behavior, or deployment assumptions must update this file in the same commit.
+
+Do not let implementation drift ahead of this document.
 
 ---
 
 ## Stack Overview
 
-Aspire Rate is a **static site** hosted on Netlify with a single serverless function. There is no backend framework, no database, and no build step.
+Aspire Rate is a static Netlify site with serverless functions and Supabase-backed saved scenarios. There is no frontend framework and no build step.
 
 | Layer | Technology |
 |---|---|
-| Frontend | Vanilla HTML + CSS + JavaScript (single `index.html`) |
-| Serverless | Netlify Functions v1 (CommonJS) |
+| Frontend | Vanilla HTML + CSS + JavaScript |
 | Hosting | Netlify (site ID: `7fc9e061-49d8-4af7-91d9-90c0d70681f9`) |
+| Serverless | Netlify Functions v1 (CommonJS) |
+| Scenario persistence | Supabase Postgres (`public.scenarios`) |
 | Domain | `aspirerate.com` |
 | Repo | `github.com/skrauss11/aspire` (branch: `main`) |
 | Email delivery | Resend (from: `score@send.aspirerate.com`) |
 | Newsletter / subscriber CRM | Beehiiv (pub ID: `pub_8ad9f164-9d8a-426e-b25a-e8e4cc3cf601`) |
-| Data layer | `rates.json` (static JSON, committed to repo) |
-| Analytics | Google Analytics (G-0YTMP6NYVB) |
+| Rate data | `rates.json` (static JSON, committed to repo) |
+| Analytics | Google Analytics (`G-0YTMP6NYVB`) |
 
 ---
 
 ## File Map
 
-```
+```text
 skrauss11/aspire/
-├── index.html                   # Full calculator + Close the Gap Simulator (all UI lives here)
-├── join.html                    # Newsletter sign-up landing page
-├── manifesto.html               # Brand manifesto page
-├── og-card.html                 # Open Graph social preview card
-├── rates.json                   # Asset + inflation rate data (10-yr CAGRs)
-├── netlify.toml                 # Netlify build config
+├── index.html                         # Landing page + calculator + email score gate
+├── simulator.html                     # Standalone simulator page fallback
+├── simulator/
+│   └── index.html                     # Primary simulator route used by score links
+├── join.html                          # Newsletter sign-up landing page
+├── manifesto.html                     # Brand manifesto page
+├── og-card.html                       # Open Graph social preview card
+├── rates.json                         # Asset + inflation rate data (10-yr CAGRs)
+├── netlify.toml                       # Netlify config, API redirects, simulator redirect
 ├── netlify/
 │   └── functions/
-│       └── score.js             # POST /api/score — computes score, upserts Beehiiv, sends Resend email
+│       ├── score.js                   # POST /api/score
+│       ├── scenario.js                # GET /api/scenario?t=...
+│       └── tracker.js                 # POST /api/tracker
 ├── favicon-32.png
 ├── favicon-512.png
 ├── x-profile.png
 ├── x-banner.png
-├── design.md                    # Brand + design standards (load before any UI work)
-├── AGENTS.md                    # AI agent operating rules (always read first)
+├── design.md
+├── AGENTS.md
 ├── PRODUCT_DNA.md
 ├── SOUL.md
 ├── COMPLIANCE.md
@@ -57,23 +71,91 @@ skrauss11/aspire/
 
 ## Core User Flow
 
-1. User lands on **aspirerate.com** (`index.html`)
-2. Fills out the calculator (goals + holdings)
-3. Submits their email → **POST /api/score** fires
-4. `score.js` runs:
-   - Computes Aspire Score (0–100), Aspire Rate, Portfolio Rate, and Gap
-   - Upserts subscriber to **Beehiiv** with score + basket stored as custom fields
-   - Sends transactional score email via **Resend** with a deep-link into the **Close the Gap Simulator**
-5. User clicks the simulator link → `index.html#simulator` opens with their basket pre-loaded via base64url query param (`?b=...`)
+1. User lands on `index.html`.
+2. User fills out the calculator with goals and holdings.
+3. User submits email through the score gate.
+4. `POST /api/score` runs in `netlify/functions/score.js`.
+5. `score.js` computes the Aspire Score from `basket.computed.fraction`.
+6. `score.js` writes the full scenario to Supabase `public.scenarios`.
+7. `score.js` upserts Beehiiv subscriber metadata.
+8. `score.js` attempts to send the score email through Resend.
+9. The API returns `{ score, scenarioId, simulatorUrl, emailSent }`.
+10. The calculator shows the score and opens the simulator CTA.
+11. User opens `/simulator/index.html?t={access_token}`.
+12. `simulator/index.html` calls `GET /api/scenario?t={access_token}`.
+13. `scenario.js` fetches the saved scenario from Supabase and returns score, basket, rates, and timestamps.
+14. Simulator hydrates the saved score, goals, holdings, Aspire Rate, Portfolio Rate, and Gap.
+15. User can test three decision paths: save more, move date, or change target.
+16. User can opt into tracker updates through `POST /api/tracker`, which uses the saved scenario token to look up their email.
 
 ---
 
-## score.js — Netlify Function
+## Supabase
 
-**Endpoint:** `POST /api/score`  
-**Runtime:** Node.js (CommonJS — `exports.handler`)
+Supabase is the source of truth for saved scenarios and simulator hydration.
 
-**Request body:**
+### Table
+
+`public.scenarios`
+
+Expected schema:
+
+```sql
+create extension if not exists pgcrypto;
+
+create table if not exists public.scenarios (
+  id uuid primary key default gen_random_uuid(),
+  access_token text unique not null default encode(gen_random_bytes(24), 'hex'),
+  email text not null,
+  basket jsonb not null,
+  score integer not null,
+  aspiration_rate numeric,
+  portfolio_rate numeric,
+  gap numeric,
+  rate_snapshot jsonb,
+  created_at timestamptz not null default now(),
+  last_accessed_at timestamptz
+);
+
+alter table public.scenarios enable row level security;
+
+create index if not exists scenarios_access_token_idx
+  on public.scenarios (access_token);
+
+create index if not exists scenarios_email_created_at_idx
+  on public.scenarios (email, created_at desc);
+```
+
+### Access Pattern
+
+The browser never talks directly to Supabase.
+
+All Supabase reads/writes go through Netlify Functions using `SUPABASE_SERVICE_ROLE_KEY`.
+
+Simulator links use the private `access_token`:
+
+```text
+/simulator/index.html?t={access_token}
+```
+
+The token is a bearer-style private link. Anyone with the link can load the scenario. Do not expose more sensitive financial data than necessary until account/auth decisions are made.
+
+---
+
+## Netlify Functions
+
+All functions use CommonJS (`exports.handler`) and run as Netlify Functions v1.
+
+### `score.js`
+
+Endpoint:
+
+```text
+POST /api/score
+```
+
+Request body:
+
 ```json
 {
   "email": "user@example.com",
@@ -84,135 +166,294 @@ skrauss11/aspire/
       "fraction": 42,
       "aspirationRate": 6.45,
       "portfolioRate": 14.85,
-      "gap": 8.4
+      "gap": 8.4,
+      "futureBuyingPower": "420k",
+      "timeHorizon": 10
     },
     "source": "calculator"
   }
 }
 ```
 
-**Response:**
+Response body:
+
 ```json
-{ "score": 42 }
+{
+  "score": 42,
+  "scenarioId": "uuid",
+  "simulatorUrl": "https://aspirerate.com/simulator/index.html?t=private_token",
+  "emailSent": true
+}
 ```
 
-**Side effects (run in parallel):**
-- Upsert Beehiiv subscriber with custom fields: `basket_json`, `last_score`, `signup_source`, `last_recalc`
-- Send Resend email (HTML, styled) with score breakdown + simulator deep-link
+Side effects:
 
-**Environment variables (set in Netlify UI):**
-| Variable | Description |
-|---|---|
-| `BEEHIIV_API_KEY` | Beehiiv API key |
-| `BEEHIIV_PUB_ID` | Publication ID (hardcoded fallback in code) |
-| `RESEND_API_KEY` | Resend API key |
-| `FROM_EMAIL` | Sending address (default: `score@send.aspirerate.com`) |
-| `FROM_NAME` | Sender name (default: `Aspire Score`) |
+- Inserts scenario into Supabase.
+- Upserts subscriber in Beehiiv.
+- Attempts to send score email through Resend.
+- Returns score and simulator link even if Beehiiv or Resend fails, as long as Supabase scenario save succeeds.
+
+### `scenario.js`
+
+Endpoint:
+
+```text
+GET /api/scenario?t={access_token}
+```
+
+Behavior:
+
+- Validates token format.
+- Fetches scenario from Supabase by `access_token`.
+- Updates `last_accessed_at` asynchronously.
+- Returns saved score, basket, computed rates, rate snapshot, and created timestamp.
+
+### `tracker.js`
+
+Endpoint:
+
+```text
+POST /api/tracker
+```
+
+Request body:
+
+```json
+{ "token": "private_access_token" }
+```
+
+Behavior:
+
+- Looks up scenario email from Supabase using the private token.
+- Upserts Beehiiv subscriber fields:
+  - `tracker_interest = true`
+  - `tracker_opted_at = ISO timestamp`
+  - `signup_source = simulator_tracker`
+
+This avoids asking for email again on the simulator page.
+
+---
+
+## Environment Variables
+
+Set these in Netlify production and local `.env` for `netlify dev`.
+
+| Variable | Required | Used By | Description |
+|---|---:|---|---|
+| `SUPABASE_URL` | Yes | `score.js`, `scenario.js`, `tracker.js` | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | `score.js`, `scenario.js`, `tracker.js` | Server-only Supabase secret/service role key |
+| `BEEHIIV_API_KEY` | Yes | `score.js`, `tracker.js` | Beehiiv API key |
+| `BEEHIIV_PUB_ID` | Yes | `score.js`, `tracker.js` | Beehiiv publication ID |
+| `RESEND_API_KEY` | Yes for email | `score.js` | Resend API key |
+| `FROM_EMAIL` | Yes for email | `score.js` | Sending address |
+| `FROM_NAME` | Optional | `score.js` | Sender name |
+
+Never expose `SUPABASE_SERVICE_ROLE_KEY` in browser code.
+
+`.env` is ignored by Git and must stay ignored.
 
 ---
 
 ## Beehiiv Integration
 
-**API version:** v2  
-**Endpoint used:** `POST /v2/publications/{pub_id}/subscriptions`
+API version: v2
 
-Every calculator submission upserts a subscriber. Custom fields stored per subscriber:
+Endpoint used:
+
+```text
+POST /v2/publications/{pub_id}/subscriptions
+```
+
+Calculator score submission stores:
 
 | Field | Value |
 |---|---|
-| `basket_json` | Full JSON basket (goals + holdings + computed) |
+| `basket_json` | Full JSON basket |
 | `last_score` | Integer 0–100 |
-| `signup_source` | `calculator` or overridden via `basket.source` |
-| `last_recalc` | ISO date of most recent score calculation |
+| `simulator_url` | Private simulator URL |
+| `signup_source` | `basket.source` or `calculator` |
+| `last_recalc` | ISO date |
 
-`reactivate_existing: true` — re-subscribes lapsed users.  
-`send_welcome_email: false` — score email is the welcome.
+Tracker opt-in stores:
 
-The **monthly recalc job** (fires 1st of each month, 7 AM ET) re-fetches all subscribers, recalculates scores from stored `basket_json`, and updates `last_score` + `last_recalc`.
+| Field | Value |
+|---|---|
+| `tracker_interest` | `true` |
+| `tracker_opted_at` | ISO timestamp |
+| `signup_source` | `simulator_tracker` |
+
+Beehiiv custom fields may need to be created/allowed in Beehiiv before writes succeed.
 
 ---
 
 ## Resend Integration
 
-**API:** `POST https://api.resend.com/emails`  
-**Sending domain:** `send.aspirerate.com`  
-**From address:** `score@send.aspirerate.com`
+API:
 
-The score email is fully HTML (inline styles, Georgia serif, terracotta brand palette). It contains:
-- Large score number (0–100)
-- Score interpretation line (4 tiers: <40, 40–74, 75–99, 100)
-- Rates table: Aspire Rate / Portfolio Rate / Annual Gap
-- Gap narrative (ahead vs. behind framing)
-- CTA button: **Run the Close the Gap Simulator →** (deep-link with base64url basket)
+```text
+POST https://api.resend.com/emails
+```
+
+Sending domain:
+
+```text
+send.aspirerate.com
+```
+
+From address:
+
+```text
+score@send.aspirerate.com
+```
+
+The score email includes:
+
+- Large score number.
+- Score interpretation.
+- Aspire Rate / Portfolio Rate / Annual Gap table.
+- Gap narrative.
+- CTA to the private Supabase-backed simulator link.
+
+Local testing may save Supabase scenarios successfully while email fails if Resend credentials/domain permissions are not valid locally.
 
 ---
 
-## rates.json — Data Layer
+## Simulator
 
-Static JSON file committed to the repo. Loaded client-side by `index.html`.
+Primary route:
 
-**Methodology:** Trailing 10-year CAGR.  
-**Sources:** Yahoo Finance (equities, gold, BTC), FRED (CPI sub-indices, national home prices), Zillow ZHVI (metro home prices), College Board (tuition).  
-**Last updated:** 2026-04-30.
+```text
+/simulator/index.html?t={access_token}
+```
 
-**Asset keys available:**
-- Portfolio assets: `sp500`, `qqq`, `single` (NVDA), `gold`, `btc`
-- Inflation/cost benchmarks: `cpi`, `home` (national), `health`, `car`
+Fallback/static page:
+
+```text
+/simulator.html
+```
+
+Netlify redirect:
+
+```text
+/simulator -> /simulator.html
+```
+
+The physical `simulator/index.html` route exists because it works reliably in local Netlify Dev and production static hosting.
+
+### Current UX
+
+The simulator is a decision-based planner, not a raw spreadsheet.
+
+Default planner modes:
+
+- Save more
+- Move date
+- Change target
+
+Locked assumptions shown to the user:
+
+- Aspire Rate
+- Portfolio Rate
+- Starting Assets
+
+The user does not edit Aspire Rate by default. Aspire Rate is treated as Aspire’s measurement from the saved basket.
+
+Main output:
+
+```text
+{original_score}% -> {simulated_coverage}%
+```
+
+Supporting outputs:
+
+- Gap movement.
+- Required monthly savings to fully close.
+- Progress bar.
+- Plain-English summary.
+- Copy simulator link.
+- Copy summary.
+- Turn on tracker updates.
+
+---
+
+## rates.json
+
+Static JSON file committed to the repo. Loaded client-side by `index.html` and simulator pages.
+
+Methodology: trailing 10-year CAGR.
+
+Sources:
+
+- Yahoo Finance: equities, gold, BTC.
+- FRED: CPI sub-indices, national home prices.
+- Zillow ZHVI: metro home prices.
+- College Board: tuition.
+
+Last known update in file: 2026-04-30.
+
+Available asset groups include:
+
+- Portfolio assets: `sp500`, `qqq`, `single`, `gold`, `btc`
+- Inflation/cost benchmarks: `cpi`, `home`, `health`, `car`
 - Metro home prices: `home_nyc`, `home_la`, `home_sf`, `home_seattle`, `home_boston`, `home_chicago`, `home_austin`, `home_dallas`, `home_houston`, `home_denver`, `home_miami`, `home_phoenix`, `home_nashville`, `home_atlanta`, `home_dc`
 - Tuition: `tuition_private`, `tuition_public_in`, `tuition_public_out`
 
 ---
 
-## Close the Gap Simulator
-
-Post-score feature embedded in `index.html` (accessible at `aspirerate.com/?b={base64url_basket}#simulator`).
-
-The simulator deep-link encodes a minimal basket:
-```json
-{
-  "goals": [{ "label": "...", "amount": 0, "horizon": 0, "asset": "..." }],
-  "holdings": [{ "label": "...", "amount": 0, "asset": "..." }]
-}
-```
-Base64url encoded (URL-safe: `+→-`, `/→_`, no `=` padding), passed as `?b=` query param.
-
----
-
 ## Score Formula
 
-```
-Aspire Score = Math.max(0, Math.min(100, Math.round(fraction)))
-  where fraction = computed by index.html before POST
+```text
+Aspire Score = clamp(round(fraction), 0, 100)
 
 Aspire Rate    = weighted CAGR of all goal cost categories
 Portfolio Rate = weighted CAGR of all holdings
-Aspire Gap     = Portfolio Rate − Aspire Rate
+Aspire Gap     = Portfolio Rate - Aspire Rate
 ```
 
+`fraction` is computed client-side before posting to `/api/score`.
+
 Score interpretation:
-- **100**: fully funded
-- **75–99**: close — last stretch
-- **40–74**: partial coverage
-- **<40**: most of the target out of reach
+
+- `100`: fully funded
+- `75-99`: close
+- `40-74`: partial coverage
+- `<40`: most of the target remains out of reach
 
 ---
 
 ## Deployment
 
-- Repo is linked to Netlify. Every push to `main` triggers a production deploy.
-- No build step — Netlify publishes the root directory.
-- Functions auto-detected from `netlify/functions/`.
-- Deploy verification: poll `https://api.netlify.com/api/v1/sites/7fc9e061-49d8-4af7-91d9-90c0d70681f9/deploys?per_page=1` until `state === 'ready'`.
+- Repo is linked to Netlify.
+- Every push to `main` triggers production deploy.
+- No build step.
+- Netlify publishes the root directory.
+- Functions are in `netlify/functions/`.
+
+Local testing:
+
+```bash
+npx netlify-cli dev
+```
+
+Use HTTP locally, not HTTPS:
+
+```text
+http://localhost:8888/
+```
+
+The local `.env` file must contain real values, not redacted placeholders.
 
 ---
 
-## What Codex Should Know Before Touching Code
+## Agent Rules Before Touching Code
 
-1. **Read `AGENTS.md` first.** Then `SOUL.md`, `PRODUCT_DNA.md`, `COMPLIANCE.md`, `design.md`.
-2. **No build step.** Don't introduce one. Keep it static + one function.
-3. **score.js is CommonJS.** Do not convert to ESM — Netlify Functions v1 requires `exports.handler`.
-4. **rates.json is the data layer.** Don't hard-code rates inline. Always read from the JSON.
-5. **Beehiiv stores the basket.** Don't stand up a database — subscriber custom fields are the persistence layer until further notice.
-6. **Score is computed client-side first.** The function receives `basket.computed.fraction` — it does not recalculate from raw inputs.
-7. **Compliance guardrails apply.** No investment advice, no guaranteed returns, no personalized recommendations. See `COMPLIANCE.md`.
-8. **Brand palette:** background `#f5f1ea`, primary text `#0f0e0c`, accent/terracotta `#c8451f`, muted `#5a544b`. Font: Georgia serif for numbers/display, system-ui for body.
+1. Read `AGENTS.md` first, then `SOUL.md`, `PRODUCT_DNA.md`, `COMPLIANCE.md`, and `design.md`.
+2. Keep the site static unless a deliberate stack decision changes that.
+3. Keep Netlify Functions CommonJS.
+4. Never expose Supabase service role keys in browser code.
+5. Use Supabase for saved scenario persistence.
+6. Use Beehiiv for subscriber/newsletter state.
+7. Use Resend for transactional score email.
+8. Keep assumptions visible and educational.
+9. Do not make investment recommendations.
+10. Update this file when technical behavior changes.
