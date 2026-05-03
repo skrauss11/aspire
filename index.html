@@ -46,13 +46,18 @@
   .wrap-wide { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
 
   nav {
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
     padding: 28px 0; border-bottom: 1px solid var(--rule);
   }
-  .logo { font-family: "Fraunces", serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; font-style: italic; }
-  .logo span { color: var(--accent); font-style: normal; font-weight: 700; margin-left: 3px; }
-  nav .nav-cta { font-size: 14px; font-weight: 500; padding: 9px 16px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); }
+  .logo { font-family: "Fraunces", serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; font-style: italic; white-space: nowrap; }
+  .logo span { color: var(--accent); font-style: normal; font-weight: 700; margin-left: 3px; margin-right: 2px; }
+  nav .nav-cta { font-size: 14px; font-weight: 500; padding: 9px 16px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); white-space: nowrap; }
   nav .nav-cta:hover { background: var(--ink); color: var(--paper); }
+  @media (max-width: 520px) {
+    nav { padding: 20px 0; gap: 12px; }
+    .logo { font-size: 18px; }
+    nav .nav-cta { font-size: 13px; padding: 7px 14px; }
+  }
 
   .hero { padding: 88px 0 72px; border-bottom: 1px solid var(--rule); }
   .eyebrow {
