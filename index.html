@@ -1374,7 +1374,14 @@
       document.getElementById('gateBtn').textContent = 'Score sent ✓';
       document.getElementById('gateBtn').disabled = true;
       // Auto-open the inline simulator and reveal post-submit sections
-      setTimeout(() => { try { openSimulator(); } catch(e){} }, 600);
+      // Auto-open the inline simulator on landing (skip redirect; redirect still fires on explicit button click)
+      setTimeout(() => {
+        try {
+          const _saved = lastSimulatorUrl; lastSimulatorUrl = null;
+          openSimulator();
+          lastSimulatorUrl = _saved;
+        } catch(e){}
+      }, 600);
       const _extras = document.getElementById('postSubmitExtras');
       if (_extras) _extras.classList.add('show');
       if (typeof gtag !== 'undefined') gtag('event', 'aspire_score_captured', { method: 'email_gate' });
