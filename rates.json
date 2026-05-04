@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-30T02:04:31.498Z",
+  "updated": "2026-05-04T11:00:25.911Z",
   "methodology": "Trailing 10-year compound annual growth rate (CAGR). Equities/gold/BTC: monthly closes from Yahoo Finance, adjusted for dividends. CPI sub-indices + national home: FRED monthly series. Metro-level homes: Zillow ZHVI (single-family, smoothed, seasonally adjusted). Tuition: College Board Trends in College Pricing (annual).",
   "rates": [
     {
@@ -7,60 +7,60 @@
       "label": "S&P 500 / broad index",
       "source": "Yahoo Finance",
       "symbol": "SPY",
-      "cagr": 14.85,
+      "cagr": 14.99,
       "start": "2016-05-01",
-      "end": "2026-04-29",
+      "end": "2026-05-01",
       "startValue": 178.2778,
-      "endValue": 711.58,
-      "years": 9.99
+      "endValue": 720.65,
+      "years": 10
     },
     {
       "key": "qqq",
       "label": "Nasdaq 100 / tech",
       "source": "Yahoo Finance",
       "symbol": "QQQ",
-      "cagr": 20.48,
+      "cagr": 20.69,
       "start": "2016-05-01",
-      "end": "2026-04-29",
+      "end": "2026-05-01",
       "startValue": 102.8016,
-      "endValue": 661.57,
-      "years": 9.99
+      "endValue": 674.15,
+      "years": 10
     },
     {
       "key": "single",
       "label": "Single-name mega-cap (NVDA)",
       "source": "Yahoo Finance",
       "symbol": "NVDA",
-      "cagr": 68.4,
+      "cagr": 67.48,
       "start": "2016-05-01",
-      "end": "2026-04-29",
+      "end": "2026-05-01",
       "startValue": 1.1437,
-      "endValue": 209.25,
-      "years": 9.99
+      "endValue": 198.45,
+      "years": 10
     },
     {
       "key": "gold",
       "label": "Gold",
       "source": "Yahoo Finance",
       "symbol": "GLD",
-      "cagr": 13.66,
+      "cagr": 13.81,
       "start": "2016-05-01",
-      "end": "2026-04-29",
+      "end": "2026-05-01",
       "startValue": 116.06,
-      "endValue": 417.41,
-      "years": 9.99
+      "endValue": 423.18,
+      "years": 10
     },
     {
       "key": "btc",
       "label": "Bitcoin",
       "source": "Yahoo Finance",
       "symbol": "BTC-USD",
-      "cagr": 64.35,
-      "start": "2016-05-01",
-      "end": "2026-04-30",
-      "startValue": 531.386,
-      "endValue": 76256.65,
-      "years": 10
+      "cagr": 61.62,
+      "start": "2016-06-01",
+      "end": "2026-05-04",
+      "startValue": 673.337,
+      "endValue": 78921.5,
+      "years": 9.92
     },
     {
       "key": "cpi",
