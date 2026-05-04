@@ -1218,7 +1218,7 @@
     // New format: positive gap means ahead (no improvement needed). Negative gap means improve by abs(value)%.
     const gapPrefixEl = document.getElementById('gap-prefix');
     if (aspireGap >= 0) {
-      if (gapPrefixEl) gapPrefixEl.textContent = 'You\u2019re growing ';
+      if (gapPrefixEl) gapPrefixEl.textContent = 'Your money is outpacing your goal by ';
       gapEl.textContent = aspireGap.toFixed(1);
       // Replace trailing text by tweaking the gap-n element: handled by sibling text; for now, keep "% per year"
     } else {
