@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Aspire — Close the Gap Simulator</title>
-<meta name="description" content="Model educational scenarios for your Aspire Gap using your saved Aspire Score, goal basket, and current holdings." />
+<meta name="description" content="Model educational plans for your gap using your saved Aspire Score, goals, and current savings." />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" sizes="512x512" href="/favicon-512.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -316,8 +316,8 @@
         <div class="score-number" id="score">—</div>
         <p class="score-copy" id="scoreCopy">Loading your saved scenario.</p>
         <div class="score-meta">
-          <div><div class="label">Aspire Rate</div><div class="v" id="aspireRate">—</div></div>
-          <div><div class="label">Portfolio Rate</div><div class="v" id="portfolioRate">—</div></div>
+          <div><div class="label">Cost growth</div><div class="v" id="aspireRate">—</div></div>
+          <div><div class="label">Money growth</div><div class="v" id="portfolioRate">—</div></div>
           <div><div class="label">Gap</div><div class="v" id="gap">—</div></div>
         </div>
       </aside>
@@ -332,7 +332,7 @@
         </div>
 
         <div class="panel">
-          <div class="panel-label">Current Holdings</div>
+          <div class="panel-label">Current savings</div>
           <h2>What you brought into the model</h2>
           <div class="list" id="holdingsList"></div>
         </div>
@@ -342,12 +342,12 @@
 
       <section class="sim-panel">
         <h2>Choose one path to test</h2>
-        <p class="intro">Your Aspire Rate stays fixed because it was calculated from your saved basket. Change a real-world lever and see what moves.</p>
+        <p class="intro">Your cost growth stays fixed because it was calculated from your saved goals. Change a real-world lever and see what moves.</p>
 
         <div class="mode-row">
           <button class="mode-btn active" data-mode="save"><strong>Save more</strong><span>Add monthly savings</span></button>
           <button class="mode-btn" data-mode="date"><strong>Move date</strong><span>Give the goal more time</span></button>
-          <button class="mode-btn" data-mode="target"><strong>Change target</strong><span>Resize the basket</span></button>
+          <button class="mode-btn" data-mode="target"><strong>Change target</strong><span>Resize the plan</span></button>
         </div>
 
         <div class="decision-control">
@@ -358,8 +358,8 @@
         </div>
 
         <div class="assumption-strip">
-          <div class="assumption-pill"><div class="k">Aspire Rate</div><div class="v" id="lockedAspireRate">—</div></div>
-          <div class="assumption-pill"><div class="k">Portfolio Rate</div><div class="v" id="lockedPortfolioRate">—</div></div>
+          <div class="assumption-pill"><div class="k">Cost growth</div><div class="v" id="lockedAspireRate">—</div></div>
+          <div class="assumption-pill"><div class="k">Money growth</div><div class="v" id="lockedPortfolioRate">—</div></div>
           <div class="assumption-pill"><div class="k">Starting Assets</div><div class="v" id="lockedAssets">—</div></div>
         </div>
 
@@ -402,7 +402,7 @@
   <section class="empty" id="empty">
     <div class="eyebrow">No saved scenario found</div>
     <h1>Start with your Aspire Score.</h1>
-    <p class="lede">The simulator needs a saved score link so it can pull through your basket, holdings, and current gap. Run the calculator first, then open the simulator from your score confirmation or follow-up email.</p>
+    <p class="lede">The simulator needs a saved score link so it can pull through your goals, savings, and current gap. Run the calculator first, then open the simulator from your score confirmation or follow-up email.</p>
     <p style="margin-top:28px;"><a class="nav-cta" href="/">Calculate yours</a></p>
   </section>
 </div>
@@ -537,8 +537,8 @@
 
     document.getElementById('score').textContent = score;
     document.getElementById('scoreCopy').textContent = score >= 100
-      ? 'At the saved assumptions, your resources cover the target basket.'
-      : `At the saved assumptions, your resources cover about ${score}% of the target basket.`;
+      ? 'At the saved assumptions, your resources cover your full plan.'
+      : `At the saved assumptions, your resources cover about ${score}% of your plan.`;
     document.getElementById('aspireRate').textContent = aspirationRate.toFixed(1) + '%';
     document.getElementById('portfolioRate').textContent = portfolioRate.toFixed(1) + '%';
     document.getElementById('gap').textContent = pct(gap);
@@ -590,7 +590,7 @@
     document.getElementById('toCoverage').textContent = Math.round(coverage) + '%';
     document.getElementById('coverageSub').textContent = `${money(portfolioFutureValue)} projected against ${money(targetFutureValue)} future target cost.`;
     document.getElementById('simGap').textContent = pct(simGap);
-    document.getElementById('gapSub').textContent = `Your Aspire Rate remains locked at ${original.aspirationRate.toFixed(1)}%.`;
+    document.getElementById('gapSub').textContent = `Your cost growth stays locked at ${original.aspirationRate.toFixed(1)}%.`;
     document.getElementById('requiredSavings').textContent = required <= 0 ? 'On track' : money(required) + '/mo';
 
     const coverageShift = document.getElementById('coverageShift');
@@ -637,7 +637,7 @@
       input.step = '1';
       input.value = Math.max(1, Math.round(original.horizon + 2));
     } else {
-      label.textContent = "Target basket in today's dollars";
+      label.textContent = "Target plan in today's dollars";
       input.min = '0';
       input.step = '1000';
       input.value = Math.round(original.totalGoals * 0.9);

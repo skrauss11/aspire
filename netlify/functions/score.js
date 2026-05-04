@@ -92,13 +92,13 @@ async function sendResend(email, score, aspirationRate, portfolioRate, gap, simu
     : score >= 75
     ? `Your money covers <strong style="color:#0f0e0c">${score}%</strong> of the life you're building toward. You're close — the last stretch is where compounding bites hardest.`
     : score >= 40
-    ? `Your money covers <strong style="color:#0f0e0c">${score}%</strong> of the life you're building toward. The rest is drifting away unless something changes.`
-    : `Your money covers <strong style="color:#c8451f">${score}%</strong> of the life you're building toward. Most of the target is still out of reach at this pace.`;
+    ? `You can afford <strong style="color:#0f0e0c">${score}%</strong> of your plan today. The rest is slipping out of reach unless something changes.`
+    : `You can afford <strong style="color:#c8451f">${score}%</strong> of your plan today. Most of it is still out of reach at this pace.`;
 
   // Gap narrative line
   const gapLine = ahead
-    ? `Your portfolio grows <strong style="color:#0f0e0c">${gapAbs}% faster per year</strong> than the life you're targeting inflates. You're compounding in the right direction.`
-    : `The life you're targeting inflates <strong style="color:#c8451f">${gapAbs}% faster per year</strong> than your portfolio grows. That gap compounds against you every year it goes unaddressed.`;
+    ? `Your money grows <strong style="color:#0f0e0c">${gapAbs}% faster per year</strong> than your goal's cost. You're compounding in the right direction.`
+    : `Your goal's cost grows <strong style="color:#c8451f">${gapAbs}% faster per year</strong> than your money does. That gap gets bigger every year if nothing changes.`;
 
   const html = `
     <div style="font-family: Georgia, serif; max-width: 580px; margin: 0 auto; padding: 40px 24px; background: #f5f1ea; color: #0f0e0c;">
@@ -113,15 +113,15 @@ async function sendResend(email, score, aspirationRate, portfolioRate, gap, simu
 
       <table style="width:100%; border-collapse: collapse; margin-bottom: 24px;">
         <tr>
-          <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; font-family: system-ui, sans-serif; font-size: 14px; color: #5a544b;">Your Aspire Rate</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; font-family: system-ui, sans-serif; font-size: 14px; color: #5a544b;">Cost growth</td>
           <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; text-align: right; font-family: Georgia, serif; font-size: 22px; font-weight: 600; color: #c8451f;">${aspirationRate.toFixed(1)}%/yr</td>
         </tr>
         <tr>
-          <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; font-family: system-ui, sans-serif; font-size: 14px; color: #5a544b;">Your Portfolio Rate</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; font-family: system-ui, sans-serif; font-size: 14px; color: #5a544b;">Money growth</td>
           <td style="padding: 12px 0; border-bottom: 1px solid #e8e2d8; text-align: right; font-family: Georgia, serif; font-size: 22px; font-weight: 600; color: #0f0e0c;">${portfolioRate.toFixed(1)}%/yr</td>
         </tr>
         <tr>
-          <td style="padding: 12px 0; font-family: system-ui, sans-serif; font-size: 14px; color: #5a544b;">Annual gap</td>
+          <td style="padding: 12px 0; font-family: system-ui, sans-serif; font-size: 14px; color: #5a544b;">Your gap</td>
           <td style="padding: 12px 0; text-align: right; font-family: Georgia, serif; font-size: 22px; font-weight: 600; color: ${ahead ? '#2a7a3b' : '#c8451f'};">${ahead ? '+' : ''}${gap.toFixed(1)}%</td>
         </tr>
       </table>
@@ -132,7 +132,7 @@ async function sendResend(email, score, aspirationRate, portfolioRate, gap, simu
 
       <p style="font-size: 15px; color: #5a544b; line-height: 1.6; font-family: system-ui, sans-serif; margin: 0 0 24px;">Your score recalculates every month as inflation, home prices, and markets move. The gap doesn't sit still.</p>
       <p style="margin: 0 0 40px;">
-        <a href="${simulatorUrl}" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">Run the Close the Gap Simulator →</a>
+        <a href="${simulatorUrl}" style="background: #c8451f; color: #f5f1ea; padding: 12px 24px; text-decoration: none; border-radius: 999px; font-size: 15px; font-family: system-ui, sans-serif;">See how to close your gap →</a>
       </p>
       <p style="font-size: 12px; color: #8f8778; margin: 0; font-family: system-ui, sans-serif;">You're receiving this because you calculated your Aspire Score at aspirerate.com.</p>
     </div>
@@ -147,7 +147,7 @@ async function sendResend(email, score, aspirationRate, portfolioRate, gap, simu
     body: JSON.stringify({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: [email],
-      subject: `Your Aspire Score: ${score} — ${score >= 100 ? "you're fully funded" : `your money covers ${score}% of the life you're building`}`,
+      subject: `Your Aspire Score: ${score} — ${score >= 100 ? "you're fully funded" : `you can afford ${score}% of your plan`}`,
       html
     })
   });
