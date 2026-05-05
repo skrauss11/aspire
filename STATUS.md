@@ -18,7 +18,8 @@ _(empty — nothing in flight)_
 
 ## Architecture decisions
 
-- **Persistence:** Supabase (project: `mknfjzgwueswetujpbsc`). Replaces the old "Beehiiv custom fields" approach. `TECHNICAL_CONTEXT.md` rule #5 needs updating to match.
+- **Persistence:** Supabase (project: `mknfjzgwueswetujpbsc`) is the system of record for saved scenarios and simulator hydration.
+- **Newsletter/subscriber layer:** Beehiiv remains the newsletter platform and subscriber metadata layer.
 - **Auth (planned, not built):** Magic link via Resend. See `session/aspire-plan-architecture.md` for full schema + phasing.
 - **Branch policy:** `main` is protected. All changes go through PRs. No direct pushes by any agent.
 - **Netlify:** Deploy Previews disabled. Only `main` triggers deploys. Production branch only.

@@ -19,6 +19,7 @@ Start here:
 | File | Purpose |
 |---|---|
 | `AGENTS.md` | Operating instructions for AI agents working on Aspire Rate |
+| `10_CANONICAL/Vocabulary.md` | Canonical internal and user-facing terminology map |
 | `SOUL.md` | The philosophical center of the product |
 | `PRODUCT_DNA.md` | Product concepts, mechanics, language, and decision principles |
 | `POSITIONING.md` | Market category, narrative, messaging, and differentiation |

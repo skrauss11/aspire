@@ -2,6 +2,14 @@
 
 This file defines how AI agents should work on Aspire Rate.
 
+## Canonical Workspace Hierarchy
+
+In the unified workspace, `aspire/` is canonical for product language, user-facing terminology, formulas, compliance, technical architecture, monetization guardrails, roadmap, and live-site behavior.
+
+`aspire-gtm/` is canonical for research, content strategy, newsletter, social, editorial planning, GTM experiments, and audience development.
+
+If there is a conflict between repos, `aspire/` wins.
+
 ## Mission
 
 Help Aspire Rate become the clearest way for people to understand whether their money is keeping up with the life they actually want.
@@ -19,6 +27,7 @@ Before making product, content, design, or strategy decisions, read:
 3. `PRODUCT_DNA.md`
 4. `COMPLIANCE.md`
 5. `design.md`
+6. `10_CANONICAL/Vocabulary.md`
 
 For specific work:
 

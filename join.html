@@ -332,13 +332,13 @@
     <div class="value-grid">
       <div class="value-card">
         <div class="value-num">01</div>
-        <h3>Know your Aspire Rate</h3>
+        <h3>Know your cost growth</h3>
         <p>CPI is the average American's inflation. Your basket — the house, the portfolio, the tuition — inflates at its own rate. We calculate yours and update it every month as markets and home prices move.</p>
       </div>
       <div class="value-card">
         <div class="value-num">02</div>
         <h3>Track your gap, not the headlines</h3>
-        <p>The Aspire Gap is the distance between what your money earns and what your future costs. Every week we track it — salary erosion, buying power shifts, home affordability by city, market changes that actually affect you.</p>
+        <p>Your gap is the distance between what your money earns and what your future costs. Every week we track it — salary erosion, buying power shifts, home affordability by city, market changes that actually affect you.</p>
       </div>
       <div class="value-card">
         <div class="value-num">03</div>
@@ -463,18 +463,18 @@
         </div>
 
         <div class="gap-hero" style="padding-top:14px;">
-          <div class="label">Aspire Gap</div>
+          <div class="label">Your gap</div>
           <div class="n" id="gap-n" style="font-size:40px;"><span id="gap">—</span>% annually</div>
           <div class="sub" id="gap-copy">Are you keeping up or falling behind?</div>
         </div>
 
         <div class="rate-duo">
           <div>
-            <div class="label">Aspire Rate</div>
+            <div class="label">Cost growth</div>
             <div class="n accent-n"><span id="pi">—</span>%</div>
           </div>
           <div>
-            <div class="label">Portfolio Rate</div>
+            <div class="label">Money growth</div>
             <div class="n"><span id="pp">—</span>%</div>
           </div>
         </div>
@@ -781,7 +781,7 @@
     const gap = document.getElementById('gap').textContent;
     const buyingPower = document.getElementById('buying-power').textContent;
     const buyingPowerPct = document.getElementById('buying-power-pct').textContent;
-    const txt = `My future buying power is $${buyingPower} (${buyingPowerPct}) in today's terms. My Aspire Gap is ${gap}% annually. What will your money actually buy? — aspirerate.com/join`;
+    const txt = `My future buying power is $${buyingPower} (${buyingPowerPct}) in today's terms. My gap is ${gap}% annually. What will your money actually buy? — aspirerate.com/join`;
     navigator.clipboard.writeText(txt).then(() => {
       const b = document.querySelector('.share-ghost');
       const orig = b.textContent;

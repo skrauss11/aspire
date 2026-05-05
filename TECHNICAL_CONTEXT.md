@@ -1,6 +1,6 @@
 # TECHNICAL_CONTEXT.md
 
-_Last updated: 2026-05-03. This file is the authoritative technical reference for Codex and other AI agents working on Aspire Rate._
+_Last updated: 2026-05-04. This file is the authoritative technical reference for Codex and other AI agents working on Aspire Rate._
 
 ---
 
@@ -14,18 +14,18 @@ Do not let implementation drift ahead of this document.
 
 ## Stack Overview
 
-Aspire Rate is a static Netlify site with serverless functions and Supabase-backed saved scenarios. There is no frontend framework and no build step.
+Aspire Rate is a static Netlify site with serverless functions and Supabase-backed saved scenarios. Supabase is the system of record for persistence; Beehiiv is the newsletter and subscriber layer. There is no frontend framework and no build step.
 
 | Layer | Technology |
 |---|---|
 | Frontend | Vanilla HTML + CSS + JavaScript |
 | Hosting | Netlify (site ID: `7fc9e061-49d8-4af7-91d9-90c0d70681f9`) |
 | Serverless | Netlify Functions v1 (CommonJS) |
-| Scenario persistence | Supabase Postgres (`public.scenarios`) |
+| System of record / scenario persistence | Supabase Postgres (`public.scenarios`) |
 | Domain | `aspirerate.com` |
 | Repo | `github.com/skrauss11/aspire` (branch: `main`) |
 | Email delivery | Resend (from: `score@send.aspirerate.com`) |
-| Newsletter / subscriber CRM | Beehiiv (pub ID: `pub_8ad9f164-9d8a-426e-b25a-e8e4cc3cf601`) |
+| Newsletter / subscriber layer | Beehiiv (pub ID: `pub_8ad9f164-9d8a-426e-b25a-e8e4cc3cf601`) |
 | Rate data | `rates.json` (static JSON, committed to repo) |
 | Analytics | Google Analytics (`G-0YTMP6NYVB`) |
 
@@ -53,6 +53,8 @@ skrauss11/aspire/
 ├── favicon-512.png
 ├── x-profile.png
 ├── x-banner.png
+├── 10_CANONICAL/
+│   └── Vocabulary.md
 ├── design.md
 ├── AGENTS.md
 ├── PRODUCT_DNA.md
@@ -77,7 +79,7 @@ skrauss11/aspire/
 4. `POST /api/score` runs in `netlify/functions/score.js`.
 5. `score.js` computes the Aspire Score from `basket.computed.fraction`.
 6. `score.js` writes the full scenario to Supabase `public.scenarios`.
-7. `score.js` upserts Beehiiv subscriber metadata.
+7. `score.js` upserts Beehiiv newsletter/subscriber metadata. Supabase remains the system of record.
 8. `score.js` attempts to send the score email through Resend.
 9. The API returns `{ score, scenarioId, simulatorUrl, emailSent }`.
 10. The calculator shows the score and opens the simulator CTA.
@@ -92,7 +94,7 @@ skrauss11/aspire/
 
 ## Supabase
 
-Supabase is the source of truth for saved scenarios and simulator hydration.
+Supabase is the system of record and source of truth for saved scenarios and simulator hydration.
 
 ### Table
 
@@ -189,7 +191,7 @@ Response body:
 Side effects:
 
 - Inserts scenario into Supabase.
-- Upserts subscriber in Beehiiv.
+- Upserts subscriber metadata in Beehiiv for newsletter/subscriber workflows.
 - Attempts to send score email through Resend.
 - Returns score and simulator link even if Beehiiv or Resend fails, as long as Supabase scenario save succeeds.
 
@@ -256,6 +258,8 @@ Never expose `SUPABASE_SERVICE_ROLE_KEY` in browser code.
 
 ## Beehiiv Integration
 
+Beehiiv is the newsletter and subscriber layer. It is not the system of record for saved scenarios; Supabase is.
+
 API version: v2
 
 Endpoint used:
@@ -268,7 +272,7 @@ Calculator score submission stores:
 
 | Field | Value |
 |---|---|
-| `basket_json` | Full JSON basket |
+| `basket_json` | Subscriber metadata copy of basket context; Supabase remains the source of truth |
 | `last_score` | Integer 0–100 |
 | `simulator_url` | Private simulator URL |
 | `signup_source` | `basket.source` or `calculator` |
@@ -310,7 +314,7 @@ The score email includes:
 
 - Large score number.
 - Score interpretation.
-- Aspire Rate / Portfolio Rate / Annual Gap table.
+- Cost growth / Money growth / Your gap table.
 - Gap narrative.
 - CTA to the private Supabase-backed simulator link.
 
@@ -352,11 +356,11 @@ Default planner modes:
 
 Locked assumptions shown to the user:
 
-- Aspire Rate
-- Portfolio Rate
+- Cost growth
+- Money growth
 - Starting Assets
 
-The user does not edit Aspire Rate by default. Aspire Rate is treated as Aspire’s measurement from the saved basket.
+The user does not edit cost growth by default. Internally, Aspire Rate is treated as Aspire's measurement from the saved basket.
 
 Main output:
 

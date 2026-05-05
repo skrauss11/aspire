@@ -590,7 +590,7 @@
 <article class="manifesto" id="manifesto">
   <div class="wrap">
     <p style="font-size:18px;line-height:1.6;color:var(--muted);max-width:600px;margin:0 0 40px;padding-top:8px;">Inflation has quietly eroded the ability of millions of Americans to afford the life they want — not because they aren't working hard, but because nobody ever gave them the honest numbers. Aspire is dedicated to that. Understanding how personal inflation works. Measuring your own rate. Planning for the future you're working toward.</p>
-    <p style="font-size:18px;font-weight:600;color:var(--ink);max-width:600px;margin:0 0 56px;">You have goals. Those goals have an inflation rate. Aspire Rate shows whether your money is keeping up.</p>
+    <p style="font-size:18px;font-weight:600;color:var(--ink);max-width:600px;margin:0 0 56px;">You have goals. Those goals have a cost growth rate. Aspire shows whether your money is keeping up.</p>
     <h2><span class="num">01 / The lie of the single number</span>One number, billions of lives</h2>
     <p>Every month, the Bureau of Labor Statistics publishes a number. Last month it was 3.1%. The headlines say inflation is "cooling." Your uncle says he remembers when gas was a dollar. You nod, you refinance nothing, you keep saving.</p>
     <p>That number — CPI — is an average. It's the price change of a basket of goods designed to represent the typical American household: some groceries, some rent, some gasoline, some medical care, some haircuts. It is a real number. It is also, for most people working toward something specific, a deeply misleading one.</p>
@@ -625,7 +625,7 @@
       π<sub>p</sub> = Σ ( w<sub>i</sub> · r<sub>i</sub> )
       <span class="sub">Your personal inflation rate = the weighted rate of the basket you're building</span>
     </div>
-    <p>Tell us your basket — how much of your future is home, how much is equity, how much is BTC, how much is tuition — and we'll hand you back the only inflation rate that matters to your life. And then we'll hand you the <strong>Aspire Gap</strong>: the distance between what your money is earning and what your future is costing.</p>
+    <p>Tell us your basket — how much of your future is home, how much is equity, how much is BTC, how much is tuition — and we'll hand you back the only cost growth rate that matters to your life. And then we'll hand you <strong>your gap</strong>: the distance between what your money is earning and what your future is costing.</p>
     <p>Most people, when they see their real number for the first time, have the same reaction. It is not panic. It is recognition.</p>
     <div class="pullquote">So that's what I've been feeling.</div>
 
@@ -645,7 +645,7 @@
     <p><strong>Name your basket.</strong> Ten minutes. Write what you are actually saving for, in rough weights. <em>50% a house in Denver. 30% index funds. 15% Bitcoin. 5% a year off in 2030.</em> Most people have never written this down. That alone is worth the exercise.</p>
     <p><strong>Price each line.</strong> Use trailing 5- or 10-year rates. Don't project — just use what's already happened.</p>
     <p><strong>Do the weighted average.</strong> That's your personal inflation rate. It is almost certainly between 8% and 15%.</p>
-    <p><strong>Find your gap.</strong> Subtract what your cash is earning, net of tax. That's the Aspire Gap — the number your life is quietly paying every year you keep the status quo.</p>
+    <p><strong>Find your gap.</strong> Subtract what your cash is earning, net of tax. That's your gap — the number your life is quietly paying every year you keep the status quo.</p>
     <p><strong>Ask the hard question.</strong> Is your allocation shaped like your basket? If your basket is 50% a house and 40% equity, and your net worth is 70% cash, you are not conservative. You are <em>aggressively short the life you want.</em></p>
     <p><strong>Change one thing.</strong> Not everything. One. Small, irreversible moves compound faster than big plans you never execute.</p>
     <p><strong>Re-run it every year.</strong> The point isn't to solve this once. The point is to stop flying blind.</p>
@@ -1527,7 +1527,7 @@
     const improvement = newGap - origGap;
     document.getElementById('simImprove').textContent = (improvement >= 0 ? '+' : '') + improvement.toFixed(1) + ' pts';
     document.getElementById('simImproveSub').textContent =
-      `Your Aspire Gap moves from ${(origGap >= 0 ? '+' : '') + origGap.toFixed(1)}% to ${(newGap >= 0 ? '+' : '') + newGap.toFixed(1)}%.`;
+      `Your gap moves from ${(origGap >= 0 ? '+' : '') + origGap.toFixed(1)}% to ${(newGap >= 0 ? '+' : '') + newGap.toFixed(1)}%.`;
 
     // Required return to fully close the gap
     const reqReturn = solveRequiredReturn(A, m, n, FGV);
