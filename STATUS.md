@@ -2,13 +2,13 @@
 
 _Single source of truth for what each agent is currently working on in this repo. Update when you start, stop, or hand off._
 
-_Last updated: 2026-05-04 08:10 ET_
+_Last updated: 2026-05-05 22:25 ET_
 
 ---
 
 ## Currently in flight
 
-_(empty — nothing in flight)_
+- 2026-05-05 — **Sauna** — `netlify/functions/score.js`: adding rotating pop culture hook opener to score email (PR in review)
 
 ## Recently shipped
 
