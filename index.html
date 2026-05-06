@@ -48,7 +48,7 @@
     .row-head, .goal-row, .holding-row { display:grid; gap:10px; align-items:center; }
     .row-head { color:#8f8778; font-size:11px; text-transform:uppercase; letter-spacing:.12em; margin:18px 0 8px; }
     .goal-row { grid-template-columns:1.2fr 130px 82px 1.25fr 34px; margin-bottom:10px; }
-    .holding-row { grid-template-columns:1.2fr 130px 1.25fr 34px; margin-bottom:10px; }
+    .holding-row { grid-template-columns:1.15fr 120px 100px 1.15fr 34px; margin-bottom:10px; }
     input, select { width:100%; min-height:42px; border:1px solid #37322b; border-radius:8px; padding:0 11px; background:#0f0e0c; color:var(--paper); font:500 14px Inter,sans-serif; }
     select { color:#f5f1ea; }
     .remove { width:34px; height:34px; background:#24211d; color:#b8b0a2; border-radius:50%; }
@@ -61,6 +61,7 @@
     .summary-card .gap.good { color:#7fb98a; }
     .metric { display:flex; justify-content:space-between; padding:13px 0; border-top:1px solid #2a2722; color:#b8b0a2; }
     .metric strong { color:var(--paper); }
+    #summaryChart { margin-top:16px; min-height:120px; border-top:1px solid #2a2722; padding-top:12px; }
     .submit-row { margin-top:22px; display:grid; gap:10px; }
     .submit-row button { background:var(--accent); color:var(--paper); min-height:48px; }
     .error { color:#ffb199; min-height:20px; font-size:13px; }
@@ -132,7 +133,7 @@
           <div class="block">
             <h3 class="block-title">What do you already have saved?</h3>
             <p class="block-sub">Current assets and money growth assumption.</p>
-            <div class="row-head holding-row"><div>Account or asset</div><div>Amount today</div><div>Money grows like</div><div></div></div>
+            <div class="row-head holding-row"><div>Account or asset</div><div>Amount today</div><div>Monthly</div><div>Money grows like</div><div></div></div>
             <div id="holdings"></div>
             <button class="add-goal" type="button" id="addHolding">+ Add a holding</button>
             <div class="basket-meta"><span>Total available today</span><strong id="totalHoldings">$0</strong></div>
@@ -146,6 +147,7 @@
           <div class="metric"><span>Money growth</span><strong id="moneyRate">—</strong></div>
           <div class="metric"><span>Cost growth</span><strong id="costRate">—</strong></div>
           <div class="metric"><span>Weighted horizon</span><strong id="horizon">—</strong></div>
+          <div id="summaryChart"></div>
           <div class="submit-row">
             <button type="button" id="submitScenario">See your gap</button>
             <div class="error" id="formError"></div>
@@ -166,9 +168,10 @@
   </footer>
 
   <script type="module">
-    import { project } from "/lib/aspire.js";
+    import { project, projectionSeries } from "/lib/aspire.js";
     import { DRAFT_KEY, toPersisted } from "/lib/schema.js";
     import { loadRates, ratesByKey, rateForKey, groupedOptions } from "/lib/rates.js";
+    import { renderRateChart } from "/lib/chart-rate.js";
     import { money, shortMoney, signedPct, pct } from "/lib/format.js";
 
     const scenarios = {
@@ -204,6 +207,7 @@
         <div class="holding-row">
           <input data-list="holdings" data-index="${index}" data-field="label" value="${escapeHtml(asset.label)}" aria-label="Holding label">
           <input type="number" data-list="holdings" data-index="${index}" data-field="amount" value="${asset.amount}" min="0" step="1000" aria-label="Holding amount">
+          <input type="number" data-list="holdings" data-index="${index}" data-field="monthly" value="${asset.monthly || 0}" min="0" step="50" aria-label="Monthly contribution">
           <select data-list="holdings" data-index="${index}" data-field="asset" aria-label="Holding rate">${options(asset.asset)}</select>
           <button class="remove" type="button" data-remove="holdings" data-index="${index}" aria-label="Remove holding">×</button>
         </div>
@@ -232,6 +236,7 @@
       document.getElementById("gapCopy").textContent = result.totalGoals && result.totalAssets
         ? `At these assumptions, your money is growing ${Math.abs(result.gap).toFixed(1)} percentage points ${result.gap >= 0 ? "faster" : "slower"} than your future life is becoming more expensive.`
         : "Add at least one goal and one holding to measure your gap.";
+      renderRateChart(document.getElementById("summaryChart"), projectionSeries(state.goals, state.holdings, result.horizon), { height: 120, mini: true });
     }
 
     function updateItem(target) {
@@ -276,7 +281,7 @@
       renderRows();
     });
     document.getElementById("addHolding").addEventListener("click", () => {
-      holdings.push({ label: "New holding", amount: 0, asset: "sp500" });
+      holdings.push({ label: "New holding", amount: 0, monthly: 0, asset: "sp500" });
       renderRows();
     });
     document.getElementById("submitScenario").addEventListener("click", submitScenario);
