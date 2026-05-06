@@ -44,6 +44,7 @@
     .summary { color:#d7cfc2; font-size:18px; margin:18px 0 0; }
     .rail { display:grid; gap:14px; }
     .panel { padding:18px; }
+    .rail-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
     .panel h3 { margin:0; font-size:25px; }
     .panel-sub { color:var(--muted); font-size:13px; margin:4px 0 14px; }
     .lever { border-top:1px solid var(--rule); padding:16px 0; }
@@ -62,12 +63,16 @@
     input[type="range"]::-moz-range-thumb { width:18px; height:18px; border-radius:50%; background:var(--accent); border:2px solid var(--paper); }
     .lever-foot { display:flex; justify-content:space-between; color:var(--muted); font-size:12px; margin-top:6px; }
     .reset { background:transparent; color:#d7cfc2; padding:0; text-decoration:underline; }
+    .reset-all { background:transparent; color:var(--yellow); padding:4px 0; text-decoration:underline; white-space:nowrap; }
     details { border-top:1px solid var(--rule); padding:14px 0; }
     details:first-of-type { border-top:0; }
     summary { cursor:pointer; font-weight:800; color:#d7cfc2; }
     .edit-row { display:grid; grid-template-columns:1fr 92px 92px 92px; gap:8px; align-items:center; padding:10px 0; border-top:1px solid #24211d; }
     .edit-row:first-child { border-top:0; }
     .edit-row label { font-size:13px; color:#d7cfc2; }
+    .field-edit { display:grid; gap:3px; }
+    .default-note { color:var(--muted); font-size:10px; line-height:1.2; }
+    .default-note.edited { color:var(--yellow); }
     input { width:100%; min-height:38px; border:1px solid #37322b; border-radius:8px; padding:0 10px; background:#0f0e0c; color:var(--paper); font:600 13px Inter,sans-serif; }
     .footer-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
     .save-panel { display:none; margin-top:14px; }
@@ -76,6 +81,8 @@
     .save-row button { background:var(--paper); color:var(--ink); padding:0 14px; min-height:38px; }
     .nudge { color:var(--muted); font-size:13px; margin:10px 0 0; }
     .hidden { display:none !important; }
+    .toast { position:fixed; right:18px; bottom:18px; background:var(--paper); color:var(--ink); border-radius:999px; padding:12px 16px; font-weight:800; opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .18s ease, transform .18s ease; z-index:20; }
+    .toast.show { opacity:1; transform:translateY(0); }
     @media (max-width: 1100px) {
       .top, .canvas { grid-template-columns:1fr; }
       .score-card { position:static; }
@@ -129,8 +136,13 @@
 
     <aside class="rail">
       <section class="panel">
-        <h3>Adjust your assumptions</h3>
-        <p class="panel-sub">Each slider shifts one assumption. Watch your gap respond.</p>
+        <div class="rail-head">
+          <div>
+            <h3>Adjust your assumptions</h3>
+            <p class="panel-sub">Each slider shifts one assumption. Watch your gap respond.</p>
+          </div>
+          <button class="reset-all" type="button" id="resetAll">Reset all</button>
+        </div>
         <div id="leverRail"></div>
       </section>
       <section class="panel">
@@ -157,6 +169,7 @@
       </section>
     </aside>
   </main>
+  <div class="toast" id="toast" role="status" aria-live="polite">Saved.</div>
 
   <script type="module">
     import { project, projectionSeries } from "/lib/aspire.js";
@@ -166,7 +179,9 @@
 
     let baseScenario;
     let currentScenario;
+    let savedScenario;
     let baseResult;
+    let scenarioToken = new URLSearchParams(location.search).get("t") || "";
     const leverValues = { contribution: 0, horizon: 0, costGrowth: 0, moneyGrowth: 0 };
 
     async function loadScenario() {
@@ -215,19 +230,33 @@
       document.getElementById("goalEdits").innerHTML = currentScenario.basket.goals.map((goal, index) => `
         <div class="edit-row">
           <label>${escapeHtml(goal.label)}</label>
-          <input type="number" data-kind="goal" data-index="${index}" data-field="amount" value="${Math.round(goal.amount)}" min="0" step="1000" aria-label="${escapeHtml(goal.label)} amount">
-          <input type="number" data-kind="goal" data-index="${index}" data-field="horizon" value="${goal.horizon}" min="1" step="1" aria-label="${escapeHtml(goal.label)} years">
-          <input type="number" data-kind="goal" data-index="${index}" data-field="growth" value="${goal.growth.toFixed(1)}" step=".1" aria-label="${escapeHtml(goal.label)} growth">
+          ${editField("goal", index, "amount", goal.amount, savedScenario.basket.goals[index]?.amount, "1000", `${goal.label} amount`)}
+          ${editField("goal", index, "horizon", goal.horizon, savedScenario.basket.goals[index]?.horizon, "1", `${goal.label} years`)}
+          ${editField("goal", index, "growth", goal.growth, savedScenario.basket.goals[index]?.growth, ".1", `${goal.label} growth`, true)}
         </div>
       `).join("");
       document.getElementById("assetEdits").innerHTML = currentScenario.basket.holdings.map((asset, index) => `
         <div class="edit-row">
           <label>${escapeHtml(asset.label)}</label>
-          <input type="number" data-kind="asset" data-index="${index}" data-field="amount" value="${Math.round(asset.amount)}" min="0" step="1000" aria-label="${escapeHtml(asset.label)} amount">
-          <input type="number" data-kind="asset" data-index="${index}" data-field="monthly" value="${Math.round(asset.monthly)}" min="0" step="50" aria-label="${escapeHtml(asset.label)} monthly">
-          <input type="number" data-kind="asset" data-index="${index}" data-field="growth" value="${asset.growth.toFixed(1)}" step=".1" aria-label="${escapeHtml(asset.label)} growth">
+          ${editField("asset", index, "amount", asset.amount, savedScenario.basket.holdings[index]?.amount, "1000", `${asset.label} amount`)}
+          ${editField("asset", index, "monthly", asset.monthly, savedScenario.basket.holdings[index]?.monthly, "50", `${asset.label} monthly`)}
+          ${editField("asset", index, "growth", asset.growth, savedScenario.basket.holdings[index]?.growth, ".1", `${asset.label} growth`, true)}
         </div>
       `).join("");
+    }
+
+    function editField(kind, index, field, value, defaultValue = 0, step, label, percent = false) {
+      const current = Number(value) || 0;
+      const saved = Number(defaultValue) || 0;
+      const edited = Math.abs(current - saved) > 0.0001;
+      const shown = percent ? current.toFixed(1) : Math.round(current);
+      const savedShown = percent ? `${saved.toFixed(1)}%` : field === "horizon" ? `${Math.round(saved)} yr` : money(saved);
+      return `
+        <div class="field-edit">
+          <input type="number" data-kind="${kind}" data-index="${index}" data-field="${field}" value="${shown}" min="${field === "growth" ? "-5" : "0"}" step="${step}" aria-label="${escapeHtml(label)}">
+          <small class="default-note ${edited ? "edited" : ""}">Default ${savedShown}</small>
+        </div>
+      `;
     }
 
     function renderAll() {
@@ -269,9 +298,9 @@
       renderAll();
     }
 
-    async function saveScenario(email) {
+    async function saveScenario(email, token = "") {
       const scenario = toPersisted(currentScenario);
-      if (!email) {
+      if (!email && !token) {
         history.replaceState(null, "", `/simulator/?s=${encodeFallbackToken(scenario)}`);
         document.getElementById("saveStatus").textContent = "Saved in this browser link.";
         return;
@@ -279,11 +308,32 @@
       const res = await fetch("/api/score", {
         method:"POST",
         headers:{ "Content-Type":"application/json" },
-        body:JSON.stringify({ email, basket: scenario.basket })
+        body:JSON.stringify({ email, token, basket: scenario.basket })
       });
       if (!res.ok) throw new Error("save failed");
       const data = await res.json();
-      window.location.href = data.simulatorUrl || `/simulator/?t=${data.t}`;
+      if (token) {
+        scenarioToken = data.t || token;
+        history.replaceState(null, "", `/simulator/?t=${scenarioToken}`);
+        showToast("Saved.");
+      } else {
+        window.location.href = data.simulatorUrl || `/simulator/?t=${data.t}`;
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function resetAllLevers() {
+      Object.keys(leverValues).forEach(key => leverValues[key] = 0);
+      applyLevers();
+      renderLevers();
+      renderAll();
     }
 
     function escapeHtml(value) {
@@ -292,6 +342,7 @@
 
     baseScenario = await loadScenario();
     if (baseScenario) {
+      savedScenario = cloneScenario(baseScenario);
       baseResult = project(baseScenario.basket.goals, baseScenario.basket.holdings);
       currentScenario = cloneScenario(baseScenario);
       renderSavedCard();
@@ -318,9 +369,14 @@
       }
     });
     document.getElementById("saveUpdated").addEventListener("click", () => {
+      if (scenarioToken) {
+        saveScenario("", scenarioToken).catch(() => showToast("Save failed."));
+        return;
+      }
       document.getElementById("savePanel").classList.toggle("open");
       document.getElementById("saveStatus").textContent = "Enter an email to save remotely, or leave it blank to keep a browser link.";
     });
+    document.getElementById("resetAll").addEventListener("click", resetAllLevers);
     document.getElementById("saveEmailButton").addEventListener("click", async () => {
       const status = document.getElementById("saveStatus");
       status.textContent = "Saving...";

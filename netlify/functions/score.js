@@ -55,6 +55,26 @@ async function saveScenario(email, scenario, metrics) {
   return Array.isArray(body) ? body[0] : body;
 }
 
+async function emailForToken(token) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) throw new Error("Supabase env vars are not configured");
+  const url = new URL(`${SUPABASE_URL}/rest/v1/scenarios`);
+  url.searchParams.set("select", "email");
+  url.searchParams.set("access_token", `eq.${token}`);
+  url.searchParams.set("limit", "1");
+  const res = await fetch(url, {
+    headers: {
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`
+    }
+  });
+  const rows = await res.json().catch(() => null);
+  if (!res.ok) {
+    console.error("supabase token lookup failed:", rows);
+    throw new Error("Unable to resolve scenario token");
+  }
+  return Array.isArray(rows) && rows[0] ? rows[0].email : "";
+}
+
 async function upsertBeehiiv(email, scenario, simulatorUrl) {
   if (!BEEHIIV_API_KEY) return false;
   const res = await fetch(`https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`, {
@@ -117,7 +137,16 @@ export const handler = async event => {
   } catch {
     return json(400, { error: "Invalid JSON" });
   }
-  if (!body.email || !body.basket) return json(400, { error: "email and basket required" });
+  if (!body.basket || (!body.email && !body.token)) return json(400, { error: "email or token and basket required" });
+  if (body.token && !/^[a-f0-9]{48}$/i.test(body.token)) return json(400, { error: "Valid scenario token required" });
+  let email;
+  try {
+    email = body.email || await emailForToken(body.token);
+  } catch (err) {
+    console.error(err);
+    return json(500, { error: "Unable to resolve saved scenario" });
+  }
+  if (!email) return json(404, { error: "Saved scenario email not found" });
 
   const validation = validate({ basket: body.basket });
   if (!validation.ok) return json(400, { error: validation.errors[0] });
@@ -126,7 +155,7 @@ export const handler = async event => {
 
   let row;
   try {
-    row = await saveScenario(body.email, scenario, metrics);
+    row = await saveScenario(email, scenario, metrics);
   } catch (err) {
     console.error(err);
     return json(500, { error: "Unable to save scenario" });
@@ -135,8 +164,8 @@ export const handler = async event => {
   const t = row.access_token;
   const simulatorUrl = `${getBaseUrl(event)}/simulator/?t=${t}`;
   const [beehiivResult, emailResult] = await Promise.allSettled([
-    upsertBeehiiv(body.email, scenario, simulatorUrl),
-    sendEmail(body.email, metrics, simulatorUrl)
+    body.email ? upsertBeehiiv(email, scenario, simulatorUrl) : Promise.resolve(false),
+    body.email ? sendEmail(email, metrics, simulatorUrl) : Promise.resolve({ ok: false })
   ]);
   console.log("beehiiv:", beehiivResult.status, "email:", emailResult.status);
 
