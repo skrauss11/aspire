@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Gap | Aspire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#0f0e0c; --paper:#f5f1ea; --paper2:#ebe3d6; --muted:#6f675b; --rule:#d8cfbf; --accent:#c8451f; --green:#2f7d48; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter,system-ui,sans-serif; line-height:1.5; }
+    a { color:inherit; text-decoration:none; }
+    .wrap-wide { width:min(1120px, calc(100% - 40px)); margin:0 auto; }
+    nav { height:76px; display:flex; justify-content:space-between; align-items:center; }
+    .logo, h1, h2, h3, .hero-number { font-family:Fraunces,serif; letter-spacing:0; }
+    .logo { font-weight:650; font-size:25px; }
+    .logo span, .accent { color:var(--accent); }
+    .nav-cta, .button, button { border:0; border-radius:999px; cursor:pointer; font:600 14px/1 Inter,sans-serif; }
+    .nav-cta, .button.primary, .save-gate-row button { background:var(--ink); color:var(--paper); padding:12px 18px; }
+    main { padding:42px 0 70px; }
+    .score-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,.8fr); gap:34px; align-items:center; }
+    .eyebrow { color:var(--accent); text-transform:uppercase; letter-spacing:.16em; font-size:12px; font-weight:700; margin-bottom:16px; }
+    h1 { margin:0; font-size:26px; }
+    .hero-number { font-size:clamp(68px, 12vw, 126px); line-height:.9; margin:14px 0; color:var(--accent); transition:color .2s ease; }
+    .hero-number.good { color:var(--green); }
+    .subline { color:var(--muted); font-size:19px; max-width:620px; }
+    .plain { font-size:18px; max-width:680px; margin:18px 0 0; }
+    .stats { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:28px; }
+    .stat, .panel { border:1px solid var(--rule); background:rgba(255,255,255,.28); border-radius:8px; padding:18px; }
+    .stat .stat-label { display:block; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.13em; }
+    .stat strong { display:block; font-family:Fraunces,serif; font-size:30px; margin-top:4px; }
+    .info { position:relative; display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; margin-left:5px; color:var(--accent); font-size:12px; letter-spacing:0; text-transform:none; cursor:help; }
+    .info-pop { position:absolute; left:50%; bottom:calc(100% + 8px); width:min(280px, 72vw); transform:translateX(-50%); padding:10px 12px; border-radius:8px; background:var(--ink); color:var(--paper); font-size:12px; font-weight:500; line-height:1.35; letter-spacing:0; text-transform:none; opacity:0; pointer-events:none; transition:opacity .15s ease; z-index:5; }
+    .info:hover .info-pop, .info:focus .info-pop, .info:focus-within .info-pop { opacity:1; }
+    .chart-card { border:1px solid var(--rule); border-radius:8px; padding:18px; background:#fbf8f2; }
+    .chart-legend { display:flex; gap:14px; flex-wrap:wrap; color:var(--muted); font-size:12px; margin-top:8px; }
+    .chart-legend i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+    .rate-path, .rate-gap-area { transition:d .2s ease; }
+    .below { display:grid; grid-template-columns:minmax(0,.9fr) minmax(360px,.7fr); gap:24px; margin-top:30px; align-items:start; }
+    .panel h2 { margin:0 0 12px; font-size:28px; }
+    details { border-top:1px solid var(--rule); padding:12px 0; }
+    details:first-of-type { border-top:0; }
+    summary { cursor:pointer; font-weight:700; }
+    .priced-row { display:flex; justify-content:space-between; gap:16px; color:var(--muted); padding:8px 0; }
+    .save-gate-form label { display:block; font:650 27px Fraunces,serif; margin-bottom:12px; }
+    .save-gate-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; }
+    input { min-height:46px; border:1px solid var(--rule); border-radius:999px; padding:0 16px; background:#fffaf3; color:var(--ink); font:500 15px Inter,sans-serif; }
+    .save-gate-row button { min-height:46px; }
+    .save-gate-form p, .gate-error { color:var(--muted); font-size:13px; }
+    .secondary { display:inline-flex; margin-top:18px; color:var(--accent); font-weight:700; }
+    @media (max-width: 880px) {
+      .score-grid, .below, .stats { grid-template-columns:1fr; }
+      .chart-card { order:2; }
+      .save-gate-row { grid-template-columns:1fr; }
+      .hero-number { font-size:66px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap-wide">
+    <nav>
+      <a class="logo" href="/">Aspire<span aria-hidden="true">Δ</span></a>
+      <a class="nav-cta" href="/manifesto">Manifesto</a>
+    </nav>
+  </div>
+
+  <main class="wrap-wide">
+    <section class="score-grid">
+      <div>
+        <h1>Your gap</h1>
+        <div class="hero-number" id="gapNumber">—</div>
+        <p class="subline" id="dollarLine">Loading your scenario.</p>
+        <p class="plain" id="plainEnglish"></p>
+        <div class="stats">
+          <div class="stat" title="The weighted annual rate your holdings are projected to compound — based on the 'grows like' assumption you chose for each asset.">
+            <span class="stat-label">Money growth <span class="info" tabindex="0">ⓘ<span class="info-pop">The weighted annual rate your holdings are projected to compound — based on the 'grows like' assumption you chose for each asset.</span></span></span>
+            <strong id="moneyRate">—</strong>
+          </div>
+          <div class="stat" title="The weighted annual rate your goals are projected to become more expensive — based on the 'grows like' assumption you chose for each goal.">
+            <span class="stat-label">Cost growth <span class="info" tabindex="0">ⓘ<span class="info-pop">The weighted annual rate your goals are projected to become more expensive — based on the 'grows like' assumption you chose for each goal.</span></span></span>
+            <strong id="costRate">—</strong>
+          </div>
+          <div class="stat" title="Your time horizon, weighted by goal size — the number of years this gap calculation is measuring over.">
+            <span class="stat-label">Weighted horizon <span class="info" tabindex="0">ⓘ<span class="info-pop">Your time horizon, weighted by goal size — the number of years this gap calculation is measuring over.</span></span></span>
+            <strong id="horizon">—</strong>
+          </div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div id="rateChart"></div>
+      </div>
+    </section>
+
+    <section class="below">
+      <div class="panel">
+        <h2>What you priced</h2>
+        <details open>
+          <summary>Goals</summary>
+          <div id="goalList"></div>
+        </details>
+        <details>
+          <summary>Assets</summary>
+          <div id="assetList"></div>
+        </details>
+      </div>
+      <div class="panel">
+        <div id="saveGate"></div>
+        <a class="secondary" href="/manifesto">Read the manifesto</a>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { project, projectionSeries } from "/lib/aspire.js";
+    import { DRAFT_KEY, fromPersisted } from "/lib/schema.js";
+    import { renderRateChart } from "/lib/chart-rate.js";
+    import { mountGate } from "/lib/gate.js";
+    import { money, shortMoney, pct, signedPct } from "/lib/format.js";
+
+    async function loadScenario() {
+      const params = new URLSearchParams(location.search);
+      const token = params.get("t");
+      if (token) {
+        const res = await fetch(`/api/scenario?t=${encodeURIComponent(token)}`);
+        if (res.ok) return fromPersisted(await res.json());
+      }
+      const draft = sessionStorage.getItem(DRAFT_KEY);
+      if (!draft) {
+        location.replace("/");
+        return null;
+      }
+      return fromPersisted(JSON.parse(draft));
+    }
+
+    function renderList(id, items, type) {
+      document.getElementById(id).innerHTML = items.map(item => `
+        <div class="priced-row">
+          <span>${escapeHtml(item.label)}</span>
+          <strong>${type === "goal" ? `${money(item.amount)} · ${item.horizon} yr · ${pct(item.growth)}` : `${money(item.amount)} · ${money(item.monthly)}/mo · ${pct(item.growth)}`}</strong>
+        </div>
+      `).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[char]));
+    }
+
+    function animateGapNumber(el, value) {
+      const start = performance.now();
+      const duration = 600;
+      const sign = value >= 0 ? "+" : "";
+      const target = Math.abs(value);
+      function frame(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = `${sign}${(target * eased).toFixed(1)}% / yr`;
+        if (t < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    const scenario = await loadScenario();
+    if (scenario) {
+      const result = project(scenario.basket.goals, scenario.basket.holdings);
+      const gapNumber = document.getElementById("gapNumber");
+      gapNumber.classList.toggle("good", result.gap >= 0);
+      animateGapNumber(gapNumber, result.gap);
+      document.getElementById("moneyRate").textContent = pct(result.moneyRate);
+      document.getElementById("costRate").textContent = pct(result.costRate);
+      document.getElementById("horizon").textContent = `${result.horizon.toFixed(1)} yr`;
+      document.getElementById("dollarLine").textContent = `In ${result.horizon.toFixed(1)} years at these assumptions, ${shortMoney(result.totalGoalToday)} in goals today is projected to cost ${shortMoney(result.totalGoals)}. Your assets are projected to grow to ${shortMoney(result.totalAssets)}.`;
+      document.getElementById("plainEnglish").textContent = `At your current assumptions, your money is growing ${Math.abs(result.gap).toFixed(1)} percentage points ${result.gap >= 0 ? "faster" : "slower"} than your future life is becoming more expensive.`;
+      renderRateChart(document.getElementById("rateChart"), projectionSeries(scenario.basket.goals, scenario.basket.holdings, result.horizon));
+      renderList("goalList", scenario.basket.goals, "goal");
+      renderList("assetList", scenario.basket.holdings, "asset");
+      mountGate({
+        container: document.getElementById("saveGate"),
+        scenario,
+        onSaved(simulatorUrl) {
+          window.location.href = simulatorUrl;
+        }
+      });
+    }
+  </script>
+</body>
+</html>

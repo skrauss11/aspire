@@ -1,1575 +1,302 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0YTMP6NYVB"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-0YTMP6NYVB');
-</script>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Aspire — How much of tomorrow can you afford?</title>
-<meta name="description" content="Inflation isn't a number. It's a vector pointing at the life you want. Aspire measures your personal inflation rate — the only one that matters." />
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-<link rel="apple-touch-icon" sizes="512x512" href="/favicon-512.png" />
-<meta property="og:title" content="Aspire — Inflation is a vector." />
-<meta property="og:description" content="CPI is the average. Aspire is yours. Measure the real rate of inflation for the life you're trying to buy." />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --ink: #0f0e0c;
-    --paper: #f5f1ea;
-    --paper-2: #ebe5db;
-    --accent: #c8451f;
-    --muted: #5a544b;
-    --rule: #d6cec0;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
-  body {
-    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
-  }
-  h1, h2, h3, .serif {
-    font-family: "Fraunces", "Iowan Old Style", "Palatino", Georgia, serif;
-    font-weight: 600; letter-spacing: -0.01em;
-  }
-  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(200,69,31,.3); }
-  a:hover { border-bottom-color: var(--accent); }
-
-  .wrap { max-width: 720px; margin: 0 auto; padding: 0 28px; }
-  .wrap-wide { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
-
-  nav {
-    display: flex; justify-content: space-between; align-items: center; gap: 20px;
-    padding: 28px 0; border-bottom: 1px solid var(--rule);
-  }
-  .logo { font-family: "Fraunces", serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; font-style: italic; white-space: nowrap; }
-  .logo span { color: var(--accent); font-style: normal; font-weight: 700; margin-left: 3px; margin-right: 2px; }
-  nav .nav-cta { font-size: 14px; font-weight: 500; padding: 9px 16px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); white-space: nowrap; }
-  nav .nav-cta:hover { background: var(--ink); color: var(--paper); }
-  @media (max-width: 520px) {
-    nav { padding: 20px 0; gap: 12px; }
-    .logo { font-size: 18px; }
-    nav .nav-cta { font-size: 13px; padding: 7px 14px; }
-  }
-
-  .hero { padding: 88px 0 72px; border-bottom: 1px solid var(--rule); }
-  .eyebrow {
-    text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px;
-    font-weight: 600; color: var(--accent); margin-bottom: 28px;
-  }
-  h1.display {
-    font-size: clamp(42px, 7vw, 76px); line-height: 1.02;
-    margin: 0 0 28px; font-weight: 500;
-  }
-  h1.display em { font-style: italic; color: var(--accent); font-weight: 500; }
-  .lede {
-    font-size: 22px; line-height: 1.45; color: var(--muted);
-    max-width: 580px; margin-bottom: 40px;
-  }
-  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-  .btn {
-    display: inline-block; padding: 14px 22px; border-radius: 999px;
-    font-size: 15px; font-weight: 500; border: 1px solid var(--ink);
-  }
-  .btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-  .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
-  .btn-ghost { background: transparent; color: var(--ink); }
-  .btn-ghost:hover { background: var(--ink); color: var(--paper); }
-  .btn { border-bottom: 1px solid var(--ink); }
-  .btn-primary { border-bottom-color: var(--ink); }
-
-  .proof-strip {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 0; padding: 36px 0; border-bottom: 1px solid var(--rule);
-  }
-  .proof { text-align: center; padding: 10px; border-right: 1px solid var(--rule); }
-  .proof:last-child { border-right: none; }
-  .proof .n { font-family: "Fraunces", serif; font-size: 34px; font-weight: 600; letter-spacing: -0.02em; }
-  .proof .n .unit { color: var(--muted); font-size: 20px; }
-  .proof .l { font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); margin-top: 4px; }
-
-  article.manifesto { padding: 80px 0; }
-  article.manifesto h2 {
-    font-size: 32px; line-height: 1.15; margin: 56px 0 22px;
-    font-weight: 600;
-  }
-  article.manifesto h2 .num {
-    font-size: 14px; color: var(--accent); font-family: "Inter", sans-serif;
-    letter-spacing: 0.2em; text-transform: uppercase; display: block;
-    margin-bottom: 8px; font-weight: 600;
-  }
-  article.manifesto p { margin: 0 0 20px; }
-  article.manifesto ul { padding-left: 22px; margin: 0 0 24px; }
-  article.manifesto li { margin-bottom: 8px; }
-  article.manifesto strong { font-weight: 600; }
-  article.manifesto em { font-style: italic; }
-
-  .pullquote {
-    font-family: "Fraunces", serif; font-size: 32px; line-height: 1.25;
-    font-weight: 500; color: var(--ink); font-style: italic;
-    border-left: 3px solid var(--accent); padding: 8px 0 8px 24px;
-    margin: 40px 0;
-  }
-
-  .formula {
-    background: var(--paper-2); border: 1px solid var(--rule);
-    border-radius: 12px; padding: 28px; margin: 32px 0;
-    font-family: "Fraunces", serif; font-size: 26px; text-align: center;
-    letter-spacing: 0.01em;
-  }
-  .formula .sub { display: block; font-family: "Inter", sans-serif; font-size: 13px; color: var(--muted); margin-top: 12px; letter-spacing: 0.05em; text-transform: uppercase; }
-
-  table.reframe {
-    width: 100%; border-collapse: collapse; margin: 28px 0 36px;
-    font-size: 16px;
-  }
-  table.reframe th, table.reframe td {
-    padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--rule);
-    vertical-align: top;
-  }
-  table.reframe th {
-    font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em;
-    color: var(--muted); font-weight: 600;
-  }
-  table.reframe td:first-child { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--rule); }
-  table.reframe td:last-child { color: var(--ink); font-weight: 500; }
-
-  /* Calculator */
-  .calc {
-    background: var(--ink); color: var(--paper); padding: 80px 0;
-  }
-  .calc h2 { color: var(--paper); font-family: "Fraunces", serif; font-size: 42px; margin: 0 0 12px; font-weight: 500; }
-  .calc .sub { color: #b8b0a2; font-size: 18px; margin-bottom: 40px; }
-  .calc-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(340px, .88fr); gap: 40px; align-items: start; }
-  @media (max-width: 1040px) { .calc-grid { grid-template-columns: 1fr; gap: 32px; } }
-  .goals { }
-  .goal-row {
-    display: grid; grid-template-columns: minmax(140px, 1.25fr) minmax(120px, .9fr) 92px minmax(130px, 1fr) 28px; gap: 10px;
-    align-items: center; padding: 12px 0; border-bottom: 1px solid #2a2824;
-  }
-  .goal-row input, .goal-row select {
-    background: #1a1815; color: var(--paper); border: 1px solid #2a2824;
-    border-radius: 6px; padding: 10px 12px; font-size: 14px;
-    font-family: "Inter", sans-serif; width: 100%; min-width: 0;
-  }
-  .goal-row input:focus, .goal-row select:focus { outline: none; border-color: var(--accent); }
-  .goal-row .remove {
-    background: transparent; border: none; color: #5a544b; cursor: pointer;
-    font-size: 20px; line-height: 1; padding: 0;
-  }
-  .goal-row .remove:hover { color: var(--accent); }
-  .goal-head {
-    display: grid; grid-template-columns: minmax(140px, 1.25fr) minmax(120px, .9fr) 92px minmax(130px, 1fr) 28px; gap: 10px;
-    padding-bottom: 10px; font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.14em; color: #8f8778;
-  }
-  .add-goal {
-    margin-top: 16px; background: transparent; color: var(--paper);
-    border: 1px dashed #3a3832; padding: 12px 18px; border-radius: 8px;
-    font-size: 14px; cursor: pointer; width: 100%; font-family: "Inter", sans-serif;
-  }
-  .add-goal:hover { border-color: var(--accent); color: var(--accent); }
-  .block { margin-bottom: 36px; }
-  .block-title {
-    font-family: "Fraunces", serif; font-size: 22px;
-    margin: 0 0 4px; font-weight: 500; color: var(--paper);
-    letter-spacing: -0.01em;
-  }
-  .block-sub { font-size: 13px; color: #8f8778; margin-bottom: 18px; }
-
-  .holding-head, .holding-row {
-    display: grid; grid-template-columns: minmax(150px, 1.5fr) minmax(110px, .8fr) minmax(130px, 1fr) 28px; gap: 10px;
-    align-items: center;
-  }
-  .holding-head {
-    padding-bottom: 10px; font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.14em; color: #8f8778;
-  }
-  .holding-row { padding: 12px 0; border-bottom: 1px solid #2a2824; }
-  .holding-row input, .holding-row select {
-    background: #1a1815; color: var(--paper); border: 1px solid #2a2824;
-    border-radius: 6px; padding: 10px 12px; font-size: 14px;
-    font-family: "Inter", sans-serif; width: 100%; min-width: 0;
-  }
-  .holding-row input:focus, .holding-row select:focus { outline: none; border-color: var(--accent); }
-  .holding-row .remove {
-    background: transparent; border: none; color: #5a544b; cursor: pointer;
-    font-size: 20px; line-height: 1; padding: 0;
-  }
-  .holding-row .remove:hover { color: var(--accent); }
-
-  .buying-power-hero { padding: 6px 0 24px; border-bottom: 1px solid #2a2824; margin-bottom: 6px; }
-  .buying-power-hero .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #8f8778; }
-  .buying-power-hero .n {
-    font-family: "Fraunces", serif; font-size: 76px; font-weight: 600; line-height: 0.95;
-    margin: 10px 0 10px; letter-spacing: -0.04em; color: var(--accent);
-  }
-  .buying-power-hero .n.maxed { color: #7fb98a; }
-  .buying-power-hero .sub { font-size: 14px; color: #b8b0a2; line-height: 1.45; }
-  .buying-power-hero .pct { color: #b8b0a2; font-size: 38px; letter-spacing: -0.02em; white-space: nowrap; }
-  .scenario-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 28px; }
-  .scenario-btn {
-    background: #1a1815; color: var(--paper); border: 1px solid #2a2824;
-    border-radius: 999px; padding: 10px 14px; cursor: pointer; font-family: "Inter", sans-serif;
-    font-size: 13px;
-  }
-  .scenario-btn:hover, .scenario-btn.active { border-color: var(--accent); color: var(--accent); }
-
-
-  .rate-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px 0 18px; }
-  .rate-duo .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: #8f8778; }
-  .rate-duo .n { font-family: "Fraunces", serif; font-size: 34px; font-weight: 600; line-height: 1; margin-top: 6px; letter-spacing: -0.02em; color: var(--paper); }
-  .rate-duo .n.accent-n { color: var(--accent); }
-
-  .gap-hero { padding: 22px 0 6px; border-top: 1px solid #2a2824; margin-top: 6px; }
-  .gap-hero .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #8f8778; }
-  .gap-hero .n { font-family: "Fraunces", serif; font-size: 60px; font-weight: 600; line-height: 1; margin-top: 8px; letter-spacing: -0.02em; color: var(--accent); }
-  .gap-hero .n.ahead { color: #7fb98a; }
-  .gap-hero .sub { font-size: 14px; color: #b8b0a2; margin-top: 10px; }
-
-
-  .basket-meta {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 20px; padding-top: 16px; border-top: 1px solid #2a2824;
-    font-size: 13px; color: #b8b0a2;
-  }
-  .basket-meta .v { font-family: "Fraunces", serif; font-size: 18px; color: var(--paper); }
-  @media (max-width: 760px) {
-    .goal-head, .holding-head { display: none; }
-    .goal-row, .holding-row { grid-template-columns: 1fr 1fr 34px; }
-    .goal-row input[data-f="label"], .holding-row input[data-f="label"] { grid-column: 1 / -1; }
-    .goal-row input[data-f="amount"], .holding-row input[data-f="amount"] { grid-column: 1; }
-    .goal-row .horizon { grid-column: 2; }
-    .goal-row select { grid-column: 1 / 3; }
-    .holding-row select { grid-column: 2; }
-    .goal-row .remove { grid-column: 3; grid-row: 2 / 4; align-self: stretch; }
-    .holding-row .remove { grid-column: 3; grid-row: 2; align-self: stretch; }
-  }
-
-  .result {
-    background: #1a1815; border: 1px solid #2a2824;
-    border-radius: 12px; padding: 32px; position: sticky; top: 24px;
-  }
-  .result .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: #8f8778; }
-  .result .big {
-    font-family: "Fraunces", serif; font-size: 72px; font-weight: 600;
-    line-height: 1; margin: 12px 0 4px; letter-spacing: -0.02em;
-  }
-  .result .big .accent { color: var(--accent); }
-  .result .caption { font-size: 14px; color: #b8b0a2; margin-bottom: 24px; }
-  .result .row { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #2a2824; font-size: 14px; }
-  .result .row .v { font-family: "Fraunces", serif; font-size: 18px; }
-  .result .gap-row .v { color: var(--accent); }
-  .result .share {
-    margin-top: 24px; display: inline-block; background: var(--accent); color: var(--paper);
-    padding: 12px 20px; border-radius: 999px; font-size: 14px; font-weight: 500; border: none; cursor: pointer;
-    border-bottom: none;
-  }
-  .total-warn { font-size: 12px; color: var(--accent); margin-top: 12px; min-height: 16px; }
-
-  footer {
-    padding: 56px 0 40px; border-top: 1px solid var(--rule);
-    color: var(--muted); font-size: 14px;
-  }
-  footer .foot-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-  footer a { color: var(--muted); border-bottom-color: var(--rule); }
-  .disclaimer { max-width: 560px; margin-top: 8px; font-size: 12px; color: var(--muted); }
-
-  @media (max-width: 640px) {
-    .proof-strip { grid-template-columns: repeat(2, 1fr); }
-    .proof:nth-child(2) { border-right: none; }
-    .proof:nth-child(1), .proof:nth-child(2) { border-bottom: 1px solid var(--rule); }
-    .hero { padding: 56px 0 48px; }
-    article.manifesto h2 { font-size: 26px; margin: 40px 0 18px; }
-    .pullquote { font-size: 24px; padding-left: 18px; }
-    .calc h2 { font-size: 32px; }
-    .result .big { font-size: 56px; }
-  }
-
-  /* ── Email gate modal ── */
-  .gate-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(15,14,12,.88);
-    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
-    backdrop-filter: blur(2px);
-  }
-  .gate-overlay.open { display: flex; }
-  .gate-card {
-    background: var(--paper); color: var(--ink);
-    border-radius: 16px; padding: 48px 40px; max-width: 480px; width: 100%;
-    position: relative; box-shadow: 0 32px 80px rgba(0,0,0,.4);
-  }
-  .gate-card h3 { font-family: "Fraunces", serif; font-size: 30px; font-weight: 500; margin: 0 0 10px; line-height: 1.1; }
-  .gate-card .gate-sub { font-size: 16px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
-  .gate-email {
-    width: 100%; padding: 14px 16px; font-size: 16px; border: 1px solid var(--rule);
-    border-radius: 8px; font-family: "Inter", sans-serif; background: white;
-    margin-bottom: 12px; box-sizing: border-box; color: var(--ink);
-  }
-  .gate-email:focus { outline: none; border-color: var(--ink); }
-  .gate-submit {
-    width: 100%; padding: 15px; background: var(--ink); color: var(--paper);
-    border: none; border-radius: 999px; font-size: 16px; font-weight: 500;
-    cursor: pointer; font-family: "Inter", sans-serif; transition: background .15s;
-  }
-  .gate-submit:hover { background: var(--accent); }
-  .gate-submit:disabled { opacity: 0.55; cursor: not-allowed; }
-  .gate-fine { font-size: 12px; color: var(--muted); margin-top: 14px; text-align: center; line-height: 1.5; }
-  .gate-close {
-    position: absolute; top: 16px; right: 20px; background: transparent;
-    border: none; font-size: 26px; color: var(--muted); cursor: pointer; line-height: 1; padding: 0;
-  }
-  .gate-close:hover { color: var(--ink); }
-  /* Score reveal inside result panel */
-  .score-reveal {
-    display: none; background: var(--accent); border-radius: 10px;
-    padding: 22px 24px; margin-bottom: 16px; color: var(--paper);
-    animation: revealIn .4s ease;
-  }
-  .score-reveal.visible { display: block; }
-  @keyframes revealIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  .score-reveal .s-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; opacity: 0.8; }
-  .score-reveal .s-number { font-family: "Fraunces", serif; font-size: 68px; font-weight: 600; line-height: 1; margin: 6px 0 4px; letter-spacing: -0.02em; }
-  .score-reveal .s-sub { font-size: 13px; opacity: 0.85; line-height: 1.4; }
-  .btn-gate {
-    display: block; width: 100%; padding: 14px; background: var(--accent); color: var(--paper);
-    border: none; border-radius: 999px; font-size: 15px; font-weight: 500;
-    cursor: pointer; font-family: "Inter", sans-serif; text-align: center;
-    margin-top: 20px; border-bottom: none;
-  }
-  .btn-gate:hover { opacity: .88; }
-  .btn-gate:disabled { opacity: 0.4; cursor: default; }
-  .share-ghost {
-    background: transparent; color: #8f8778; border: none; border-bottom: none;
-    font-size: 13px; cursor: pointer; font-family: "Inter", sans-serif;
-    display: block; width: 100%; text-align: center; margin-top: 10px; padding: 4px;
-  }
-  .share-ghost:hover { color: var(--paper); }
-  .share-ghost:hover { color: var(--paper); }
-  @media (max-width: 640px) { .gate-card { padding: 36px 24px; } }
-
-  /* ── Close the Gap Simulator ── */
-  .sim-section {
-    display: none;
-    padding: 64px 0;
-    border-top: 1px solid var(--rule);
-    background: var(--paper);
-  }
-  .sim-section.open { display: block; }
-  .sim-section h2 {
-    font-family: "Fraunces", serif;
-    font-size: 36px;
-    font-weight: 500;
-    margin: 0 0 8px;
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-  }
-  .sim-section .sim-sub {
-    font-size: 16px;
-    color: var(--muted);
-    margin: 0 0 48px;
-    max-width: 560px;
-    line-height: 1.5;
-  }
-  .sim-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: start;
-  }
-  @media (max-width: 840px) { .sim-grid { grid-template-columns: 1fr; gap: 32px; } }
-  .sim-inputs-col h3,
-  .sim-outputs-col h3 {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--muted);
-    margin: 0 0 20px;
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-  }
-  .sim-lever {
-    margin-bottom: 24px;
-  }
-  .sim-lever label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
-  .sim-lever .lever-hint {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 8px;
-    line-height: 1.4;
-  }
-  .sim-lever input[type="number"],
-  .sim-lever input[type="text"] {
-    width: 100%;
-    padding: 10px 14px;
-    font-size: 15px;
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    font-family: "Inter", sans-serif;
-    background: white;
-    box-sizing: border-box;
-    color: var(--ink);
-    transition: border-color .15s;
-  }
-  .sim-lever input:focus { outline: none; border-color: var(--ink); }
-  .return-presets {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    margin-bottom: 6px;
-  }
-  .return-preset {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    padding: 10px 4px;
-    background: white;
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    font-family: "Inter", sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--ink);
-    cursor: pointer;
-    transition: background .12s, border-color .12s, color .12s;
-    line-height: 1.2;
-  }
-  .return-preset span {
-    font-family: "Fraunces", serif;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-  .return-preset:hover { border-color: var(--ink); }
-  .return-preset.active {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
-  }
-  @media (max-width: 640px) {
-    .return-presets { grid-template-columns: repeat(2, 1fr); }
-    .return-preset { padding: 12px 8px; }
-  }
-  .sim-out {
-    background: #f0ebe3;
-    border-radius: 12px;
-    padding: 20px 22px;
-    margin-bottom: 16px;
-  }
-  .sim-out .out-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    color: var(--muted);
-    margin: 0 0 4px;
-    font-family: "Inter", sans-serif;
-  }
-  .sim-out .out-value {
-    font-family: "Fraunces", serif;
-    font-size: 30px;
-    font-weight: 600;
-    color: var(--ink);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    margin: 0 0 4px;
-  }
-  .sim-out.positive .out-value { color: #2a7a3b; }
-  .sim-out.negative .out-value { color: var(--accent); }
-  .sim-out .out-sub {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.45;
-  }
-  .sim-improvement {
-    background: var(--ink);
-    color: var(--paper);
-    border-radius: 12px;
-    padding: 20px 22px;
-    margin-bottom: 16px;
-  }
-  .sim-improvement .out-label { color: rgba(245,241,234,0.65); }
-  .sim-improvement .out-value { color: var(--paper); font-size: 26px; }
-  .sim-improvement .out-sub { color: rgba(245,241,234,0.75); }
-  .sim-cta-strip {
-    display: none;
-    margin-top: 40px;
-    padding-top: 32px;
-    border-top: 1px solid var(--rule);
-    text-align: center;
-  }
-  .sim-cta-strip.show { display: block; }
-  .sim-cta-strip p {
-    font-size: 15px;
-    color: var(--muted);
-    margin: 0 0 16px;
-  }
-  .sim-cta-strip a {
-    display: inline-block;
-    background: var(--accent);
-    color: var(--paper);
-    padding: 13px 28px;
-    border-radius: 999px;
-    font-size: 15px;
-    font-weight: 500;
-    font-family: "Inter", sans-serif;
-    text-decoration: none;
-    border-bottom: none;
-  }
-  .sim-cta-strip a:hover { opacity: .88; }
-  .btn-sim-trigger {
-    display: none;
-    width: 100%;
-    margin-top: 14px;
-    padding: 13px;
-    background: transparent;
-    border: 1.5px solid var(--ink);
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--ink);
-    cursor: pointer;
-    font-family: "Inter", sans-serif;
-    text-align: center;
-    transition: background .15s, color .15s;
-  }
-  .btn-sim-trigger.show { display: block; }
-  .btn-sim-trigger:hover { background: var(--ink); color: var(--paper); }
-
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aspire | Calculate Your Gap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#0f0e0c; --paper:#f5f1ea; --paper2:#ebe3d6; --muted:#6f675b; --rule:#d8cfbf; --accent:#c8451f; --green:#2f7d48; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter,system-ui,sans-serif; line-height:1.5; }
+    a { color:inherit; text-decoration:none; }
+    .wrap, .wrap-wide { width:min(1120px, calc(100% - 40px)); margin:0 auto; }
+    .wrap { width:min(840px, calc(100% - 40px)); }
+    nav { height:76px; display:flex; justify-content:space-between; align-items:center; }
+    .logo { font-family:Fraunces,serif; font-weight:650; font-size:25px; }
+    .logo span { color:var(--accent); margin-left:2px; }
+    .nav-cta, .btn, button { border:0; border-radius:999px; cursor:pointer; font:600 14px/1 Inter,sans-serif; }
+    .nav-cta { background:var(--ink); color:var(--paper); padding:12px 18px; }
+    .hero { padding:70px 0 56px; }
+    .eyebrow { color:var(--accent); text-transform:uppercase; letter-spacing:.16em; font-size:12px; font-weight:700; margin-bottom:18px; }
+    h1, h2, h3 { font-family:Fraunces,serif; margin:0; letter-spacing:0; }
+    h1 { font-size:clamp(42px, 7vw, 76px); line-height:.98; max-width:860px; }
+    .lede { color:var(--muted); font-size:19px; max-width:660px; margin:22px 0 0; }
+    .cta-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:30px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding:0 20px; }
+    .btn-primary { background:var(--accent); color:var(--paper); }
+    .btn-ghost { border:1px solid var(--rule); }
+    .proof-strip { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--rule); border-radius:8px; overflow:hidden; margin-bottom:56px; }
+    .proof { padding:22px; border-right:1px solid var(--rule); background:rgba(255,255,255,.24); }
+    .proof:last-child { border-right:0; }
+    .proof .n { font-family:Fraunces,serif; font-size:36px; line-height:1; }
+    .proof .unit { color:var(--muted); font-size:18px; }
+    .proof .l { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.12em; margin-top:8px; }
+    .product-flow { background:var(--ink); color:var(--paper); padding:66px 0 76px; }
+    .product-flow h2 { font-size:42px; }
+    .product-flow .sub { color:#b8b0a2; max-width:680px; margin:12px 0 26px; }
+    .scenario-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
+    .scenario-btn { background:#24211d; color:var(--paper); padding:12px 18px; border:1px solid #342f28; }
+    .scenario-btn.active { background:var(--paper); color:var(--ink); }
+    .calc-grid { display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:22px; align-items:start; }
+    .block, .summary-card { background:#171512; border:1px solid #2a2722; border-radius:8px; padding:22px; }
+    .block + .block { margin-top:18px; }
+    .block-title { font-size:24px; }
+    .block-sub, .hint { color:#9f9688; font-size:13px; margin-top:4px; }
+    .row-head, .goal-row, .holding-row { display:grid; gap:10px; align-items:center; }
+    .row-head { color:#8f8778; font-size:11px; text-transform:uppercase; letter-spacing:.12em; margin:18px 0 8px; }
+    .goal-row { grid-template-columns:1.2fr 130px 82px 1.25fr 34px; margin-bottom:10px; }
+    .holding-row { grid-template-columns:1.2fr 130px 1.25fr 34px; margin-bottom:10px; }
+    input, select { width:100%; min-height:42px; border:1px solid #37322b; border-radius:8px; padding:0 11px; background:#0f0e0c; color:var(--paper); font:500 14px Inter,sans-serif; }
+    select { color:#f5f1ea; }
+    .remove { width:34px; height:34px; background:#24211d; color:#b8b0a2; border-radius:50%; }
+    .add-goal { background:transparent; color:#d7cfc2; border:1px solid #37322b; padding:11px 14px; border-radius:8px; }
+    .basket-meta { display:flex; justify-content:space-between; border-top:1px solid #2a2722; margin-top:18px; padding-top:14px; color:#b8b0a2; }
+    .basket-meta strong { color:var(--paper); font-family:Fraunces,serif; font-size:23px; }
+    .summary-card { position:sticky; top:20px; }
+    .summary-card .label { color:#8f8778; text-transform:uppercase; letter-spacing:.14em; font-size:11px; }
+    .summary-card .gap { font-family:Fraunces,serif; font-size:58px; line-height:1; margin:10px 0; color:#f0b35b; transition:color .2s ease; }
+    .summary-card .gap.good { color:#7fb98a; }
+    .metric { display:flex; justify-content:space-between; padding:13px 0; border-top:1px solid #2a2722; color:#b8b0a2; }
+    .metric strong { color:var(--paper); }
+    .submit-row { margin-top:22px; display:grid; gap:10px; }
+    .submit-row button { background:var(--accent); color:var(--paper); min-height:48px; }
+    .error { color:#ffb199; min-height:20px; font-size:13px; }
+    footer { padding:28px 0; color:var(--muted); font-size:13px; }
+    .foot-row { display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; border-top:1px solid var(--rule); padding-top:22px; }
+    @media (max-width: 860px) {
+      .proof-strip, .calc-grid { grid-template-columns:1fr; }
+      .proof { border-right:0; border-bottom:1px solid var(--rule); }
+      .proof:last-child { border-bottom:0; }
+      .summary-card { position:static; }
+      .goal-row, .holding-row, .row-head { grid-template-columns:1fr; }
+      .row-head { display:none; }
+    }
+  </style>
 </head>
 <body>
-
-<div class="wrap-wide">
-  <nav>
-    <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
-    <div style="display:flex;align-items:center;gap:24px;">
-      <a href="/manifesto" style="font-size:14px;font-weight:500;color:var(--ink);border-bottom:1px solid var(--rule);">Manifesto</a>
-      <a class="nav-cta" href="#calculator">Calculate yours</a>
-    </div>
-  </nav>
-</div>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="wrap">
-    <div class="eyebrow">A new way to measure your money</div>
-    <h1 class="display">Inflation isn't a number.<br />It's a <em>vector.</em></h1>
-    <p class="lede">CPI is the average. It describes no one. The only rate of inflation that matters is the rate for the life <em>you</em> are trying to buy.</p>
-    <div class="cta-row">
-      <a href="#calculator" class="btn btn-primary">Find your rate →</a>
-      <a href="#manifesto" class="btn btn-ghost">Read the manifesto</a>
-    </div>
-  </div>
-</section>
-
-<!-- PROOF STRIP -->
-<div class="wrap-wide">
-  <div class="proof-strip">
-    <div class="proof"><div class="n" data-rate="cpi">3.3<span class="unit">%</span></div><div class="l">US CPI, 10yr</div></div>
-    <div class="proof"><div class="n" data-rate="home">6.5<span class="unit">%</span></div><div class="l">US home prices</div></div>
-    <div class="proof"><div class="n" data-rate="qqq">20.5<span class="unit">%</span></div><div class="l">Nasdaq 100, 10yr</div></div>
-    <div class="proof"><div class="n" data-rate="btc">64.4<span class="unit">%</span></div><div class="l">Bitcoin, 10yr</div></div>
-  </div>
-</div>
-
-<!-- MANIFESTO -->
-<article class="manifesto" id="manifesto">
-  <div class="wrap">
-    <p style="font-size:18px;line-height:1.6;color:var(--muted);max-width:600px;margin:0 0 40px;padding-top:8px;">Inflation has quietly eroded the ability of millions of Americans to afford the life they want — not because they aren't working hard, but because nobody ever gave them the honest numbers. Aspire is dedicated to that. Understanding how personal inflation works. Measuring your own rate. Planning for the future you're working toward.</p>
-    <p style="font-size:18px;font-weight:600;color:var(--ink);max-width:600px;margin:0 0 56px;">You have goals. Those goals have a cost growth rate. Aspire shows whether your money is keeping up.</p>
-    <h2><span class="num">01 / The lie of the single number</span>One number, billions of lives</h2>
-    <p>Every month, the Bureau of Labor Statistics publishes a number. Last month it was 3.1%. The headlines say inflation is "cooling." Your uncle says he remembers when gas was a dollar. You nod, you refinance nothing, you keep saving.</p>
-    <p>That number — CPI — is an average. It's the price change of a basket of goods designed to represent the typical American household: some groceries, some rent, some gasoline, some medical care, some haircuts. It is a real number. It is also, for most people working toward something specific, a deeply misleading one.</p>
-    <p>Because <strong>the basket in the report is not your basket.</strong></p>
-
-    <h2><span class="num">02 / The basket you actually care about</span>What you're really trying to buy</h2>
-    <p>Make a list of the things you want your money to turn into over the next ten years. For most people reading this, it looks something like:</p>
-    <ul>
-      <li>A house. A specific one, in a specific zip code.</li>
-      <li>Equity in great companies. Index funds at minimum. Maybe a few names you have conviction about.</li>
-      <li>Maybe Bitcoin. Maybe gold.</li>
-      <li>Tuition — yours, or a child's.</li>
-      <li>Time — a year off, a slower career, a window to build something.</li>
-      <li>Healthcare that doesn't bankrupt you.</li>
-      <li>Experiences you can't get back — weddings, trips, your parents while they're still here.</li>
-    </ul>
-    <p>None of those things inflate at 3%.</p>
-
-    <h2><span class="num">03 / The thesis</span>Inflation is a vector</h2>
-    <p>CPI is just a number — no direction, no destination. It measures an imaginary average family. Your inflation is a vector. It's aimed directly at the life you actually want.</p>
-    <div class="pullquote">Your inflation is a vector. It points at the specific future you're trying to buy — and its magnitude depends entirely on which direction you're facing.</div>
-    <p>If the life you're aiming at is made of homes and blue-chip equity and ownership, your personal inflation rate isn't 3%. It's closer to 12%. Maybe 15%. Which means a 4% savings account isn't "beating inflation." It's losing <strong>eight to eleven points a year</strong> to the life you told yourself you were working toward.</p>
-
-    <h2><span class="num">04 / The consequence</span>The gap hiding in plain sight</h2>
-    <p>CPI doesn't know what you're saving for. A parent trying to fund a college education. Someone working toward homeownership in their city. A person who just wants their money to keep pace with the future they have in mind. These goals all have their own inflation rates — and for most people, those rates are higher than whatever's in the news.</p>
-    <p>We have built an entire retail financial system around the wrong benchmark — one that tells people they are keeping up while the things they actually want drift quietly out of reach.</p>
-    <p>Call it what it is: <strong>a silent gap between your money and your future.</strong> Paid in foregone ownership. Paid in "I'll buy next year." Paid in the slow, almost-invisible widening of the distance between your savings balance and the life you were actually building toward.</p>
-
-    <h2><span class="num">05 / A new number</span>The formula</h2>
-    <p>Aspire exists to give people a different number. Not a market forecast. Not a portfolio tip. A <em>measurement.</em></p>
-    <div class="formula">
-      π<sub>p</sub> = Σ ( w<sub>i</sub> · r<sub>i</sub> )
-      <span class="sub">Your personal inflation rate = the weighted rate of the basket you're building</span>
-    </div>
-    <p>Tell us your basket — how much of your future is home, how much is equity, how much is BTC, how much is tuition — and we'll hand you back the only cost growth rate that matters to your life. And then we'll hand you <strong>your gap</strong>: the distance between what your money is earning and what your future is costing.</p>
-    <p>Most people, when they see their real number for the first time, have the same reaction. It is not panic. It is recognition.</p>
-    <div class="pullquote">So that's what I've been feeling.</div>
-
-    <h2><span class="num">06 / The reframe</span>New questions, not new answers</h2>
-    <table class="reframe">
-      <thead><tr><th>The old question</th><th>The new question</th></tr></thead>
-      <tbody>
-        <tr><td>Am I beating inflation?</td><td>Am I beating <em>my</em> inflation?</td></tr>
-        <tr><td>What's the CPI?</td><td>What's the rate of the life I'm trying to buy?</td></tr>
-        <tr><td>Is my cash safe?</td><td>Is my cash keeping up with what I'm saving <em>for</em>?</td></tr>
-        <tr><td>Am I ahead?</td><td>Of what?</td></tr>
-      </tbody>
-    </table>
-    <p>The point is not to be anxious. The point is to be <strong>accurate.</strong> You cannot plan for a future you are mis-measuring. You cannot close a gap you cannot see.</p>
-
-    <h2><span class="num">07 / The playbook</span>What to do Monday morning</h2>
-    <p><strong>Name your basket.</strong> Ten minutes. Write what you are actually saving for, in rough weights. <em>50% a house in Denver. 30% index funds. 15% Bitcoin. 5% a year off in 2030.</em> Most people have never written this down. That alone is worth the exercise.</p>
-    <p><strong>Price each line.</strong> Use trailing 5- or 10-year rates. Don't project — just use what's already happened.</p>
-    <p><strong>Do the weighted average.</strong> That's your personal inflation rate. It is almost certainly between 8% and 15%.</p>
-    <p><strong>Find your gap.</strong> Subtract what your cash is earning, net of tax. That's your gap — the number your life is quietly paying every year you keep the status quo.</p>
-    <p><strong>Ask the hard question.</strong> Is your allocation shaped like your basket? If your basket is 50% a house and 40% equity, and your net worth is 70% cash, you are not conservative. You are <em>aggressively short the life you want.</em></p>
-    <p><strong>Change one thing.</strong> Not everything. One. Small, irreversible moves compound faster than big plans you never execute.</p>
-    <p><strong>Re-run it every year.</strong> The point isn't to solve this once. The point is to stop flying blind.</p>
-
-    <div class="pullquote">The denominator is the whole argument.</div>
-  </div>
-</article>
-
-<!-- CALCULATOR -->
-<section class="calc" id="calculator">
   <div class="wrap-wide">
-    <h2>See what your life will actually cost in the future</h2>
-    <div class="sub">Tell us what you’re planning for, and we’ll show what it may cost — and how close you are.</div>
+    <nav>
+      <a class="logo" href="/">Aspire<span aria-hidden="true">Δ</span></a>
+      <div style="display:flex;align-items:center;gap:18px;">
+        <a href="/manifesto">Manifesto</a>
+        <a class="nav-cta" href="#calculator">Calculate yours</a>
+      </div>
+    </nav>
+  </div>
 
-    <div class="scenario-row">
-      <button class="scenario-btn active" data-scenario="home" onclick="setScenario('home')">Buy a home</button>
-      <button class="scenario-btn" data-scenario="family" onclick="setScenario('family')">Plan your future</button>
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Personal inflation index</div>
+      <h1>Your gap is the rate between your money and your future.</h1>
+      <p class="lede">Build the basket you are trying to buy, add the assets you already own, and see whether your money growth is keeping pace with your cost growth.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#calculator">See your gap</a>
+        <a class="btn btn-ghost" href="/manifesto">Read the manifesto</a>
+      </div>
     </div>
+  </section>
 
-    <div class="calc-grid">
-      <div>
-        <div class="block">
-          <h3 class="block-title">What are you planning for?</h3>
-          <div class="block-sub">What it costs today</div>
-          <div class="goal-head">
-            <div>What</div>
-            <div>Cost today</div>
-            <div class="h-horizon">When</div>
-            <div class="h-asset">Grows like</div>
-            <div class="h-remove"></div>
-          </div>
-          <div id="goals"></div>
-          <button class="add-goal" onclick="addGoal()">+ Add a goal</button>
+  <div class="wrap-wide">
+    <div class="proof-strip" id="proofStrip">
+      <div class="proof"><div class="n" data-rate="cpi">3.3<span class="unit">%</span></div><div class="l">US CPI, 10yr</div></div>
+      <div class="proof"><div class="n" data-rate="home">6.5<span class="unit">%</span></div><div class="l">US home prices</div></div>
+      <div class="proof"><div class="n" data-rate="qqq">20.7<span class="unit">%</span></div><div class="l">Nasdaq 100, 10yr</div></div>
+      <div class="proof"><div class="n" data-rate="btc">61.6<span class="unit">%</span></div><div class="l">Bitcoin, 10yr</div></div>
+    </div>
+  </div>
 
-          <div class="basket-meta">
-            <div>Total cost today</div>
-            <div class="v">$<span id="total-today">0</span></div>
-          </div>
-          <div class="basket-meta" style="border-top:none;padding-top:0;margin-top:8px;">
-            <div>Estimated future cost</div>
-            <div class="v">$<span id="total-future">0</span></div>
-          </div>
-        </div>
-
-        <div class="block">
-          <h3 class="block-title">What do you already have saved?</h3>
-          <div class="block-sub">Your current savings and investments</div>
-          <div class="holding-head">
-            <div>Account or asset</div>
-            <div>Amount today</div>
-            <div>Money grows like</div>
-            <div></div>
-          </div>
-          <div id="holdings"></div>
-          <button class="add-goal" onclick="addHolding()">+ Add a holding</button>
-
-          <div class="basket-meta">
-            <div>Total available today</div>
-            <div class="v">$<span id="total-holdings">0</span></div>
-          </div>
-        </div>
+  <main class="product-flow" id="calculator">
+    <div class="wrap-wide">
+      <h2>Calculate your gap</h2>
+      <p class="sub">Choose a historical benchmark, then edit the forward assumption. This is your assumption, not a prediction.</p>
+      <div class="scenario-row">
+        <button class="scenario-btn active" type="button" data-scenario="home">Buy a home</button>
+        <button class="scenario-btn" type="button" data-scenario="future">Plan your future</button>
       </div>
 
-      <div class="result">
-        <div class="buying-power-hero">
-          <div class="label">What you’re on track to afford</div>
-          <div class="n" id="buying-power-n">$<span id="buying-power">—</span> <span class="pct">(<span id="buying-power-pct">—</span>)</span></div>
-          <div class="sub" id="buying-power-copy">Add goals and holdings to see what your money may actually buy.</div>
-        </div>
+      <div class="calc-grid">
+        <section>
+          <div class="block">
+            <h3 class="block-title">What are you planning for?</h3>
+            <p class="block-sub">Cost today, timing, and cost growth assumption.</p>
+            <div class="row-head goal-row"><div>What</div><div>Cost today</div><div>When</div><div>Grows like</div><div></div></div>
+            <div id="goals"></div>
+            <button class="add-goal" type="button" id="addGoal">+ Add a goal</button>
+            <div class="basket-meta"><span>Total cost today</span><strong id="totalToday">$0</strong></div>
+            <div class="basket-meta" style="border-top:0;margin-top:4px;padding-top:0;"><span>Estimated future cost</span><strong id="totalFuture">$0</strong></div>
+          </div>
 
-        <div class="gap-hero" style="padding-top:14px;">
+          <div class="block">
+            <h3 class="block-title">What do you already have saved?</h3>
+            <p class="block-sub">Current assets and money growth assumption.</p>
+            <div class="row-head holding-row"><div>Account or asset</div><div>Amount today</div><div>Money grows like</div><div></div></div>
+            <div id="holdings"></div>
+            <button class="add-goal" type="button" id="addHolding">+ Add a holding</button>
+            <div class="basket-meta"><span>Total available today</span><strong id="totalHoldings">$0</strong></div>
+          </div>
+        </section>
+
+        <aside class="summary-card">
           <div class="label">Your gap</div>
-          <div class="n" id="gap-n" style="font-size:40px;"><span id="gap-prefix">You need to improve by </span><span id="gap">—</span>% per year</div>
-          <div class="sub" id="gap-copy">Are you keeping up or falling behind?</div>
-        </div>
-
-        <div class="rate-duo">
-          <div>
-            <div class="label">Cost growth</div>
-            <div class="n accent-n"><span id="pi">—</span>%</div>
+          <div class="gap" id="gapValue">—</div>
+          <p class="hint" id="gapCopy">Add goals and holdings to preview the rate gap.</p>
+          <div class="metric"><span>Money growth</span><strong id="moneyRate">—</strong></div>
+          <div class="metric"><span>Cost growth</span><strong id="costRate">—</strong></div>
+          <div class="metric"><span>Weighted horizon</span><strong id="horizon">—</strong></div>
+          <div class="submit-row">
+            <button type="button" id="submitScenario">See your gap</button>
+            <div class="error" id="formError"></div>
           </div>
-          <div>
-            <div class="label">Money growth</div>
-            <div class="n"><span id="pp">—</span>%</div>
-          </div>
-        </div>
-        <div class="row"><span>You have</span><span class="v"><span id="time-horizon">—</span> years</span></div>
-
-        <div class="score-reveal" id="scoreReveal">
-          <div class="s-label">Aspire Score</div>
-          <div class="s-number" id="scoreNumber">—</div>
-          <div class="s-sub" id="scoreMatch"></div>
-        </div>
-
-        <div class="caption" id="caption" style="margin-top:18px;">This gap compounds every year.</div>
-        <div class="total-warn" id="warn"></div>
-        <button class="btn-gate" id="gateBtn" onclick="openGate()">See how to close the gap →</button>
-        <button class="share-ghost" onclick="shareRate()">Share this result</button>
-        <button class="btn-sim-trigger" id="simTriggerBtn" onclick="openSimulator()">See What Closes the Gap →</button>
+        </aside>
       </div>
     </div>
-  </div>
-</section>
+  </main>
 
-
-<!-- CLOSE THE GAP SIMULATOR -->
-<section class="sim-section" id="simSection">
-  <div class="wrap-wide">
-    <h2>Close the Gap Simulator</h2>
-    <p class="sim-sub">Adjust a few assumptions to see how your numbers could change. Educational planning, not financial advice.</p>
-
-    <div class="sim-grid">
-      <div class="sim-inputs-col">
-        <h3>Adjust the Plan</h3>
-
-        <div class="sim-lever">
-          <label for="simSavings">Additional monthly savings</label>
-          <div class="lever-hint">How much more could you put toward this goal each month?</div>
-          <input type="number" id="simSavings" min="0" step="100" value="0" oninput="runSim()" />
-        </div>
-
-        <div class="sim-lever">
-          <label for="simReturn">Expected portfolio return (%)</label>
-          <div class="lever-hint">Pick a benchmark or enter your own assumption.</div>
-          <div class="return-presets" id="returnPresets">
-            <button type="button" class="return-preset" data-rate="5"  onclick="setReturnPreset(5, this)">Conservative<span>5%</span></button>
-            <button type="button" class="return-preset" data-rate="10" onclick="setReturnPreset(10, this)">Market avg<span>10%</span></button>
-            <button type="button" class="return-preset" data-rate="15" onclick="setReturnPreset(15, this)">Aggressive<span>15%</span></button>
-            <button type="button" class="return-preset" data-rate="custom" onclick="setReturnPreset('custom', this)">Custom</button>
-          </div>
-          <input type="number" id="simReturn" min="0" max="50" step="0.1" oninput="onReturnInput()" style="margin-top:10px;" />
-        </div>
-
-        <div class="sim-lever">
-          <label for="simYears">Years until goal</label>
-          <div class="lever-hint">How long do you have until you want to reach this goal?</div>
-          <input type="number" id="simYears" min="1" max="40" step="1" oninput="runSim()" />
-        </div>
-
-        <div class="sim-lever">
-          <label for="simTarget">Target goal value (today’s dollars)</label>
-          <div class="lever-hint">What does this goal cost in today’s dollars?</div>
-          <input type="number" id="simTarget" min="0" step="1000" oninput="runSim()" />
-        </div>
-
-        <div class="sim-lever">
-          <label for="simAspireRate">Cost growth (%)</label>
-          <div class="lever-hint">How fast do we assume your goal’s cost grows each year?</div>
-          <input type="number" id="simAspireRate" min="0" max="20" step="0.1" oninput="runSim()" />
-        </div>
-      </div>
-
-      <div class="sim-outputs-col">
-        <h3>Updated Projections</h3>
-
-        <div class="sim-out" id="simOutBP">
-          <div class="out-label">What you’re on track to afford</div>
-          <div class="out-value" id="simBP">—</div>
-          <div class="out-sub" id="simBPSub">Adjust the inputs to see your projection.</div>
-        </div>
-
-        <div class="sim-out" id="simOutGap">
-          <div class="out-label">Your gap</div>
-          <div class="out-value" id="simGap">—</div>
-          <div class="out-sub">Annual difference between your portfolio growth and the inflation rate of your goal.</div>
-        </div>
-
-        <div class="sim-improvement" id="simOutImprove">
-          <div class="out-label">Gap Improvement</div>
-          <div class="out-value" id="simImprove">—</div>
-          <div class="out-sub" id="simImproveSub">—</div>
-        </div>
-
-        <div class="sim-out" id="simOutReqReturn">
-          <div class="out-label">Required annual return to fully close the gap</div>
-          <div class="out-value" id="simReqReturn">—</div>
-          <div class="out-sub">Annual return needed for your current assets and savings to fully match the future cost of your goal. This is a benchmark, not a recommendation.</div>
-        </div>
-
-        <div class="sim-out" id="simOutReqSavings">
-          <div class="out-label">Required monthly savings to fully close the gap</div>
-          <div class="out-value" id="simReqSavings">—</div>
-          <div class="out-sub">Estimated additional monthly savings needed to fully match the future cost of your goal, at the selected return rate.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sim-cta-strip" id="simCTAStrip">
-      <p>Your gap compounds every month you wait. The Aspire Tracker monitors it automatically.</p>
-      <a href="#" onclick="openGate('tracker'); return false;" style="display:inline-block;background:#c8451f;color:#f5f1ea;padding:13px 28px;border-radius:999px;font-size:15px;font-weight:500;font-family:'Inter',sans-serif;text-decoration:none;border-bottom:none;">Get early access to the Tracker →</a>
-    </div>
-  </div>
-</section>
-<!-- POST-SUBMIT EXTRAS: Aspire Index card + footer reassurance -->
-<section id="postSubmitExtras">
-  <style>
-    #postSubmitExtras { display:none; }
-    #postSubmitExtras.show { display:block; }
-    .index-section { background:#efe9df; padding:80px 0 60px; border-top:1px solid rgba(15,14,12,0.08); }
-    .index-section h2 { font-family:'Fraunces',Georgia,serif; font-style:italic; font-weight:500; font-size:34px; line-height:1.15; margin:0 0 8px; color:var(--ink); letter-spacing:-0.01em; }
-    .index-section .lede { font-size:16px; line-height:1.6; color:var(--muted); max-width:560px; margin:0 0 36px; }
-    .index-card { display:grid; grid-template-columns: 1fr; gap:0; background:var(--paper); border:1px solid rgba(15,14,12,0.10); border-radius:16px; overflow:hidden; max-width:760px; }
-    @media (min-width:680px){ .index-card { grid-template-columns: 280px 1fr; } }
-    .index-card .meta { padding:28px 28px 24px; }
-    .index-card .badge { font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); font-weight:600; margin:0 0 10px; }
-    .index-card h3 { font-family:'Fraunces',Georgia,serif; font-style:italic; font-weight:500; font-size:24px; margin:0 0 6px; color:var(--ink); }
-    .index-card .year { font-size:13px; color:var(--muted); margin:0 0 18px; }
-    .index-card .row-then-now { display:flex; gap:24px; margin:0 0 14px; }
-    .index-card .row-then-now > div { flex:1; }
-    .index-card .row-then-now .label { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 4px; }
-    .index-card .row-then-now .value { font-family:'Fraunces',Georgia,serif; font-size:22px; color:var(--ink); }
-    .index-card .delta { font-size:14px; color:var(--accent); font-weight:500; margin:8px 0 0; }
-    .index-card .image { background:linear-gradient(135deg,#c8451f 0%,#8a2c12 100%); display:flex; align-items:center; justify-content:center; min-height:180px; color:#f5f1ea; font-family:'Fraunces',Georgia,serif; font-style:italic; font-size:42px; }
-    .reassure { padding:40px 0 80px; text-align:center; }
-    .reassure p { font-size:15px; color:var(--muted); max-width:560px; margin:0 auto 14px; line-height:1.6; }
-    .reassure .links a { color:var(--ink); text-decoration:none; border-bottom:1px solid rgba(15,14,12,0.2); margin:0 10px; font-size:14px; }
-    .reassure .links a:hover { border-bottom-color:var(--accent); color:var(--accent); }
-  </style>
-
-  <div class="index-section">
+  <footer>
     <div class="wrap-wide">
-      <h2>Inflation hides in the things you grew up watching.</h2>
-      <p class="lede">The Aspire Index measures how the life of an average movie character has inflated. Here’s one.</p>
-      <div class="index-card">
-        <div class="image">Δ</div>
-        <div class="meta">
-          <p class="badge">The Aspire Index — Vol. 1</p>
-          <h3>The McCallister House, Home Alone</h3>
-          <p class="year">Winnetka, IL · 1988 → 2025</p>
-          <div class="row-then-now">
-            <div>
-              <div class="label">Then (1988)</div>
-              <div class="value">$875,000</div>
-            </div>
-            <div>
-              <div class="label">Sold (Jan 2025)</div>
-              <div class="value">$5.5M</div>
-            </div>
-          </div>
-          <p class="delta">Δ Up 5.1% per year — well above CPI.</p>
-        </div>
+      <div class="foot-row">
+        <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
+        <div>© 2026 · <a href="/manifesto">Manifesto</a> · <a href="mailto:hello@aspirerate.com">hello@aspirerate.com</a></div>
       </div>
+      <p>Outputs are educational measurements, not investment advice. Past rates are not guarantees of future results.</p>
     </div>
-  </div>
+  </footer>
 
-  <div class="reassure">
-    <div class="wrap-wide">
-      <p>Your Aspire Score recalculates the 1st of every month. Watch your inbox.</p>
-      <div class="links">
-        <a href="#manifesto">Manifesto</a>
-        <a href="https://x.com/aspirerate" target="_blank" rel="noopener">Follow on X</a>
-      </div>
-    </div>
-  </div>
-</section>
+  <script type="module">
+    import { project } from "/lib/aspire.js";
+    import { DRAFT_KEY, toPersisted } from "/lib/schema.js";
+    import { loadRates, ratesByKey, rateForKey, groupedOptions } from "/lib/rates.js";
+    import { money, shortMoney, signedPct, pct } from "/lib/format.js";
 
-<footer>
-  <div class="wrap-wide">
-    <div class="foot-row">
-      <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
-      <div>© 2026 · <a href="#manifesto">Manifesto</a> · <a href="#calculator">Calculator</a> · <a href="mailto:hello@aspirerate.com">hello@aspirerate.com</a></div>
-    </div>
-    <div class="disclaimer" id="updated-stamp" style="margin-bottom:12px;">
-      Rates reflect trailing 10-year CAGR. Sources: Yahoo Finance, FRED.
-    </div>
-    <div class="disclaimer">
-      Aspire is a measurement and planning tool. It is not investment advice. Past rates of return are not guarantees of future results. The rate of change for specific assets can be negative.
-    </div>
-  </div>
-</footer>
-
-<script>
-  // Baseline rates (trailing 10-yr CAGR). Overwritten by rates.json at runtime.
-  const assetTypes = [
-    // Homes — national + metros
-    { key: "home",             name: "Home — US national",                 rate: 6.45,  group: "Home" },
-    { key: "home_nyc",         name: "Home — New York, NY",                rate: 5.18,  group: "Home" },
-    { key: "home_la",          name: "Home — Los Angeles, CA",             rate: 6.26,  group: "Home" },
-    { key: "home_sf",          name: "Home — San Francisco, CA",           rate: 3.73,  group: "Home" },
-    { key: "home_seattle",     name: "Home — Seattle, WA",                 rate: 6.87,  group: "Home" },
-    { key: "home_boston",      name: "Home — Boston, MA",                  rate: 5.84,  group: "Home" },
-    { key: "home_chicago",     name: "Home — Chicago, IL",                 rate: 5.19,  group: "Home" },
-    { key: "home_austin",      name: "Home — Austin, TX",                  rate: 4.24,  group: "Home" },
-    { key: "home_dallas",      name: "Home — Dallas, TX",                  rate: 6.03,  group: "Home" },
-    { key: "home_houston",     name: "Home — Houston, TX",                 rate: 4.48,  group: "Home" },
-    { key: "home_denver",      name: "Home — Denver, CO",                  rate: 5.19,  group: "Home" },
-    { key: "home_miami",       name: "Home — Miami, FL",                   rate: 7.00,  group: "Home" },
-    { key: "home_phoenix",     name: "Home — Phoenix, AZ",                 rate: 6.80,  group: "Home" },
-    { key: "home_nashville",   name: "Home — Nashville, TN",               rate: 7.10,  group: "Home" },
-    { key: "home_atlanta",     name: "Home — Atlanta, GA",                 rate: 7.09,  group: "Home" },
-    { key: "home_dc",          name: "Home — Washington, DC",              rate: 4.09,  group: "Home" },
-    // Equities & alternatives
-    { key: "sp500",            name: "S&P 500 / broad index",              rate: 14.85, group: "Markets" },
-    { key: "qqq",              name: "Nasdaq 100 / tech",                  rate: 20.48, group: "Markets" },
-    { key: "single",           name: "Single-name mega-cap (NVDA)",        rate: 68.40, group: "Markets" },
-    { key: "btc",              name: "Bitcoin",                            rate: 64.36, group: "Markets" },
-    { key: "gold",             name: "Gold",                               rate: 13.66, group: "Markets" },
-    // Tuition
-    { key: "tuition_private",  name: "Tuition — Private 4-year",           rate: 4.20,  group: "Tuition" },
-    { key: "tuition_public_in",name: "Tuition — Public 4-year (in-state)", rate: 3.10,  group: "Tuition" },
-    { key: "tuition_public_out",name: "Tuition — Public 4-year (out-of-state)", rate: 3.70, group: "Tuition" },
-    // Life costs
-    { key: "health",           name: "Healthcare",                         rate: 2.60,  group: "Life costs" },
-    { key: "car",              name: "New car",                            rate: 1.98,  group: "Life costs" },
-    { key: "cpi",              name: "Cost of living (CPI)",               rate: 3.33,  group: "Life costs" },
-    // Cash
-    { key: "cash",             name: "Cash / HYSA",                        rate: 4.00,  group: "Cash" },
-    { key: "checking",         name: "Checking (no yield)",                rate: 0.50,  group: "Cash" },
-  ];
-
-  async function hydrateRates() {
-    try {
-      const r = await fetch('rates.json', { cache: 'no-store' });
-      if (!r.ok) return;
-      const data = await r.json();
-      (data.rates || []).forEach(live => {
-        const a = assetTypes.find(x => x.key === live.key);
-        if (a && typeof live.cagr === 'number') a.rate = live.cagr;
-      });
-      document.querySelectorAll('[data-rate]').forEach(el => {
-        const k = el.getAttribute('data-rate');
-        const live = (data.rates || []).find(r => r.key === k);
-        if (live) el.innerHTML = live.cagr.toFixed(1) + '<span class="unit">%</span>';
-      });
-      const stamp = document.getElementById('updated-stamp');
-      if (stamp && data.updated) {
-        const d = new Date(data.updated);
-        stamp.textContent = `Rates last refreshed ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}. Sources: Yahoo Finance, FRED.`;
+    const scenarios = {
+      home: {
+        goals: [{ label: "Home in Denver", amount: 800000, horizon: 5, asset: "home_denver" }],
+        holdings: [{ label: "Cash / HYSA", amount: 120000, asset: "cash" }, { label: "Index funds", amount: 180000, asset: "sp500" }]
+      },
+      future: {
+        goals: [{ label: "Future home", amount: 900000, horizon: 7, asset: "home" }, { label: "Education fund", amount: 300000, horizon: 18, asset: "tuition_private" }],
+        holdings: [{ label: "Cash / HYSA", amount: 100000, asset: "cash" }, { label: "Index funds", amount: 250000, asset: "sp500" }]
       }
-      renderGoals();
-      renderHoldings();
-    } catch (e) {}
-  }
-
-  const scenarios = {
-    home: {
-      goals: [
-        { label: "Home in Denver", amount: 800000, horizon: 5, asset: "home_denver" }
-      ],
-      holdings: [
-        { label: "Cash / HYSA", amount: 120000, asset: "cash" },
-        { label: "Index funds", amount: 180000, asset: "sp500" }
-      ]
-    },
-    family: {
-      goals: [
-        { label: "Future home", amount: 900000, horizon: 7, asset: "home" },
-        { label: "Education fund", amount: 300000, horizon: 18, asset: "tuition_private" },
-        { label: "Index fund cushion", amount: 500000, horizon: 15, asset: "sp500" }
-      ],
-      holdings: [
-        { label: "Cash / HYSA", amount: 100000, asset: "cash" },
-        { label: "Index funds", amount: 250000, asset: "sp500" }
-      ]
-    }
-  };
-
-  const defaultGoals = scenarios.home.goals;
-  const defaultHoldings = scenarios.home.holdings;
-
-  let goals = defaultGoals.map(x => ({ ...x }));
-  let holdings = defaultHoldings.map(x => ({ ...x }));
-
-  function assetOptions(selected) {
-    const groups = {};
-    for (const a of assetTypes) {
-      const g = a.group || 'Other';
-      (groups[g] = groups[g] || []).push(
-        `<option value="${a.key}" ${a.key===selected?'selected':''}>${a.name} (${a.rate.toFixed(1)}%)</option>`
-      );
-    }
-    return Object.entries(groups).map(([g, opts]) =>
-      `<optgroup label="${g}">${opts.join('')}</optgroup>`
-    ).join('');
-  }
-
-  function renderGoals() {
-    const el = document.getElementById('goals');
-    el.innerHTML = '';
-    goals.forEach((g, idx) => {
-      const row = document.createElement('div');
-      row.className = 'goal-row';
-
-      const label = makeInput('text', g.label, idx, 'label', 'goals');
-      label.placeholder = 'e.g. House in Austin';
-
-      const amount = makeInput('number', g.amount, idx, 'amount', 'goals');
-      amount.min = '0';
-      amount.step = '1000';
-
-      const horizon = makeInput('number', g.horizon, idx, 'horizon', 'goals');
-      horizon.className = 'horizon';
-      horizon.min = '1';
-      horizon.max = '50';
-      horizon.step = '1';
-
-      const asset = makeAssetSelect(g.asset, idx, 'goals');
-      const remove = makeRemoveButton(idx, 'goals');
-
-      row.append(label, amount, horizon, asset, remove);
-      el.appendChild(row);
-    });
-    attach(el);
-    recompute();
-  }
-
-  function renderHoldings() {
-    const el = document.getElementById('holdings');
-    el.innerHTML = '';
-    holdings.forEach((h, idx) => {
-      const row = document.createElement('div');
-      row.className = 'holding-row';
-
-      const label = makeInput('text', h.label, idx, 'label', 'holdings');
-      label.placeholder = 'e.g. Vanguard brokerage';
-
-      const amount = makeInput('number', h.amount, idx, 'amount', 'holdings');
-      amount.min = '0';
-      amount.step = '1000';
-
-      const asset = makeAssetSelect(h.asset, idx, 'holdings');
-      const remove = makeRemoveButton(idx, 'holdings');
-
-      row.append(label, amount, asset, remove);
-      el.appendChild(row);
-    });
-    attach(el);
-    recompute();
-  }
-
-  function makeInput(type, value, idx, field, list) {
-    const input = document.createElement('input');
-    input.type = type;
-    input.value = value ?? '';
-    input.dataset.i = idx;
-    input.dataset.f = field;
-    input.dataset.list = list;
-    return input;
-  }
-
-  function makeAssetSelect(selected, idx, list) {
-    const select = document.createElement('select');
-    select.dataset.i = idx;
-    select.dataset.f = 'asset';
-    select.dataset.list = list;
-    select.innerHTML = assetOptions(selected);
-    return select;
-  }
-
-  function makeRemoveButton(idx, list) {
-    const button = document.createElement('button');
-    button.className = 'remove';
-    button.dataset.i = idx;
-    button.dataset.list = list;
-    button.title = 'Remove';
-    button.type = 'button';
-    button.textContent = '×';
-    return button;
-  }
-
-  function attach(container) {
-    container.querySelectorAll('input,select').forEach(el => {
-      el.addEventListener('input', e => {
-        const i = parseInt(e.target.dataset.i);
-        const f = e.target.dataset.f;
-        const list = e.target.dataset.list === 'goals' ? goals : holdings;
-        list[i][f] = (f === 'label' || f === 'asset') ? e.target.value : parseFloat(e.target.value) || 0;
-        recompute();
-      });
-    });
-    container.querySelectorAll('.remove').forEach(b => {
-      b.addEventListener('click', e => {
-        const i = parseInt(e.target.dataset.i);
-        if (e.target.dataset.list === 'goals') { goals.splice(i, 1); renderGoals(); }
-        else { holdings.splice(i, 1); renderHoldings(); }
-      });
-    });
-  }
-
-  function addGoal()    { goals.push({ label: "", amount: 0, horizon: 10, asset: "sp500" }); renderGoals(); }
-  function addHolding() { holdings.push({ label: "", amount: 0, asset: "sp500" }); renderHoldings(); }
-
-  function setScenario(name) {
-    const s = scenarios[name];
-    if (!s) return;
-    goals = s.goals.map(x => ({ ...x }));
-    holdings = s.holdings.map(x => ({ ...x }));
-    document.querySelectorAll('.scenario-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.scenario === name);
-    });
-    renderGoals();
-    renderHoldings();
-  }
-
-  function fmt(n) {
-    if (n >= 1e6) return (n/1e6).toFixed(n >= 1e7 ? 1 : 2) + 'M';
-    if (n >= 1e3) return Math.round(n/1e3) + 'k';
-    return Math.round(n).toLocaleString();
-  }
-
-  function recompute() {
-    // Aspiration basket — weighted rate + future cost
-    const totalGoals = goals.reduce((s, g) => s + (g.amount || 0), 0);
-    let aspirationRate = 0;
-    let totalFuture = 0;
-    goals.forEach(g => {
-      const a = assetTypes.find(x => x.key === g.asset) || { rate: 0 };
-      if (totalGoals > 0) aspirationRate += (g.amount / totalGoals) * a.rate;
-      totalFuture += (g.amount || 0) * Math.pow(1 + a.rate/100, g.horizon || 0);
-    });
-
-    // Current portfolio — weighted rate
-    const totalHoldings = holdings.reduce((s, h) => s + (h.amount || 0), 0);
-    let portfolioRate = 0;
-    holdings.forEach(h => {
-      const a = assetTypes.find(x => x.key === h.asset) || { rate: 0 };
-      if (totalHoldings > 0) portfolioRate += (h.amount / totalHoldings) * a.rate;
-    });
-
-    // Future Buying Power projects current holdings forward, then discounts coverage back into today's target dollars.
-
-    document.getElementById('total-today').textContent = fmt(totalGoals);
-    document.getElementById('total-future').textContent = fmt(totalFuture);
-    document.getElementById('total-holdings').textContent = fmt(totalHoldings);
-
-    const gapN = document.getElementById('gap-n');
-    const buyingPowerEl = document.getElementById('buying-power');
-    const buyingPowerPctEl = document.getElementById('buying-power-pct');
-    const buyingPowerN = document.getElementById('buying-power-n');
-    const buyingPowerCopyEl = document.getElementById('buying-power-copy');
-    const piEl = document.getElementById('pi');
-    const ppEl = document.getElementById('pp');
-    const gapEl = document.getElementById('gap');
-    const gapCopyEl = document.getElementById('gap-copy');
-    const timeHorizonEl = document.getElementById('time-horizon');
-    const captionEl = document.getElementById('caption');
-
-    piEl.textContent = totalGoals > 0 ? aspirationRate.toFixed(1) : '—';
-    ppEl.textContent = totalHoldings > 0 ? portfolioRate.toFixed(1) : '—';
-
-    if (totalGoals === 0 || totalHoldings === 0) {
-      buyingPowerEl.textContent = '—';
-      buyingPowerPctEl.textContent = '—';
-      buyingPowerN.classList.remove('maxed');
-      buyingPowerCopyEl.textContent = totalGoals === 0
-        ? 'Add a goal to see what it’ll cost.'
-        : 'Add what you already have saved to see what you’re on track to afford.';
-      gapEl.textContent = '—';
-      gapCopyEl.textContent = 'How big is your gap?';
-      timeHorizonEl.textContent = '—';
-      gapN.classList.remove('ahead');
-      captionEl.textContent = 'This gap gets bigger every year if nothing changes.';
-      return;
-    }
-
-    const aspireGap = portfolioRate - aspirationRate;
-    const weightedHorizon = totalGoals > 0
-      ? goals.reduce((s, g) => s + ((g.amount || 0) / totalGoals) * (g.horizon || 0), 0)
-      : 0;
-    const futurePortfolioValue = totalHoldings * Math.pow(1 + portfolioRate/100, weightedHorizon);
-    const coverageRatio = totalFuture > 0 ? futurePortfolioValue / totalFuture : 0;
-    const fraction = 100 * coverageRatio;
-    const futureBuyingPower = totalGoals * coverageRatio;
-
-    buyingPowerEl.textContent = fmt(futureBuyingPower);
-    buyingPowerPctEl.textContent = `${fraction.toFixed(0)}%`; 
-    buyingPowerN.classList.toggle('maxed', fraction >= 100);
-    const mainGoal = goals.length === 1 ? goals[0].label.toLowerCase() : 'basket';
-    buyingPowerCopyEl.textContent = `At your current pace, you’re on track to afford about ${fmt(futureBuyingPower)} of your goal (in today’s dollars).`;
-
-    // New format: positive gap means ahead (no improvement needed). Negative gap means improve by abs(value)%.
-    const gapPrefixEl = document.getElementById('gap-prefix');
-    if (aspireGap >= 0) {
-      if (gapPrefixEl) gapPrefixEl.textContent = 'Your money is outpacing your goal by ';
-      gapEl.textContent = aspireGap.toFixed(1);
-      // Replace trailing text by tweaking the gap-n element: handled by sibling text; for now, keep "% per year"
-    } else {
-      if (gapPrefixEl) gapPrefixEl.textContent = 'You need to improve by ';
-      gapEl.textContent = Math.abs(aspireGap).toFixed(1);
-    }
-    gapCopyEl.textContent = 'This gap gets bigger every year if nothing changes.';
-    gapN.classList.toggle('ahead', aspireGap >= 0);
-    timeHorizonEl.textContent = weightedHorizon.toFixed(0);
-
-    let caption = '';
-    if (fraction >= 200)      caption = `You can buy the future twice over. That's a rare problem.`;
-    else if (fraction >= 100) caption = `You're on pace to cover the full target, with ${(fraction - 100).toFixed(0)} points of margin.`;
-    else if (fraction >= 75)  caption = `You're close. The last quarter is where compounding starts to bite.`;
-    else if (fraction >= 40)  caption = `You’re on track to afford part of your plan. The rest is slipping out of reach.`;
-    else if (fraction >= 20)  caption = `Most of your plan is still out of reach at this pace.`;
-    else                      caption = `You're saving for one future and compounding toward another.`;
-    captionEl.textContent = caption;
-  }
-
-  renderGoals();
-  renderHoldings();
-  hydrateRates();
-
-  // ── Deep-link support: load basket from URL ──
-  // ?b=<base64-json> populates the calculator.
-  // #simulator auto-opens the simulator once the basket is loaded and scored.
-  (function loadFromURL() {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const b = params.get('b');
-      if (b) {
-        const json = atob(b.replace(/-/g, '+').replace(/_/g, '/'));
-        const parsed = JSON.parse(json);
-        if (Array.isArray(parsed.goals) && parsed.goals.length) {
-          goals.length = 0;
-          parsed.goals.forEach(g => goals.push({
-            label:   String(g.label   || ''),
-            amount:  Number(g.amount  || 0),
-            horizon: Number(g.horizon || 10),
-            asset:   String(g.asset   || 'sp500')
-          }));
-        }
-        if (Array.isArray(parsed.holdings) && parsed.holdings.length) {
-          holdings.length = 0;
-          parsed.holdings.forEach(h => holdings.push({
-            label:  String(h.label  || ''),
-            amount: Number(h.amount || 0),
-            asset:  String(h.asset  || 'sp500')
-          }));
-        }
-        renderGoals();
-        renderHoldings();
-      }
-    } catch (err) { console.warn('deep-link parse failed', err); }
-
-    // Auto-open simulator if #simulator in URL hash
-    if (window.location.hash === '#simulator') {
-      // Wait one tick so rates + recompute finish
-      setTimeout(() => {
-        try { openSimulator(); } catch (e) { console.warn('auto-open simulator failed', e); }
-      }, 300);
-    }
-  })();
-
-
-  function shareRate() {
-    const pi = document.getElementById('pi').textContent;
-    const pp = document.getElementById('pp').textContent;
-    const gap = document.getElementById('gap').textContent;
-    const buyingPower = document.getElementById('buying-power').textContent;
-    const buyingPowerPct = document.getElementById('buying-power-pct').textContent;
-    const txt = `I can afford ${buyingPowerPct} of the life I’m building toward (about ${buyingPower} of my goal in today’s dollars). What’s your Aspire Score? — aspirerate.com`;
-    navigator.clipboard.writeText(txt).then(() => {
-      const b = document.querySelector('.share-ghost');
-      const orig = b.textContent;
-      b.textContent = "Copied ✓";
-      setTimeout(() => b.textContent = orig, 1800);
-    });
-  }
-
-  // ── Email gate ──
-  let gateSource = 'calculator';
-  function openGate(source) {
-    source = source || 'calculator';
-    gateSource = source;
-    const buyingPower = document.getElementById('buying-power').textContent;
-    if (buyingPower === '—') return;
-    if (source === 'tracker') {
-      document.getElementById('gateHeading').textContent = 'Get early access to the Aspire Tracker.';
-      document.getElementById('gateSub').textContent = 'Enter your email and we’ll add you to the early access list — and send your monthly Aspire Score while you wait.';
-      document.getElementById('gateSubmit').textContent = 'Join the waitlist →';
-    } else {
-      document.getElementById('gateHeading').textContent = 'Your Aspire Score is ready.';
-      document.getElementById('gateSub').textContent = 'Enter your email and we’ll send it to your inbox — then recalculate it every month as inflation, markets, and home prices move.';
-      document.getElementById('gateSubmit').textContent = 'Send my Aspire Score →';
-    }
-    document.getElementById('gateOverlay').classList.add('open');
-    setTimeout(() => document.getElementById('gateEmail').focus(), 50);
-  }
-  function closeGate() {
-    document.getElementById('gateOverlay').classList.remove('open');
-  }
-  function closeGateIfOutside(e) {
-    if (e.target === document.getElementById('gateOverlay')) closeGate();
-  }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGate(); });
-
-  async function submitGate() {
-    const emailEl = document.getElementById('gateEmail');
-    const email = emailEl.value.trim();
-    if (!email || !/.+@.+\..+/.test(email)) {
-      emailEl.style.borderColor = 'var(--accent)';
-      emailEl.focus();
-      return;
-    }
-    const btn = document.getElementById('gateSubmit');
-    btn.disabled = true;
-    btn.textContent = 'Calculating…';
-
-    const aspirationRate = parseFloat(document.getElementById('pi').textContent) || 0;
-    const portfolioRate  = parseFloat(document.getElementById('pp').textContent) || 0;
-    const futureBuyingPower = document.getElementById('buying-power').textContent;
-    const gap            = parseFloat(document.getElementById('gap').textContent) || 0;
-    const fraction       = parseFloat(document.getElementById('buying-power-pct').textContent) || 0;
-
-    const basket = {
-      goals,
-      holdings,
-      computed: { aspirationRate, portfolioRate, futureBuyingPower, fraction, gap },
-      source: gateSource
     };
+    let rateMap = {};
+    let rateList = [];
+    let goals = structuredClone(scenarios.home.goals);
+    let holdings = structuredClone(scenarios.home.holdings);
 
-    try {
-      const res = await fetch('/api/score', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, basket })
-      });
-      if (!res.ok) throw new Error('api error');
-      const data = await res.json();
-      lastSimulatorUrl = data.simulatorUrl || null;
-      closeGate();
-      document.getElementById('scoreNumber').textContent = data.score;
-      document.getElementById('scoreMatch').innerHTML =
-        data.dollarMatch
-          ? `To match 1995 middle-class, you'd need $${Number(data.dollarMatch).toLocaleString()} today`
-          : `You can afford <strong>${data.score}%</strong> of your plan. Average Aspire Score is <strong>38</strong>. Your score is on its way to ${email}.`;
-      document.getElementById('scoreReveal').classList.add('visible');
-      document.getElementById('simTriggerBtn').classList.add('show');
-      document.getElementById('simTriggerBtn').textContent = 'Open your Close the Gap Simulator →';
-      document.getElementById('gateBtn').textContent = 'Score sent ✓';
-      document.getElementById('gateBtn').disabled = true;
-      // Auto-open the inline simulator and reveal post-submit sections
-      // Auto-open the inline simulator on landing (skip redirect; redirect still fires on explicit button click)
-      setTimeout(() => {
-        try {
-          const _saved = lastSimulatorUrl; lastSimulatorUrl = null;
-          openSimulator();
-          lastSimulatorUrl = _saved;
-        } catch(e){}
-      }, 600);
-      const _extras = document.getElementById('postSubmitExtras');
-      if (_extras) _extras.classList.add('show');
-      if (typeof gtag !== 'undefined') gtag('event', 'aspire_score_captured', { method: 'email_gate' });
-    } catch (err) {
-      btn.disabled = false;
-      btn.textContent = 'Something went wrong — try again';
-    }
-  }
+    const withGrowth = item => ({ ...item, growth: rateForKey(rateMap, item.asset) });
+    const labelForRate = key => rateMap[key]?.label || key;
 
-
-  // ── Close the Gap Simulator ──
-
-  // Snapshot of original calculator values; set when score is revealed
-  let simOriginal = null;
-  let lastSimulatorUrl = null;
-
-  function openSimulator() {
-    if (lastSimulatorUrl) {
-      window.location.href = lastSimulatorUrl;
-      return;
+    function renderRows() {
+      const options = selected => groupedOptions(rateList, selected);
+      document.getElementById("goals").innerHTML = goals.map((goal, index) => `
+        <div class="goal-row">
+          <input data-list="goals" data-index="${index}" data-field="label" value="${escapeHtml(goal.label)}" aria-label="Goal label">
+          <input type="number" data-list="goals" data-index="${index}" data-field="amount" value="${goal.amount}" min="0" step="1000" aria-label="Goal amount">
+          <input type="number" data-list="goals" data-index="${index}" data-field="horizon" value="${goal.horizon}" min="1" step="1" aria-label="Goal horizon">
+          <select data-list="goals" data-index="${index}" data-field="asset" aria-label="Goal rate">${options(goal.asset)}</select>
+          <button class="remove" type="button" data-remove="goals" data-index="${index}" aria-label="Remove goal">×</button>
+        </div>
+      `).join("");
+      document.getElementById("holdings").innerHTML = holdings.map((asset, index) => `
+        <div class="holding-row">
+          <input data-list="holdings" data-index="${index}" data-field="label" value="${escapeHtml(asset.label)}" aria-label="Holding label">
+          <input type="number" data-list="holdings" data-index="${index}" data-field="amount" value="${asset.amount}" min="0" step="1000" aria-label="Holding amount">
+          <select data-list="holdings" data-index="${index}" data-field="asset" aria-label="Holding rate">${options(asset.asset)}</select>
+          <button class="remove" type="button" data-remove="holdings" data-index="${index}" aria-label="Remove holding">×</button>
+        </div>
+      `).join("");
+      recompute();
     }
 
-    const totalGoals = goals.reduce((s, g) => s + (g.amount || 0), 0);
-    const totalHoldings = holdings.reduce((s, h) => s + (h.amount || 0), 0);
-    if (!totalGoals || !totalHoldings) return;
-
-    const aspirationRate = parseFloat(document.getElementById('pi').textContent) || 0;
-    const portfolioRate  = parseFloat(document.getElementById('pp').textContent) || 0;
-    const weightedHorizon = goals.length > 0
-      ? goals.reduce((s, g) => s + ((g.amount || 0) / totalGoals) * (g.horizon || 0), 0)
-      : 10;
-
-    simOriginal = { aspirationRate, portfolioRate, weightedHorizon, totalGoals, totalHoldings };
-
-    // Pre-populate inputs from calculator
-    document.getElementById('simReturn').value      = portfolioRate.toFixed(1);
-    selectNearestPreset(portfolioRate);
-    document.getElementById('simYears').value       = Math.round(weightedHorizon);
-    document.getElementById('simTarget').value      = Math.round(totalGoals);
-    document.getElementById('simAspireRate').value  = aspirationRate.toFixed(1);
-    document.getElementById('simSavings').value     = 0;
-
-    document.getElementById('simSection').classList.add('open');
-    document.getElementById('simSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    runSim();
-  }
-
-  // Return-rate presets
-  function setReturnPreset(rate, btn) {
-    document.querySelectorAll('.return-preset').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const input = document.getElementById('simReturn');
-    if (rate === 'custom') {
-      input.style.display = 'block';
-      input.focus();
-      input.select();
-    } else {
-      input.value = rate;
-      input.style.display = 'none';
-      runSim();
+    function currentState() {
+      return {
+        goals: goals.map(withGrowth),
+        holdings: holdings.map(asset => ({ ...withGrowth(asset), monthly: Number(asset.monthly) || 0 }))
+      };
     }
-  }
-  function onReturnInput() {
-    // If user types, mark Custom as active
-    document.querySelectorAll('.return-preset').forEach(b => b.classList.remove('active'));
-    const customBtn = document.querySelector('.return-preset[data-rate="custom"]');
-    if (customBtn) customBtn.classList.add('active');
-    runSim();
-  }
-  function selectNearestPreset(rate) {
-    // Match exactly to a preset if close (within 0.5pp), else mark Custom
-    const presets = [5, 10, 15];
-    const match = presets.find(p => Math.abs(p - rate) < 0.5);
-    document.querySelectorAll('.return-preset').forEach(b => b.classList.remove('active'));
-    const input = document.getElementById('simReturn');
-    if (match !== undefined) {
-      const btn = document.querySelector(`.return-preset[data-rate="${match}"]`);
-      if (btn) btn.classList.add('active');
-      input.value = match;
-      input.style.display = 'none';
-    } else {
-      const customBtn = document.querySelector('.return-preset[data-rate="custom"]');
-      if (customBtn) customBtn.classList.add('active');
-      input.style.display = 'block';
+
+    function recompute() {
+      const state = currentState();
+      const result = project(state.goals, state.holdings);
+      document.getElementById("totalToday").textContent = money(result.totalGoalToday);
+      document.getElementById("totalFuture").textContent = shortMoney(result.totalGoals);
+      document.getElementById("totalHoldings").textContent = money(result.totalAssetsToday);
+      document.getElementById("gapValue").textContent = result.totalGoals && result.totalAssets ? `${signedPct(result.gap)} / yr` : "—";
+      document.getElementById("gapValue").classList.toggle("good", result.gap >= 0);
+      document.getElementById("moneyRate").textContent = result.totalAssets ? pct(result.moneyRate) : "—";
+      document.getElementById("costRate").textContent = result.totalGoals ? pct(result.costRate) : "—";
+      document.getElementById("horizon").textContent = result.totalGoals ? `${result.horizon.toFixed(1)} yr` : "—";
+      document.getElementById("gapCopy").textContent = result.totalGoals && result.totalAssets
+        ? `At these assumptions, your money is growing ${Math.abs(result.gap).toFixed(1)} percentage points ${result.gap >= 0 ? "faster" : "slower"} than your future life is becoming more expensive.`
+        : "Add at least one goal and one holding to measure your gap.";
     }
-  }
 
-  function simFmt(n) {
-    if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
-    if (n >= 1e3) return '$' + Math.round(n).toLocaleString();
-    return '$' + Math.round(n).toLocaleString();
-  }
-
-  // Binary search: find annual return p that closes the gap
-  function solveRequiredReturn(A, m, n, FGV) {
-    // FPV(p) = A*(1+p)^n + m*12*((1+p)^n - 1)/p = FGV
-    let lo = 0.0001, hi = 5.0; // 0.01% to 500%
-    for (let i = 0; i < 60; i++) {
-      const mid = (lo + hi) / 2;
-      const growth = Math.pow(1 + mid, n);
-      const fv = A * growth + (mid > 0.00001 ? m * 12 * (growth - 1) / mid : m * 12 * n);
-      if (fv < FGV) lo = mid; else hi = mid;
+    function updateItem(target) {
+      const list = target.dataset.list === "goals" ? goals : holdings;
+      const item = list[Number(target.dataset.index)];
+      if (!item) return;
+      item[target.dataset.field] = target.dataset.field === "label" || target.dataset.field === "asset" ? target.value : Number(target.value) || 0;
+      recompute();
     }
-    const p = (lo + hi) / 2;
-    return p * 100; // return as %
-  }
 
-  function runSim() {
-    if (!simOriginal) return;
-
-    const m  = parseFloat(document.getElementById('simSavings').value)    || 0;
-    const p  = (parseFloat(document.getElementById('simReturn').value)     || 0) / 100;
-    const n  = parseFloat(document.getElementById('simYears').value)       || simOriginal.weightedHorizon;
-    const T  = parseFloat(document.getElementById('simTarget').value)      || simOriginal.totalGoals;
-    const a  = (parseFloat(document.getElementById('simAspireRate').value) || 0) / 100;
-    const A  = simOriginal.totalHoldings;
-
-    // Future cost of goal
-    const FGV = T * Math.pow(1 + a, n);
-
-    // Future portfolio value
-    const growth = Math.pow(1 + p, n);
-    const FPV = A * growth + (p > 0.00001 ? m * 12 * (growth - 1) / p : m * 12 * n);
-
-    // Updated buying power
-    const bpPct = FPV / FGV * 100;
-    document.getElementById('simBP').textContent = simFmt(FPV);
-    document.getElementById('simBPSub').textContent =
-      `At these assumptions, your money may cover ${bpPct.toFixed(0)}% of your target in today’s dollars.`;
-    const simOutBP = document.getElementById('simOutBP');
-    simOutBP.classList.toggle('positive', bpPct >= 100);
-    simOutBP.classList.toggle('negative', bpPct < 60);
-
-    // Updated gap
-    const newGap = (p - a) * 100;
-    document.getElementById('simGap').textContent = (newGap >= 0 ? '+' : '') + newGap.toFixed(1) + '% annually';
-    const simOutGap = document.getElementById('simOutGap');
-    simOutGap.classList.toggle('positive', newGap >= 0);
-    simOutGap.classList.toggle('negative', newGap < 0);
-
-    // Gap improvement vs original
-    const origGap = simOriginal.portfolioRate - simOriginal.aspirationRate;
-    const improvement = newGap - origGap;
-    document.getElementById('simImprove').textContent = (improvement >= 0 ? '+' : '') + improvement.toFixed(1) + ' pts';
-    document.getElementById('simImproveSub').textContent =
-      `Your gap moves from ${(origGap >= 0 ? '+' : '') + origGap.toFixed(1)}% to ${(newGap >= 0 ? '+' : '') + newGap.toFixed(1)}%.`;
-
-    // Required return to fully close the gap
-    const reqReturn = solveRequiredReturn(A, m, n, FGV);
-    document.getElementById('simReqReturn').textContent =
-      reqReturn > 200 ? 'Not achievable at these inputs' : reqReturn.toFixed(1) + '%';
-
-    // Required monthly savings to fully close the gap
-    let reqSavings = 0;
-    if (p > 0.00001) {
-      const g = Math.pow(1 + p, n);
-      const deficit = FGV - A * g;
-      reqSavings = deficit > 0 ? deficit * p / (12 * (g - 1)) : 0;
-    } else {
-      reqSavings = Math.max(0, (FGV - A) / (n * 12));
+    function removeItem(button) {
+      const list = button.dataset.remove === "goals" ? goals : holdings;
+      if (list.length <= 1) return;
+      list.splice(Number(button.dataset.index), 1);
+      renderRows();
     }
-    document.getElementById('simReqSavings').textContent =
-      reqSavings <= 0 ? 'Already on track' : simFmt(reqSavings) + '/mo';
 
-    // Show CTA once simulation has been touched
-    document.getElementById('simCTAStrip').classList.add('show');
+    function submitScenario() {
+      const scenario = toPersisted(currentState());
+      const validGoal = scenario.basket.goals.some(goal => goal.amount > 0 && goal.horizon > 0);
+      const validHolding = scenario.basket.holdings.some(asset => asset.amount > 0);
+      if (!validGoal || !validHolding) {
+        document.getElementById("formError").textContent = "Add at least one goal and one holding with amounts above zero.";
+        return;
+      }
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify(scenario));
+      window.location.href = "/score/";
+    }
 
-    // GA event
-    if (typeof gtag !== 'undefined') gtag('event', 'sim_run', {
-      gap_improvement: improvement.toFixed(1),
-      req_return: reqReturn.toFixed(1)
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[char]));
+    }
+
+    document.addEventListener("input", event => {
+      if (event.target.matches("[data-list]")) updateItem(event.target);
     });
-  }
+    document.addEventListener("click", event => {
+      if (event.target.matches("[data-remove]")) removeItem(event.target);
+    });
+    document.getElementById("addGoal").addEventListener("click", () => {
+      goals.push({ label: "New goal", amount: 0, horizon: 10, asset: "cpi" });
+      renderRows();
+    });
+    document.getElementById("addHolding").addEventListener("click", () => {
+      holdings.push({ label: "New holding", amount: 0, asset: "sp500" });
+      renderRows();
+    });
+    document.getElementById("submitScenario").addEventListener("click", submitScenario);
+    document.querySelectorAll(".scenario-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        goals = structuredClone(scenarios[button.dataset.scenario].goals);
+        holdings = structuredClone(scenarios[button.dataset.scenario].holdings);
+        document.querySelectorAll(".scenario-btn").forEach(btn => btn.classList.toggle("active", btn === button));
+        renderRows();
+      });
+    });
 
-</script>
-
-<!-- EMAIL GATE MODAL -->
-<div class="gate-overlay" id="gateOverlay" onclick="closeGateIfOutside(event)">
-  <div class="gate-card">
-    <button class="gate-close" onclick="closeGate()">×</button>
-    <h3 id="gateHeading">Your Aspire Score is ready.</h3>
-    <p class="gate-sub" id="gateSub">Enter your email and we’ll send it to your inbox — then recalculate it every month as inflation, markets, and home prices move.</p>
-    <input class="gate-email" type="email" id="gateEmail" placeholder="you@example.com"
-      onkeydown="if(event.key==='Enter') submitGate()" />
-    <button class="gate-submit" id="gateSubmit" onclick="submitGate()">Send my Aspire Score →</button>
-    <p class="gate-fine">We send your score, a monthly recalculation, and The Aspire Report.<br>Unsubscribe anytime.</p>
-  </div>
-</div>
-
+    const data = await loadRates();
+    rateMap = await ratesByKey();
+    rateList = data.rates;
+    document.querySelectorAll("[data-rate]").forEach(el => {
+      const rate = rateMap[el.dataset.rate];
+      if (rate) el.innerHTML = `${Number(rate.cagrTrailing).toFixed(1)}<span class="unit">%</span>`;
+    });
+    renderRows();
+  </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" sizes="512x512" href="/favicon-512.png" />
 <meta property="og:title" content="Everyone knows inflation is bad. Nobody knows their number." />
-<meta property="og:description" content="Join Aspire — measure your personal inflation rate and get weekly buying power updates." />
+<meta property="og:description" content="Join Aspire — measure your personal inflation rate and get weekly future affordability updates." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -338,7 +338,7 @@
       <div class="value-card">
         <div class="value-num">02</div>
         <h3>Track your gap, not the headlines</h3>
-        <p>Your gap is the distance between what your money earns and what your future costs. Every week we track it — salary erosion, buying power shifts, home affordability by city, market changes that actually affect you.</p>
+        <p>Your gap is the distance between what your money earns and what your future costs. Every week we track it — salary erosion, future affordability shifts, home affordability by city, market changes that actually affect you.</p>
       </div>
       <div class="value-card">
         <div class="value-num">03</div>
@@ -364,7 +364,7 @@
       <li>
         <span class="gets-icon">🏠</span>
         <div>
-          <strong>Home buying power by city</strong>
+          <strong>Home affordability by city</strong>
           <span>Monthly updates on what $800k buys in Denver vs. Austin vs. Miami as prices and rates move.</span>
         </div>
       </li>
@@ -515,7 +515,7 @@
   <div class="gate-card">
     <button class="gate-close" onclick="closeGate()">×</button>
     <h3>Your Aspire Score is ready.</h3>
-    <p class="gate-sub">Enter your email and we'll send it now — then recalculate it every month as inflation, home prices, and markets move. You'll also get The Aspire Report: weekly buying power reality checks for the life you're actually building.</p>
+    <p class="gate-sub">Enter your email and we'll send it now — then recalculate it every month as inflation, home prices, and markets move. You'll also get The Aspire Report: weekly future affordability reality checks for the life you're actually building.</p>
     <input class="gate-email" type="email" id="gateEmail" placeholder="you@example.com"
       onkeydown="if(event.key==='Enter') submitGate()" />
     <button class="gate-submit" id="gateSubmit" onclick="submitGate()">Send my score + subscribe →</button>
@@ -563,7 +563,7 @@
       const data = await r.json();
       (data.rates || []).forEach(live => {
         const a = assetTypes.find(x => x.key === live.key);
-        if (a && typeof live.cagr === 'number') a.rate = live.cagr;
+        if (a && typeof live.cagrTrailing === 'number') a.rate = live.cagrTrailing;
       });
       const stamp = document.getElementById('updated-stamp');
       if (stamp && data.updated) {
@@ -754,7 +754,7 @@
     buyingPowerPctEl.textContent = `${fraction.toFixed(0)}%`;
     buyingPowerN.classList.toggle('maxed', fraction >= 100);
     const mainGoal = goals.length === 1 ? goals[0].label.toLowerCase() : 'basket';
-    buyingPowerCopyEl.textContent = `You're targeting a $${fmt(totalGoals)} ${mainGoal}. At your current pace, your future buying power may only cover $${fmt(futureBuyingPower)} in today's terms.`;
+    buyingPowerCopyEl.textContent = `You're targeting a $${fmt(totalGoals)} ${mainGoal}. At your current pace, your future future affordability may only cover $${fmt(futureBuyingPower)} in today's terms.`;
 
     gapEl.textContent = (aspireGap > 0 ? '+' : '') + aspireGap.toFixed(1);
     gapCopyEl.textContent = 'This gap compounds every year.';
@@ -781,7 +781,7 @@
     const gap = document.getElementById('gap').textContent;
     const buyingPower = document.getElementById('buying-power').textContent;
     const buyingPowerPct = document.getElementById('buying-power-pct').textContent;
-    const txt = `My future buying power is $${buyingPower} (${buyingPowerPct}) in today's terms. My gap is ${gap}% annually. What will your money actually buy? — aspirerate.com/join`;
+    const txt = `My future future affordability is $${buyingPower} (${buyingPowerPct}) in today's terms. My gap is ${gap}% annually. What will your money actually buy? — aspirerate.com/join`;
     navigator.clipboard.writeText(txt).then(() => {
       const b = document.querySelector('.share-ghost');
       const orig = b.textContent;
