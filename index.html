@@ -47,7 +47,7 @@
     .block-sub, .hint { color:#9f9688; font-size:13px; margin-top:4px; }
     .row-head, .goal-row, .holding-row { display:grid; gap:10px; align-items:center; }
     .row-head { color:#8f8778; font-size:11px; text-transform:uppercase; letter-spacing:.12em; margin:18px 0 8px; }
-    .goal-row { grid-template-columns:1.2fr 130px 82px 1.25fr 34px; margin-bottom:10px; }
+    .goal-row { grid-template-columns:120px minmax(130px,1.05fr) 82px 130px minmax(140px,1.15fr) 34px; margin-bottom:10px; }
     .holding-row { grid-template-columns:1.15fr 120px 100px 1.15fr 34px; margin-bottom:10px; }
     input, select { width:100%; min-height:42px; border:1px solid #37322b; border-radius:8px; padding:0 11px; background:#0f0e0c; color:var(--paper); font:500 14px Inter,sans-serif; }
     select { color:#f5f1ea; }
@@ -91,8 +91,8 @@
   <section class="hero">
     <div class="wrap">
       <div class="eyebrow">Personal inflation index</div>
-      <h1>Your gap is the rate between your money and your future.</h1>
-      <p class="lede">Build the basket you are trying to buy, add the assets you already own, and see whether your money growth is keeping pace with your cost growth.</p>
+      <h1>What life are you trying to afford?</h1>
+      <p class="lede">Price the future you are working toward, then compare it with the money you have and the contributions you plan to make.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#calculator">See your gap</a>
         <a class="btn btn-ghost" href="/manifesto">Read the manifesto</a>
@@ -111,8 +111,8 @@
 
   <main class="product-flow" id="calculator">
     <div class="wrap-wide">
-      <h2>Calculate your gap</h2>
-      <p class="sub">Choose a historical benchmark, then edit the forward assumption. This is your assumption, not a prediction.</p>
+      <h2>Price the life you want</h2>
+      <p class="sub">Choose cost and money-growth assumptions for this scenario. They are planning inputs, not predictions.</p>
       <div class="scenario-row">
         <button class="scenario-btn active" type="button" data-scenario="home">Buy a home</button>
         <button class="scenario-btn" type="button" data-scenario="future">Plan your future</button>
@@ -121,21 +121,22 @@
       <div class="calc-grid">
         <section>
           <div class="block">
-            <h3 class="block-title">What are you planning for?</h3>
-            <p class="block-sub">Cost today, timing, and cost growth assumption.</p>
-            <div class="row-head goal-row"><div>What</div><div>Cost today</div><div>When</div><div>Grows like</div><div></div></div>
+            <h3 class="block-title">What life are you trying to afford?</h3>
+            <p class="block-sub">Life goal, timing, estimated cost today, and cost growth assumption.</p>
+            <div class="row-head goal-row"><div>Goal type</div><div>Goal name</div><div>When</div><div>Estimated cost today</div><div>Cost grows like</div><div></div></div>
             <div id="goals"></div>
             <button class="add-goal" type="button" id="addGoal">+ Add a goal</button>
-            <div class="basket-meta"><span>Total cost today</span><strong id="totalToday">$0</strong></div>
+            <div class="basket-meta"><span>Estimated cost today</span><strong id="totalToday">$0</strong></div>
             <div class="basket-meta" style="border-top:0;margin-top:4px;padding-top:0;"><span>Estimated future cost</span><strong id="totalFuture">$0</strong></div>
           </div>
 
           <div class="block">
-            <h3 class="block-title">What do you already have saved?</h3>
-            <p class="block-sub">Current assets and money growth assumption.</p>
+            <h3 class="block-title">What money do you have working toward it?</h3>
+            <p class="block-sub">Current resources, planned contributions, and money-growth assumption.</p>
             <div class="row-head holding-row"><div>Account or asset</div><div>Amount today</div><div>Monthly</div><div>Money grows like</div><div></div></div>
             <div id="holdings"></div>
             <button class="add-goal" type="button" id="addHolding">+ Add a holding</button>
+            <button class="add-goal" type="button" id="toggleAdvanced" style="margin-left:8px;">Show advanced assumptions</button>
             <div class="basket-meta"><span>Total available today</span><strong id="totalHoldings">$0</strong></div>
           </div>
         </section>
@@ -144,9 +145,11 @@
           <div class="label">Your gap</div>
           <div class="gap" id="gapValue">—</div>
           <p class="hint" id="gapCopy">Add goals and holdings to preview the rate gap.</p>
+          <div class="metric"><span>Future goal cost</span><strong id="futureCostMetric">—</strong></div>
+          <div class="metric"><span>Projected resources</span><strong id="resourcesMetric">—</strong></div>
+          <div class="metric"><span>Dollar gap</span><strong id="dollarGapMetric">—</strong></div>
           <div class="metric"><span>Money growth</span><strong id="moneyRate">—</strong></div>
           <div class="metric"><span>Cost growth</span><strong id="costRate">—</strong></div>
-          <div class="metric"><span>Weighted horizon</span><strong id="horizon">—</strong></div>
           <div id="summaryChart"></div>
           <div class="submit-row">
             <button type="button" id="submitScenario">See your gap</button>
@@ -170,17 +173,18 @@
   <script type="module">
     import { project, projectionSeries } from "/lib/aspire.js";
     import { DRAFT_KEY, toPersisted } from "/lib/schema.js";
-    import { loadRates, ratesByKey, rateForKey, groupedOptions } from "/lib/rates.js";
-    import { renderRateChart } from "/lib/chart-rate.js";
+    import { loadRates, ratesByKey, rateForKey, goalRateOptions, holdingRateOptions } from "/lib/rates.js";
+    import { renderDollarChart } from "/lib/chart-rate.js";
     import { money, shortMoney, signedPct, pct } from "/lib/format.js";
 
+    const goalTypes = ["Home", "College", "Car", "Retirement", "Wedding", "Children", "Time off work", "Business investment", "Medical", "Custom"];
     const scenarios = {
       home: {
-        goals: [{ label: "Home in Denver", amount: 800000, horizon: 5, asset: "home_denver" }],
+        goals: [{ goalType: "Home", label: "Home in Denver", amount: 800000, horizon: 5, asset: "home_denver" }],
         holdings: [{ label: "Cash / HYSA", amount: 120000, asset: "cash" }, { label: "Index funds", amount: 180000, asset: "sp500" }]
       },
       future: {
-        goals: [{ label: "Future home", amount: 900000, horizon: 7, asset: "home" }, { label: "Education fund", amount: 300000, horizon: 18, asset: "tuition_private" }],
+        goals: [{ goalType: "Home", label: "Future home", amount: 900000, horizon: 7, asset: "home" }, { goalType: "College", label: "Education fund", amount: 300000, horizon: 18, asset: "tuition_private" }],
         holdings: [{ label: "Cash / HYSA", amount: 100000, asset: "cash" }, { label: "Index funds", amount: 250000, asset: "sp500" }]
       }
     };
@@ -188,18 +192,18 @@
     let rateList = [];
     let goals = structuredClone(scenarios.home.goals);
     let holdings = structuredClone(scenarios.home.holdings);
+    let showAdvancedAssumptions = false;
 
     const withGrowth = item => ({ ...item, growth: rateForKey(rateMap, item.asset) });
-    const labelForRate = key => rateMap[key]?.label || key;
 
     function renderRows() {
-      const options = selected => groupedOptions(rateList, selected);
       document.getElementById("goals").innerHTML = goals.map((goal, index) => `
         <div class="goal-row">
+          <select data-list="goals" data-index="${index}" data-field="goalType" aria-label="Goal type">${goalTypeOptions(goal.goalType)}</select>
           <input data-list="goals" data-index="${index}" data-field="label" value="${escapeHtml(goal.label)}" aria-label="Goal label">
-          <input type="number" data-list="goals" data-index="${index}" data-field="amount" value="${goal.amount}" min="0" step="1000" aria-label="Goal amount">
           <input type="number" data-list="goals" data-index="${index}" data-field="horizon" value="${goal.horizon}" min="1" step="1" aria-label="Goal horizon">
-          <select data-list="goals" data-index="${index}" data-field="asset" aria-label="Goal rate">${options(goal.asset)}</select>
+          <input type="number" data-list="goals" data-index="${index}" data-field="amount" value="${goal.amount}" min="0" step="1000" aria-label="Estimated cost today">
+          <select data-list="goals" data-index="${index}" data-field="asset" aria-label="Cost growth assumption">${goalRateOptions(rateList, goal.asset)}</select>
           <button class="remove" type="button" data-remove="goals" data-index="${index}" aria-label="Remove goal">×</button>
         </div>
       `).join("");
@@ -208,7 +212,7 @@
           <input data-list="holdings" data-index="${index}" data-field="label" value="${escapeHtml(asset.label)}" aria-label="Holding label">
           <input type="number" data-list="holdings" data-index="${index}" data-field="amount" value="${asset.amount}" min="0" step="1000" aria-label="Holding amount">
           <input type="number" data-list="holdings" data-index="${index}" data-field="monthly" value="${asset.monthly || 0}" min="0" step="50" aria-label="Monthly contribution">
-          <select data-list="holdings" data-index="${index}" data-field="asset" aria-label="Holding rate">${options(asset.asset)}</select>
+          <select data-list="holdings" data-index="${index}" data-field="asset" aria-label="Money growth assumption">${holdingRateOptions(rateList, asset.asset, showAdvancedAssumptions)}</select>
           <button class="remove" type="button" data-remove="holdings" data-index="${index}" aria-label="Remove holding">×</button>
         </div>
       `).join("");
@@ -217,7 +221,7 @@
 
     function currentState() {
       return {
-        goals: goals.map(withGrowth),
+        goals: goals.map(goal => ({ ...withGrowth(goal), goalType: goal.goalType || "Custom", goalMode: goal.goalMode || "life" })),
         holdings: holdings.map(asset => ({ ...withGrowth(asset), monthly: Number(asset.monthly) || 0 }))
       };
     }
@@ -230,20 +234,22 @@
       document.getElementById("totalHoldings").textContent = money(result.totalAssetsToday);
       document.getElementById("gapValue").textContent = result.totalGoals && result.totalAssets ? `${signedPct(result.gap)} / yr` : "—";
       document.getElementById("gapValue").classList.toggle("good", result.gap >= 0);
+      document.getElementById("futureCostMetric").textContent = result.totalGoals ? shortMoney(result.totalGoals) : "—";
+      document.getElementById("resourcesMetric").textContent = result.totalAssets ? shortMoney(result.totalAssets) : "—";
+      document.getElementById("dollarGapMetric").textContent = result.totalGoals && result.totalAssets ? shortMoney(result.dollarGap) : "—";
       document.getElementById("moneyRate").textContent = result.totalAssets ? pct(result.moneyRate) : "—";
       document.getElementById("costRate").textContent = result.totalGoals ? pct(result.costRate) : "—";
-      document.getElementById("horizon").textContent = result.totalGoals ? `${result.horizon.toFixed(1)} yr` : "—";
       document.getElementById("gapCopy").textContent = result.totalGoals && result.totalAssets
         ? `At these assumptions, your money is growing ${Math.abs(result.gap).toFixed(1)} percentage points ${result.gap >= 0 ? "faster" : "slower"} than your future life is becoming more expensive.`
         : "Add at least one goal and one holding to measure your gap.";
-      renderRateChart(document.getElementById("summaryChart"), projectionSeries(state.goals, state.holdings, result.horizon), { height: 120, mini: true });
+      renderDollarChart(document.getElementById("summaryChart"), projectionSeries(state.goals, state.holdings, result.horizon), { height: 120, mini: true });
     }
 
     function updateItem(target) {
       const list = target.dataset.list === "goals" ? goals : holdings;
       const item = list[Number(target.dataset.index)];
       if (!item) return;
-      item[target.dataset.field] = target.dataset.field === "label" || target.dataset.field === "asset" ? target.value : Number(target.value) || 0;
+      item[target.dataset.field] = ["label", "asset", "goalType"].includes(target.dataset.field) ? target.value : Number(target.value) || 0;
       recompute();
     }
 
@@ -277,11 +283,16 @@
       if (event.target.matches("[data-remove]")) removeItem(event.target);
     });
     document.getElementById("addGoal").addEventListener("click", () => {
-      goals.push({ label: "New goal", amount: 0, horizon: 10, asset: "cpi" });
+      goals.push({ goalType: "Custom", label: "New goal", amount: 0, horizon: 10, asset: "cpi" });
       renderRows();
     });
     document.getElementById("addHolding").addEventListener("click", () => {
       holdings.push({ label: "New holding", amount: 0, monthly: 0, asset: "sp500" });
+      renderRows();
+    });
+    document.getElementById("toggleAdvanced").addEventListener("click", event => {
+      showAdvancedAssumptions = !showAdvancedAssumptions;
+      event.currentTarget.textContent = showAdvancedAssumptions ? "Hide advanced assumptions" : "Show advanced assumptions";
       renderRows();
     });
     document.getElementById("submitScenario").addEventListener("click", submitScenario);
@@ -302,6 +313,10 @@
       if (rate) el.innerHTML = `${Number(rate.cagrTrailing).toFixed(1)}<span class="unit">%</span>`;
     });
     renderRows();
+
+    function goalTypeOptions(selected = "Custom") {
+      return goalTypes.map(type => `<option value="${type}" ${type === selected ? "selected" : ""}>${type}</option>`).join("");
+    }
   </script>
 </body>
 </html>

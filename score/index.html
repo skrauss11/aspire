@@ -131,7 +131,7 @@
   <script type="module">
     import { project, projectionSeries } from "/lib/aspire.js";
     import { DRAFT_KEY, fromPersisted } from "/lib/schema.js";
-    import { renderRateChart } from "/lib/chart-rate.js";
+    import { renderDollarChart } from "/lib/chart-rate.js";
     import { renderCompositionStrip } from "/lib/chart-composition.js";
     import { mountGate } from "/lib/gate.js";
     import { money, shortMoney, pct, signedPct } from "/lib/format.js";
@@ -189,7 +189,7 @@
       document.getElementById("horizon").textContent = `${result.horizon.toFixed(1)} yr`;
       document.getElementById("dollarLine").textContent = `In ${result.horizon.toFixed(1)} years at these assumptions, ${shortMoney(result.totalGoalToday)} in goals today is projected to cost ${shortMoney(result.totalGoals)}. Your assets are projected to grow to ${shortMoney(result.totalAssets)}.`;
       document.getElementById("plainEnglish").textContent = `At your current assumptions, your money is growing ${Math.abs(result.gap).toFixed(1)} percentage points ${result.gap >= 0 ? "faster" : "slower"} than your future life is becoming more expensive.`;
-      renderRateChart(document.getElementById("rateChart"), projectionSeries(scenario.basket.goals, scenario.basket.holdings, result.horizon));
+      renderDollarChart(document.getElementById("rateChart"), projectionSeries(scenario.basket.goals, scenario.basket.holdings, result.horizon));
       renderCompositionStrip(document.getElementById("costComposition"), result.goalDetails, { rateKey: "growth", totalKey: "amount" });
       renderCompositionStrip(document.getElementById("moneyComposition"), result.assetDetails, { rateKey: "growth", totalKey: "amount" });
       renderList("goalList", scenario.basket.goals, "goal");

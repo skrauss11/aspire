@@ -38,6 +38,10 @@
     .gap-header h2 { font-size:30px; margin:0; }
     .gap-now { color:var(--yellow); font-size:42px; line-height:1; transition:color .2s ease; }
     .gap-now.good { color:var(--green); }
+    .answer-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0 18px; }
+    .answer-card { border:1px solid var(--rule); border-radius:8px; padding:13px; background:#12100e; min-width:0; }
+    .answer-card span { display:block; color:var(--muted); text-transform:uppercase; letter-spacing:.12em; font-size:10px; }
+    .answer-card strong { display:block; font-family:Fraunces,serif; font-size:25px; line-height:1.05; margin-top:6px; color:var(--paper); overflow-wrap:anywhere; }
     .chart-legend { display:flex; gap:14px; flex-wrap:wrap; color:var(--muted); font-size:12px; margin-top:8px; }
     .chart-legend i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
     .rate-path, .rate-gap-area { transition:d .2s ease; }
@@ -89,8 +93,12 @@
     }
     @media (max-width: 920px) {
       .gap-header { display:block; }
+      .answer-grid { grid-template-columns:repeat(2,1fr); }
       .edit-row { grid-template-columns:1fr; }
       .save-row { grid-template-columns:1fr; }
+    }
+    @media (max-width: 560px) {
+      .answer-grid { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -106,7 +114,7 @@
     <div>
       <div class="eyebrow">Sensitivity simulator</div>
       <h1>Move the assumptions. Watch your gap move.</h1>
-      <p class="lede">Four levers show which rate has to bend, and how much, to change your scenario.</p>
+      <p class="lede">Model a scenario by changing contributions, timing, or assumptions. Aspire shows the gap; it does not recommend investments.</p>
     </div>
     <aside class="score-card">
       <div class="label">Saved scenario</div>
@@ -129,6 +137,12 @@
         </div>
         <div class="gap-now" id="currentGap">—</div>
       </div>
+      <div class="answer-grid">
+        <div class="answer-card"><span>Extra monthly to close</span><strong id="requiredMonthly">—</strong></div>
+        <div class="answer-card"><span>Required money growth</span><strong id="requiredGrowth">—</strong></div>
+        <div class="answer-card"><span>Dollar gap</span><strong id="dollarGap">—</strong></div>
+        <div class="answer-card"><span>Scenario coverage</span><strong id="coverage">—</strong></div>
+      </div>
       <div id="rateChart"></div>
       <p class="summary" id="summary">Move a lever to see the scenario respond.</p>
       <p class="nudge" id="firstRunNudge">Try moving Monthly contribution to see your gap respond.</p>
@@ -139,7 +153,7 @@
         <div class="rail-head">
           <div>
             <h3>Adjust your assumptions</h3>
-            <p class="panel-sub">Each slider shifts one assumption. Watch your gap respond.</p>
+            <p class="panel-sub">Each slider shifts one planning assumption. Watch the scenario respond.</p>
           </div>
           <button class="reset-all" type="button" id="resetAll">Reset all</button>
         </div>
@@ -172,10 +186,10 @@
   <div class="toast" id="toast" role="status" aria-live="polite">Saved.</div>
 
   <script type="module">
-    import { project, projectionSeries } from "/lib/aspire.js";
+    import { additionalMonthlyRequired, project, projectionSeries, requiredMoneyGrowthRate } from "/lib/aspire.js";
     import { fromPersisted, decodeFallbackToken, toPersisted, encodeFallbackToken } from "/lib/schema.js";
-    import { renderRateChart } from "/lib/chart-rate.js";
-    import { money, pct, signedPct } from "/lib/format.js";
+    import { renderDollarChart } from "/lib/chart-rate.js";
+    import { money, pct, shortMoney, signedPct } from "/lib/format.js";
 
     let baseScenario;
     let currentScenario;
@@ -201,7 +215,7 @@
       { id:"contribution", label:"Monthly contribution", tip:"Additional savings added each month, distributed across your holdings.", min:0, max:5000, step:50, value:v => money(v), defaultText:"$0", apply:(s,v) => s.basket.holdings.forEach(asset => asset.monthly += v / Math.max(1, s.basket.holdings.length)) },
       { id:"horizon", label:"Time horizon", tip:"Shifts every goal's timeline earlier or later by this many years.", min:-10, max:20, step:1, value:v => `${v > 0 ? "+" : ""}${v} yr`, defaultText:"0 yr", apply:(s,v) => s.basket.goals.forEach(goal => goal.horizon = Math.max(1, goal.horizon + v)) },
       { id:"costGrowth", label:"Cost growth", tip:"Adjusts how fast your goals are becoming more expensive — shifts the cost growth rate up or down.", min:-5, max:5, step:.1, value:v => `${v > 0 ? "+" : ""}${Number(v).toFixed(1)} pp`, defaultText:"0 pp", apply:(s,v) => s.basket.goals.forEach(goal => goal.growth = Math.max(-5, goal.growth + v)) },
-      { id:"moneyGrowth", label:"Money growth", tip:"Adjusts how fast your assets are compounding — shifts the money growth rate up or down.", min:-5, max:5, step:.1, value:v => `${v > 0 ? "+" : ""}${Number(v).toFixed(1)} pp`, defaultText:"0 pp", apply:(s,v) => s.basket.holdings.forEach(asset => asset.growth = Math.max(-5, asset.growth + v)) }
+      { id:"moneyGrowth", label:"Money growth assumption", tip:"Adjusts the hypothetical growth rate used for your resources in this scenario.", min:-5, max:5, step:.1, value:v => `${v > 0 ? "+" : ""}${Number(v).toFixed(1)} pp`, defaultText:"0 pp", apply:(s,v) => s.basket.holdings.forEach(asset => asset.growth = Math.max(-5, asset.growth + v)) }
     ];
 
     function cloneScenario(scenario) {
@@ -261,14 +275,24 @@
 
     function renderAll() {
       const result = project(currentScenario.basket.goals, currentScenario.basket.holdings);
+      const requiredMonthly = additionalMonthlyRequired(currentScenario.basket.goals, currentScenario.basket.holdings);
+      const requiredGrowth = requiredMoneyGrowthRate(currentScenario.basket.goals, currentScenario.basket.holdings);
       document.getElementById("currentGap").textContent = `${signedPct(result.gap)} / yr`;
       document.getElementById("currentGap").classList.toggle("good", result.gap >= 0);
       document.getElementById("gapHeader").textContent = `Your gap was ${signedPct(baseResult.gap)} / yr. With these changes, it is ${signedPct(result.gap)} / yr.`;
+      document.getElementById("requiredMonthly").textContent = requiredMonthly ? `${money(requiredMonthly)}/mo` : "$0/mo";
+      document.getElementById("requiredGrowth").textContent = result.dollarGap >= 0 ? "Covered" : pct(requiredGrowth);
+      document.getElementById("dollarGap").textContent = shortMoney(result.dollarGap);
+      document.getElementById("coverage").textContent = `${Math.round(Math.max(0, result.coverage))}%`;
       const delta = result.gap - baseResult.gap;
       document.getElementById("summary").textContent = delta >= 0
-        ? `This scenario closes your gap by ${Math.abs(delta).toFixed(1)} percentage points.`
-        : `This scenario widens your gap by ${Math.abs(delta).toFixed(1)} percentage points.`;
-      renderRateChart(document.getElementById("rateChart"), projectionSeries(currentScenario.basket.goals, currentScenario.basket.holdings, result.horizon), { height: 360 });
+        ? `This scenario closes your rate gap by ${Math.abs(delta).toFixed(1)} percentage points and leaves a projected dollar gap of ${shortMoney(result.dollarGap)}.`
+        : `This scenario widens your rate gap by ${Math.abs(delta).toFixed(1)} percentage points and leaves a projected dollar gap of ${shortMoney(result.dollarGap)}.`;
+      renderDollarChart(
+        document.getElementById("rateChart"),
+        projectionSeries(currentScenario.basket.goals, currentScenario.basket.holdings, result.horizon),
+        { height: 360, baseline: projectionSeries(baseScenario.basket.goals, baseScenario.basket.holdings, baseResult.horizon) }
+      );
       for (const lever of leverRegistry) {
         const value = document.getElementById(`${lever.id}Value`);
         if (value) value.textContent = lever.value(leverValues[lever.id]);
