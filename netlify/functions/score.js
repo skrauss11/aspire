@@ -1,13 +1,13 @@
 // netlify/functions/score.js — Netlify Functions v1 (CommonJS)
 // POST /api/score → compute Aspire Score, save scenario, upsert Beehiiv, send Resend email
 
-const BEEHIIV_PUB_ID = process.env.BEEHIIV_PUB_ID || 'pub_8ad9f164-9d8a-426e-b25a-e8e4cc3cf601';
-const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY;
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || 'score@send.aspirerate.com';
-const FROM_NAME = process.env.FROM_NAME || 'Aspire Score';
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const BEEHIIV_PUB_ID = "placeholder" || 'pub_8ad9f164-9d8a-426e-b25a-e8e4cc3cf601';
+const BEEHIIV_API_KEY = "placeholder";
+const RESEND_API_KEY = "placeholder";
+const FROM_EMAIL = "placeholder" || 'score@send.aspirerate.com';
+const FROM_NAME = "placeholder" || 'Aspire Score';
+const SUPABASE_URL = "placeholder";
+const SUPABASE_SERVICE_ROLE_KEY = "placeholder";
 
 // Score = fraction of the basket the user can afford (0–100).
 // 42 = you can cover 42% of the life you're building toward.
@@ -82,9 +82,22 @@ async function saveScenario(email, basket, score, aspirationRate, portfolioRate,
   return Array.isArray(body) ? body[0] : body;
 }
 
+// Rotating pop culture hooks — change weekly.
+// Each one anchors the email in a concrete, real-world price memory before the score appears.
+const CULTURE_HOOKS = [
+  `Disney World opened in 1971 at $3.50 for adult admission. CPI says $30 today. The park charges $119–$209. That spread — between what the math says something should cost and what it actually costs — is what your score is measuring.`,
+  `A top concert ticket averaged $12 in 1980. Adjusted for CPI: $45. Pollstar's 2024 average: $136. The album used to subsidize the tour. Streaming flipped that. Your ticket absorbed the difference.`,
+  `The Happy Meal debuted in 1979 at $1.10. CPI puts that at $4.70 today. McDonald's charges $5–$7. Not a scandal. Just the quiet repricing of a familiar thing — which is what's been happening to your goals too.`,
+  `In 1992, the Barenaked Ladies wrote a song about what they'd do with a million dollars. That million buys roughly $435,000 worth of stuff today. To mean the same thing, the song would need to be about $2.3 million. Time is the variable nobody puts in the denominator.`,
+];
+
 async function sendResend(email, score, aspirationRate, portfolioRate, gap, simulatorUrl) {
   const ahead   = gap >= 0;
   const gapAbs  = Math.abs(gap).toFixed(1);
+
+  // Rotate hooks weekly
+  const weekIndex = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
+  const cultureHook = CULTURE_HOOKS[weekIndex % CULTURE_HOOKS.length];
 
   // Score interpretation line
   const scoreLine = score >= 100
@@ -102,6 +115,10 @@ async function sendResend(email, score, aspirationRate, portfolioRate, gap, simu
 
   const html = `
     <div style="font-family: Georgia, serif; max-width: 580px; margin: 0 auto; padding: 40px 24px; background: #f5f1ea; color: #0f0e0c;">
+
+      <p style="font-size: 14px; font-style: italic; color: #5a544b; line-height: 1.7; margin: 0 0 24px; font-family: Georgia, serif;">${cultureHook}</p>
+
+      <hr style="border: none; border-top: 1px solid #d6cec0; margin: 0 0 28px;" />
 
       <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: #c8451f; margin: 0 0 16px; font-family: system-ui, sans-serif;">Your Aspire Score</p>
       <h1 style="font-family: Georgia, serif; font-size: 80px; font-weight: 600; margin: 0 0 12px; line-height: 1; letter-spacing: -0.02em;">${score}</h1>
