@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-04T11:00:25.911Z",
+  "updated": "2026-05-11T11:00:54.463Z",
   "methodology": "Trailing 10-year compound annual growth rate (CAGR). Equities/gold/BTC: monthly closes from Yahoo Finance, adjusted for dividends. CPI sub-indices + national home: FRED monthly series. Metro-level homes: Zillow ZHVI (single-family, smoothed, seasonally adjusted). Tuition: College Board Trends in College Pricing (annual).",
   "rates": [
     {
@@ -7,312 +7,282 @@
       "label": "S&P 500 / broad index",
       "source": "Yahoo Finance",
       "symbol": "SPY",
-      "start": "2016-05-01",
-      "end": "2026-05-01",
-      "startValue": 178.2778,
-      "endValue": 720.65,
-      "years": 10,
-      "cagrTrailing": 14.99,
-      "cagrForwardSuggested": 8
+      "cagr": 15.39,
+      "start": "2016-06-01",
+      "end": "2026-05-08",
+      "startValue": 177.972,
+      "endValue": 737.62,
+      "years": 9.93
     },
     {
       "key": "qqq",
       "label": "Nasdaq 100 / tech",
       "source": "Yahoo Finance",
       "symbol": "QQQ",
-      "start": "2016-05-01",
-      "end": "2026-05-01",
-      "startValue": 102.8016,
-      "endValue": 674.15,
-      "years": 10,
-      "cagrTrailing": 20.69,
-      "cagrForwardSuggested": 10,
-      "forwardNote": "Trailing 10-year CAGR is volatile. Forward suggested is dampened and editable."
+      "cagr": 21.81,
+      "start": "2016-06-01",
+      "end": "2026-05-08",
+      "startValue": 100.1929,
+      "endValue": 711.06,
+      "years": 9.93
     },
     {
       "key": "single",
       "label": "Single-name mega-cap (NVDA)",
       "source": "Yahoo Finance",
       "symbol": "NVDA",
-      "start": "2016-05-01",
-      "end": "2026-05-01",
-      "startValue": 1.1437,
-      "endValue": 198.45,
-      "years": 10,
-      "cagrTrailing": 67.48,
-      "cagrForwardSuggested": 12,
-      "forwardNote": "Trailing 10-year CAGR is volatile. Forward suggested is dampened and editable."
+      "cagr": 69.26,
+      "start": "2016-06-01",
+      "end": "2026-05-08",
+      "startValue": 1.1538,
+      "endValue": 215.22,
+      "years": 9.93
     },
     {
       "key": "gold",
       "label": "Gold",
       "source": "Yahoo Finance",
       "symbol": "GLD",
-      "start": "2016-05-01",
-      "end": "2026-05-01",
-      "startValue": 116.06,
-      "endValue": 423.18,
-      "years": 10,
-      "cagrTrailing": 13.81,
-      "cagrForwardSuggested": 5
+      "cagr": 13.21,
+      "start": "2016-06-01",
+      "end": "2026-05-08",
+      "startValue": 126.47,
+      "endValue": 433.77,
+      "years": 9.93
     },
     {
       "key": "btc",
       "label": "Bitcoin",
       "source": "Yahoo Finance",
       "symbol": "BTC-USD",
+      "cagr": 61.89,
       "start": "2016-06-01",
-      "end": "2026-05-04",
+      "end": "2026-05-11",
       "startValue": 673.337,
-      "endValue": 78921.5,
-      "years": 9.92,
-      "cagrTrailing": 61.62,
-      "cagrForwardSuggested": 15,
-      "forwardNote": "Trailing 10-year CAGR is volatile. Forward suggested is dampened and editable."
+      "endValue": 80963.99,
+      "years": 9.94
     },
     {
       "key": "cpi",
       "label": "Cost of living (CPI)",
       "source": "FRED",
       "id": "CPIAUCSL",
+      "cagr": 3.33,
       "start": "2016-03-01",
       "end": "2026-03-01",
       "startValue": 238.08,
       "endValue": 330.293,
-      "years": 10,
-      "cagrTrailing": 3.33,
-      "cagrForwardSuggested": 3.33
+      "years": 10
     },
     {
       "key": "home",
       "label": "Home — US national (Case-Shiller)",
       "source": "FRED",
       "id": "CSUSHPINSA",
+      "cagr": 6.45,
       "start": "2016-02-01",
       "end": "2026-02-01",
       "startValue": 175.26,
       "endValue": 327.311,
-      "years": 10,
-      "cagrTrailing": 6.45,
-      "cagrForwardSuggested": 6.45
+      "years": 10
     },
     {
       "key": "health",
       "label": "Healthcare",
       "source": "FRED",
       "id": "CPIMEDSL",
+      "cagr": 2.6,
       "start": "2016-03-01",
       "end": "2026-03-01",
       "startValue": 457.723,
       "endValue": 591.587,
-      "years": 10,
-      "cagrTrailing": 2.6,
-      "cagrForwardSuggested": 2.6
+      "years": 10
     },
     {
       "key": "car",
       "label": "New car",
       "source": "FRED",
       "id": "CUSR0000SETA01",
+      "cagr": 1.98,
       "start": "2016-03-01",
       "end": "2026-03-01",
       "startValue": 147.443,
       "endValue": 179.465,
-      "years": 10,
-      "cagrTrailing": 1.98,
-      "cagrForwardSuggested": 1.98
+      "years": 10
     },
     {
       "key": "home_nyc",
       "label": "Home — New York, NY",
       "source": "Zillow ZHVI",
       "metro": "New York, NY",
+      "cagr": 5.18,
       "startValue": 431841,
       "endValue": 715584,
-      "years": 10,
-      "cagrTrailing": 5.18,
-      "cagrForwardSuggested": 5.18
+      "years": 10
     },
     {
       "key": "home_la",
       "label": "Home — Los Angeles, CA",
       "source": "Zillow ZHVI",
       "metro": "Los Angeles, CA",
+      "cagr": 6.26,
       "startValue": 527217,
       "endValue": 967836,
-      "years": 10,
-      "cagrTrailing": 6.26,
-      "cagrForwardSuggested": 6.26
+      "years": 10
     },
     {
       "key": "home_sf",
       "label": "Home — San Francisco, CA",
       "source": "Zillow ZHVI",
       "metro": "San Francisco, CA",
+      "cagr": 3.73,
       "startValue": 792694,
       "endValue": 1143246,
-      "years": 10,
-      "cagrTrailing": 3.73,
-      "cagrForwardSuggested": 3.73
+      "years": 10
     },
     {
       "key": "home_seattle",
       "label": "Home — Seattle, WA",
       "source": "Zillow ZHVI",
       "metro": "Seattle, WA",
+      "cagr": 6.87,
       "startValue": 386700,
       "endValue": 751552,
-      "years": 10,
-      "cagrTrailing": 6.87,
-      "cagrForwardSuggested": 6.87
+      "years": 10
     },
     {
       "key": "home_boston",
       "label": "Home — Boston, MA",
       "source": "Zillow ZHVI",
       "metro": "Boston, MA",
+      "cagr": 5.84,
       "startValue": 414488,
       "endValue": 731139,
-      "years": 10,
-      "cagrTrailing": 5.84,
-      "cagrForwardSuggested": 5.84
+      "years": 10
     },
     {
       "key": "home_chicago",
       "label": "Home — Chicago, IL",
       "source": "Zillow ZHVI",
       "metro": "Chicago, IL",
+      "cagr": 5.19,
       "startValue": 207876,
       "endValue": 344687,
-      "years": 10,
-      "cagrTrailing": 5.19,
-      "cagrForwardSuggested": 5.19
+      "years": 10
     },
     {
       "key": "home_austin",
       "label": "Home — Austin, TX",
       "source": "Zillow ZHVI",
       "metro": "Austin, TX",
+      "cagr": 4.24,
       "startValue": 281996,
       "endValue": 427045,
-      "years": 10,
-      "cagrTrailing": 4.24,
-      "cagrForwardSuggested": 4.24
+      "years": 10
     },
     {
       "key": "home_dallas",
       "label": "Home — Dallas, TX",
       "source": "Zillow ZHVI",
       "metro": "Dallas, TX",
+      "cagr": 6.03,
       "startValue": 203136,
       "endValue": 364734,
-      "years": 10,
-      "cagrTrailing": 6.03,
-      "cagrForwardSuggested": 6.03
+      "years": 10
     },
     {
       "key": "home_houston",
       "label": "Home — Houston, TX",
       "source": "Zillow ZHVI",
       "metro": "Houston, TX",
+      "cagr": 4.48,
       "startValue": 198366,
       "endValue": 307493,
-      "years": 10,
-      "cagrTrailing": 4.48,
-      "cagrForwardSuggested": 4.48
+      "years": 10
     },
     {
       "key": "home_denver",
       "label": "Home — Denver, CO",
       "source": "Zillow ZHVI",
       "metro": "Denver, CO",
+      "cagr": 5.19,
       "startValue": 345646,
       "endValue": 573363,
-      "years": 10,
-      "cagrTrailing": 5.19,
-      "cagrForwardSuggested": 5.19
+      "years": 10
     },
     {
       "key": "home_miami",
       "label": "Home — Miami, FL",
       "source": "Zillow ZHVI",
       "metro": "Miami, FL",
+      "cagr": 7,
       "startValue": 240504,
       "endValue": 472937,
-      "years": 10,
-      "cagrTrailing": 7,
-      "cagrForwardSuggested": 7
+      "years": 10
     },
     {
       "key": "home_phoenix",
       "label": "Home — Phoenix, AZ",
       "source": "Zillow ZHVI",
       "metro": "Phoenix, AZ",
+      "cagr": 6.8,
       "startValue": 232085,
       "endValue": 448160,
-      "years": 10,
-      "cagrTrailing": 6.8,
-      "cagrForwardSuggested": 6.8
+      "years": 10
     },
     {
       "key": "home_nashville",
       "label": "Home — Nashville, TN",
       "source": "Zillow ZHVI",
       "metro": "Nashville, TN",
+      "cagr": 7.1,
       "startValue": 228510,
       "endValue": 453873,
-      "years": 10,
-      "cagrTrailing": 7.1,
-      "cagrForwardSuggested": 7.1
+      "years": 10
     },
     {
       "key": "home_atlanta",
       "label": "Home — Atlanta, GA",
       "source": "Zillow ZHVI",
       "metro": "Atlanta, GA",
+      "cagr": 7.09,
       "startValue": 191350,
       "endValue": 379509,
-      "years": 10,
-      "cagrTrailing": 7.09,
-      "cagrForwardSuggested": 7.09
+      "years": 10
     },
     {
       "key": "home_dc",
       "label": "Home — Washington, DC",
       "source": "Zillow ZHVI",
       "metro": "Washington, DC",
+      "cagr": 4.09,
       "startValue": 388860,
       "endValue": 580335,
-      "years": 10,
-      "cagrTrailing": 4.09,
-      "cagrForwardSuggested": 4.09
+      "years": 10
     },
     {
       "key": "tuition_private",
       "label": "Tuition — Private 4-year (non-profit)",
       "source": "College Board Trends 2024",
+      "cagr": 4.2,
       "years": 10,
-      "note": "10yr average annualized increase in published tuition + fees",
-      "cagrTrailing": 4.2,
-      "cagrForwardSuggested": 4.2
+      "note": "10yr average annualized increase in published tuition + fees"
     },
     {
       "key": "tuition_public_in",
       "label": "Tuition — Public 4-year (in-state)",
       "source": "College Board Trends 2024",
+      "cagr": 3.1,
       "years": 10,
-      "note": "10yr average annualized increase in published tuition + fees",
-      "cagrTrailing": 3.1,
-      "cagrForwardSuggested": 3.1
+      "note": "10yr average annualized increase in published tuition + fees"
     },
     {
       "key": "tuition_public_out",
       "label": "Tuition — Public 4-year (out-of-state)",
       "source": "College Board Trends 2024",
+      "cagr": 3.7,
       "years": 10,
-      "note": "10yr average annualized increase in published tuition + fees",
-      "cagrTrailing": 3.7,
-      "cagrForwardSuggested": 3.7
+      "note": "10yr average annualized increase in published tuition + fees"
     }
   ],
   "errors": []
