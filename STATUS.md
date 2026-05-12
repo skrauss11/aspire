@@ -2,13 +2,13 @@
 
 _Single source of truth for what each agent is currently working on in this repo. Update when you start, stop, or hand off._
 
-_Last updated: 2026-05-04 08:10 ET_
+_Last updated: 2026-05-11 ET_
 
 ---
 
 ## Currently in flight
 
-_(empty — nothing in flight)_
+- **Claude** — `claude/may-2026-redirection`: ships the May 2026 strategic redirection. Adds `specs/` (7 canonical product/design specs + README-HANDOFF + PRE-LAUNCH-CHECKLIST), `content/` (placeholder Methodology page + 2 Explainer voice exemplars), `CLAUDE.md` and `_DRIFT_REPORT_2026-05-11.md` at repo root, AGENTS.md/AGENT_WORKFLOW.md updates (Sauna discontinued, Claude added to roster, voice rules merged, "at these assumptions" pairing tightened), supersession marks on `PRODUCT_DNA.md` / `POSITIONING.md` / `CONTENT_STRATEGY.md` / `ROADMAP.md` / `BUSINESS_MODEL.md` / `10_CANONICAL/Vocabulary.md`. Reconciles with the May 4 alignment report and the May 11 drift report. **Awaiting Scott's review and merge.** Companion PR in `aspire-gtm/` on `claude/may-2026-redirection` covers the GTM AGENTS.md update + V3.2 archive.
 
 ## Recently shipped
 

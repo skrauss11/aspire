@@ -1,5 +1,7 @@
 # CONTENT_STRATEGY.md
 
+> **⚠ Partial supersession (2026-05-11):** Content surfaces, editorial cadence, content-tier shape, and operational publication flow are now canonized in `specs/content-architecture.md`. The four canonical surfaces (Aspire Index, Aspire Report, Explainers, Methodology) and the Beehiiv-as-spine model live there. The mission, editorial thesis, voice comps, and content pillars below remain canonical. Where this doc and `specs/content-architecture.md` conflict on surfaces or cadence, the spec wins.
+
 ## Content Mission
 
 Make "the inflation rate of the life you want" a durable financial idea.

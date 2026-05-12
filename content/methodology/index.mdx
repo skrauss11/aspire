@@ -1,0 +1,149 @@
+---
+title: "Methodology"
+slug: "methodology"
+version: 1
+last_refreshed: 2026-05-11
+status: "PLACEHOLDER SHELL — figures and source links to be finalized before launch"
+---
+
+# Methodology
+
+_How Aspire computes the Aspire Rate, the Aspire Gap, and every figure on this site. Boring on purpose. If a number on Aspire surprises you, it should be defensible here._
+
+**Version 1 — last refreshed 2026-05-11.**
+
+---
+
+## §1. The two definitions
+
+**Aspire Rate** — the required money-growth rate to cover the priced future at the user's current assumptions. Equivalent to the 5-year trailing CAGR of the user's selected goals basket. The *floor* — at exactly this rate, the user's money keeps pace with the cost of the life they're pricing.
+
+**Target Aspire Rate** — Aspire Rate plus a margin of safety, defaulted to +1%. The aspirational target. Hitting Target Aspire Rate means the user is ahead of the floor, not at it. Tunable in the Simulator (range: 0.0% to 5.0%, step 0.1%).
+
+**Aspire Gap** — the delta between the user's projected money growth rate and Aspire Rate.
+
+```
+Aspire Gap = (your money growth rate) − Aspire Rate
+```
+
+Sign convention: positive Aspire Gap means the user is outpacing the cost growth of their priced future (good); negative Aspire Gap means the cost is rising faster than the user's resources (typical first-run case).
+
+All Aspire outputs are educational measurements at the user's current assumptions. They are not predictions, recommendations, or investment advice. See `/manifesto` and `/account` for full posture.
+
+---
+
+## §2. The basket presets
+
+Three locked basket presets are offered in the Calculator. Each preset weights component categories that drive the user's personal cost growth rate.
+
+| Basket | Housing | S&P 500 | CPI-U | Childcare | Tuition | Healthcare |
+|---|---|---|---|---|---|---|
+| A home | 50% | 25% | 15% | 10% | — | — |
+| A family | 30% | 25% | — | 20% | 15% | 10% |
+| Freedom | 30% | 35% | — | — | — | 35% (placeholder weights — see §X for finalization) |
+
+> _Placeholder values; final basket weights to be locked before launch and audited quarterly._
+
+The Simulator lets users override component weights via the "Refine basket" panel. Adding new component categories beyond the locked set is out of scope for v1.
+
+---
+
+## §3. CAGR sources and methodology
+
+All baseline rates use **5-year trailing CAGR** to smooth volatility while staying current. Refreshed weekly via `aspire/rates.json`. Each figure carries a vintage timestamp.
+
+| Component | Source | Series | Methodology |
+|---|---|---|---|
+| Housing — National | FRED — Case-Shiller US National Home Price Index | `CSUSHPINSA` | 5-yr trailing CAGR, monthly closes |
+| Housing — Metro (Austin, NYC, LA, etc.) | Zillow ZHVI | Single-family, smoothed, seasonally adjusted | 5-yr trailing CAGR, monthly closes |
+| Equity — broad index (S&P 500) | Yahoo Finance | `SPY` (with reinvested dividends proxy) | 5-yr trailing CAGR, monthly closes |
+| Equity — tech index | Yahoo Finance | `QQQ` | 5-yr trailing CAGR, monthly closes |
+| Tuition — private | College Board, *Trends in College Pricing* | Annual published values | Annual CAGR over 5-year window |
+| Tuition — public in-state | College Board | Annual values | Annual CAGR over 5-year window |
+| Healthcare | CMS National Health Expenditure Accounts | Per-capita NHE | 5-yr trailing CAGR |
+| Childcare | BLS CPI subindex + Care.com Cost of Care | Composite | 5-yr trailing CAGR; weighted average |
+| General CPI (for contrast) | BLS | `CPIAUCSL` (CPI-U) | 5-yr trailing CAGR |
+| Cash / HYSA assumed return | National HYSA average | National rate aggregate | 5-yr trailing |
+| Real estate (general) | FRED | National Case-Shiller | 5-yr trailing CAGR |
+| Other (blended/conservative) | Composite | TBD methodology — placeholder 6.0% | _Finalization pending_ |
+
+> _Weekly refresh job runs on `aspire/rates.json` (cron). Last known refresh: 2026-04-30. Update cadence: weekly._
+
+---
+
+## §4. Portfolio-return assumptions
+
+When the user enters their allocation across the four buckets (Cash & savings / Stocks & index funds / Real estate / Other), each bucket carries a default expected return:
+
+| Bucket | Default expected return | Source |
+|---|---|---|
+| Cash & savings | 4.0% | National HYSA average, 5-yr trailing |
+| Stocks & index funds | 10.4% | S&P 500 5-yr trailing CAGR |
+| Real estate | 9.0% | Case-Shiller national, 5-yr trailing |
+| Other | 6.0% | Conservative blended default |
+
+> _All defaults editable in the Simulator's "Configurable CAGR" lever. Users can switch any asset class to 10-yr trailing, 20-yr trailing, or a custom percentage._
+
+The user's overall money growth rate is the weighted average of the four buckets at their current allocation.
+
+---
+
+## §5. The 1% margin of safety
+
+The default margin between Aspire Rate (the floor) and Target Aspire Rate (the aspirational target) is **+1.0%.**
+
+A 1% margin compounds meaningfully over a typical planning horizon: at 10 years, a 1% per year edge represents roughly 10–11% additional headroom against the priced future. At 30 years, the headroom is closer to 35%.
+
+The margin is tunable in the Simulator (range 0.0%–5.0%, step 0.1%). Users with a stronger view of risk may set it higher; users in steady-income contexts may set it lower. Aspire does not recommend a specific margin — it provides a default and surfaces the consequences of changing it.
+
+---
+
+## §6. What's not modeled (honest limitations)
+
+Aspire's outputs reflect the assumptions in the model. They do not account for:
+
+- **Taxes** — pre-tax returns assumed throughout v1. Tax-aware modeling (401k vs. Roth vs. taxable vs. HSA) is a v2 feature.
+- **Investment fees** — assumed zero. Real expense ratios should be subtracted from money growth assumptions if material.
+- **Lifestyle inflation** beyond the basket — if the user's life gets more expensive in ways the basket doesn't capture (e.g., new hobbies, moves), Aspire won't see it.
+- **Sequence-of-returns risk** — Aspire uses a constant CAGR assumption. Real markets are volatile. Outputs are point-estimates, not Monte Carlo distributions.
+- **Income trajectory** — Aspire models contributions as a constant monthly figure. Income changes (raises, job loss, retirement) require manual scenario adjustments.
+- **Life events** — divorce, death, disability, inheritance, business sale. Out of scope.
+- **Behavioral risk** — savings discipline, market timing, panic selling. Out of scope.
+
+---
+
+## §7. Refresh schedule
+
+| Item | Cadence |
+|---|---|
+| `rates.json` (CAGR snapshots) | Weekly (Monday morning, automated) |
+| Methodology figures on this page | Quarterly |
+| Source list | Reviewed annually |
+| Basket presets | Reviewed annually |
+| Default expected returns | Reviewed quarterly |
+
+When this page updates, the change is logged in §8 below.
+
+---
+
+## §8. Change log
+
+| Date | Change |
+|---|---|
+| 2026-05-11 | Methodology page initialized. Aspire Rate / Target Aspire Rate / Aspire Gap definitions established. Basket presets locked (placeholder weights pending final audit). |
+
+---
+
+## §9. Disclaimers
+
+> Aspire Rate is an educational planning tool at your current assumptions. It does not provide investment, tax, legal, or insurance advice and does not recommend any security or financial product. Outputs are hypothetical, may be incomplete or inaccurate, and are not guarantees of future costs, returns, or outcomes. Past CAGRs are not guarantees of future returns. Consider consulting a fiduciary financial advisor before making financial decisions.
+
+For full compliance posture, see `aspire/COMPLIANCE.md`.
+
+---
+
+## §10. Contact
+
+Questions about methodology: methodology@aspirerate.com.
+General questions: hello@aspirerate.com.
+Privacy questions: privacy@aspirerate.com.

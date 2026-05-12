@@ -1,5 +1,7 @@
 # POSITIONING.md
 
+> **⚠ Partial supersession (2026-05-11):** The "Internal vs User-Facing Terminology" section is superseded by `specs/brief-v2.md` §1 (canonical terminology — Aspire Rate / Target Aspire Rate / Aspire Gap, with the existing gap sign convention preserved). The category positioning, narrative, messaging pillars, and audience promise below remain canonical. Tagline section: the primary tagline *"How much of tomorrow can you afford?"* is preserved; *"Inflation isn't a number. It's a vector."* is added as a secondary punchline for Calculator H1 and editorial accents per `specs/copy.md` §4.0.
+
 ## Category
 
 Aspire Rate creates a category around personal future inflation.

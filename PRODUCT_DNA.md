@@ -1,5 +1,7 @@
 # PRODUCT_DNA.md
 
+> **⚠ Partial supersession (2026-05-11):** Sections "Internal vs User-Facing Terminology", "Core Concepts", "Key User Inputs", "Key Outputs", and "Calculation Philosophy" are partially superseded by `specs/brief-v2.md` §1 (canonical Aspire Rate / Target Aspire Rate / Aspire Gap definitions and sign convention) and `specs/page-spec-calculator.md` §4–6 (canonical input set and output structure). Where this doc and the specs conflict, the specs win. The principles, philosophy, jobs-to-be-done, and product boundaries below remain canonical.
+
 ## Product Definition
 
 Aspire Rate is a personal inflation framework.
