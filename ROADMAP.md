@@ -1,5 +1,7 @@
 # ROADMAP.md
 
+> **⚠ Partial supersession (2026-05-11):** The 5-phase technical roadmap below remains the canonical phasing model. **Phases 4–5 (Content & Growth Loops + Monetization) are now elaborated by the v1/v1.5/v2 monetization sequencing in `specs/content-architecture.md` §12.** Specifically: v1 = free-only launch (current Phase 1–4 scope); v1.5 = Aspire Report Premium via Beehiiv tiered subscriptions (test of Phase 5 willingness-to-pay); v2 = Aspire Pro product subscription (multi-goal, tax-aware, spouse mode — full Phase 5). Where this doc and the spec conflict on monetization sequencing, the spec wins.
+
 ## Roadmap Philosophy
 
 Build the concept before building complexity.

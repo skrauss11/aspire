@@ -2,13 +2,78 @@
 
 This file defines how AI agents should work on Aspire Rate.
 
-## Canonical Workspace Hierarchy
+## Cross-Repo Authority Rule
 
 In the unified workspace, `aspire/` is canonical for product language, user-facing terminology, formulas, compliance, technical architecture, monetization guardrails, roadmap, and live-site behavior.
 
 `aspire-gtm/` is canonical for research, content strategy, newsletter, social, editorial planning, GTM experiments, and audience development.
 
-If there is a conflict between repos, `aspire/` wins.
+When product, formula, compliance, monetization, roadmap, technical architecture, or live-site behavior decisions conflict across repos, `aspire/` wins.
+
+`aspire-gtm/` may create GTM recommendations, content ideas, campaign strategy, newsletter strategy, and audience-development plans, but it may not redefine canonical product terminology, formulas, compliance posture, roadmap, monetization guardrails, technical architecture, or live-site behavior.
+
+Any GTM document that touches recommendations, financial products, affiliates, sponsorships, advertisers, aggregate gap data, referrals, or data licensing must defer to `aspire/COMPLIANCE.md`.
+
+## Agent Roster (updated 2026-05-11)
+
+Aspire runs as a multi-agent product. The current roster:
+
+| Agent | Primary responsibility | Default file scope |
+|---|---|---|
+| Codex | Backend, Netlify Functions, Supabase schema/migrations, build tooling, deploy infra, live-site HTML refactors | `netlify/functions/`, `lib/`, `rates.json`, schema, `*.html` |
+| Claude | Strategy, spec authoring, copy, content (MDX), cross-repo synthesis, drift detection, decision documents | `specs/`, `*.md` (strategy/spec), `content/` (when added) |
+| Hermes | Research, market intel, trend monitoring, competitor analysis | `aspire-gtm/40_MARKET_INTELLIGENCE/`, `aspire-gtm/00_RAW/Research/` |
+
+_Sauna was discontinued as of 2026-05-11. Sauna's prior content/copy/UX-writing responsibilities moved to Claude; Sauna's prior live-site HTML editing role moved to Codex._
+
+Operational rules in `AGENT_WORKFLOW.md` apply to all three agents equally:
+- Branch protection on `main` is enforced. PRs only.
+- Add a `STATUS.md` entry under "Currently in flight" *before* opening the PR.
+- Branch name format: `<agent>/<short-slug>` (e.g., `claude/spec-pass`, `codex/score-refactor`).
+- Wait for Scott's merge.
+- No deploy previews; only merges to `main` deploy.
+
+## Canonical Specs (added 2026-05-11)
+
+Seven specs in `specs/` are the canonical product and design source of truth as of 2026-05-11:
+
+- `specs/brief-v2.md` — master design + product brief
+- `specs/creative-direction.md` — type, color, motion, two-register system
+- `specs/page-spec-calculator.md` — Calculator page spec
+- `specs/page-spec-simulator.md` — Simulator page spec
+- `specs/security-and-privacy.md` — security model, RLS, encryption, deletion flow
+- `specs/content-architecture.md` — content layer + monetization tier shape
+- `specs/copy.md` — every word on every page
+
+These supersede the design-direction sections of `POSITIONING.md`, `PRODUCT_DNA.md`, `CONTENT_STRATEGY.md`, `BUSINESS_MODEL.md`, and `ROADMAP.md` where they conflict. The reconciliation log between the prior canon and these specs is `_DRIFT_REPORT_2026-05-11.md` (this repo, root). `COMPLIANCE.md`, `ICP.md`, `TECHNICAL_CONTEXT.md`, `AGENT_WORKFLOW.md`, and `10_CANONICAL/Vocabulary.md` retain authority for their specific domains (with `Vocabulary.md` updated to match the new terminology in a separate cleanup PR).
+
+## Internal vs User-Facing Terminology
+
+Aspire uses descriptive internal terms for product logic and documentation:
+
+- Cost growth rate = modeled growth rate of the priced future
+- Money growth rate = modeled growth rate of the user's listed resources
+- Required money-growth rate = solved money-growth rate needed to cover the priced future at the current assumptions
+- Gap = difference between money growth and cost growth, plus the dollar gap implied by the model
+
+Canonical user-facing vocabulary:
+
+- Cost growth = how fast the priced future is becoming more expensive
+- Money growth = how fast the listed resources are modeled to grow
+- Your gap = the difference between cost growth and money growth, plus the dollar gap implied by the model
+- Your Aspire Rate = the required money-growth rate the model estimates would be needed to cover the priced future at the current assumptions
+
+Formula:
+
+```text
+Your gap = Money growth - Cost growth
+```
+
+Avoid using "Aspire Rate" internally to mean cost growth. "Your Aspire Rate" is now reserved for the branded user-facing required money-growth rate.
+
+Your Aspire Rate is a modeled requirement, not a recommendation. It does not tell the user what to buy, sell, hold, or allocate toward. Always frame it with "at these assumptions" or equivalent language.
+
+`Future Buying Power` is a supporting result/explanation layer, not the primary metric.
 
 ## Mission
 
@@ -24,20 +89,26 @@ Before making product, content, design, or strategy decisions, read:
 
 1. `README.md`
 2. `SOUL.md`
-3. `PRODUCT_DNA.md`
-4. `COMPLIANCE.md`
-5. `design.md`
-6. `10_CANONICAL/Vocabulary.md`
+3. `specs/brief-v2.md` (canonical product/design brief — supersedes design-direction sections of older docs where they conflict)
+4. `PRODUCT_DNA.md`
+5. `COMPLIANCE.md`
+6. `specs/creative-direction.md` (visual identity supersedes `design.md` where they conflict)
+7. `10_CANONICAL/Vocabulary.md` (terminology — being updated to match `specs/brief-v2.md` §1)
+8. `STATUS.md` (current work in flight)
+9. `AGENT_WORKFLOW.md` (per-change checklist)
+10. `_DRIFT_REPORT_2026-05-11.md` (reconciliation log between prior canon and the new specs — useful context, not required for every task)
 
 For specific work:
 
-- Messaging and marketing: read `POSITIONING.md` and `CONTENT_STRATEGY.md`
+- Messaging and marketing: read `POSITIONING.md`, `CONTENT_STRATEGY.md`, and `specs/content-architecture.md`
 - User research and onboarding: read `ICP.md`
-- Feature planning: read `ROADMAP.md`
-- Pricing and packaging: read `BUSINESS_MODEL.md`
+- Feature planning: read `ROADMAP.md` and `specs/brief-v2.md` (Phase 4–5 of the existing roadmap is now elaborated by the v1/v1.5/v2 sequencing in the new specs)
+- Pricing and packaging: read `BUSINESS_MODEL.md` and `specs/content-architecture.md` §12 (locked tier shape)
 - Prompt or agent design: read `PROMPTS.md`
 - Research planning: read `RESEARCH_TASKS.md`
-- Technical implementation: read `TECHNICAL_CONTEXT.md`
+- Technical implementation: read `TECHNICAL_CONTEXT.md` and the Tech notes sections of `specs/page-spec-calculator.md` §11 and `specs/page-spec-simulator.md` §13
+- Security, encryption, deletion flow, schema: read `specs/security-and-privacy.md`
+- Copy work: read `specs/copy.md` (source of truth for every word on every page)
 
 ## Product Principles
 
@@ -47,7 +118,7 @@ For specific work:
 - Show assumptions clearly.
 - Distinguish measurement from advice.
 - Treat uncertainty as part of the product, not a footnote.
-- Do not imply that Aspire Rate can predict the future.
+- Do not imply that Aspire Rate or Your Aspire Rate can predict the future.
 - Do not recommend specific securities, asset allocations, or financial products unless the business has approved the relevant compliance path.
 
 ## Agent Decision Rules
@@ -62,6 +133,8 @@ When making a product decision, ask:
 
 ## Voice Rules
 
+Comps: **Morgan Housel × Matt Levine × Nassim Taleb.**
+
 Use the Aspire voice:
 
 - Sharp, not sales-y
@@ -70,8 +143,10 @@ Use the Aspire voice:
 - Calm about risk
 - Honest about uncertainty
 - Free of financial-services cosplay
+- Contractions always
+- Italics earn their keep on key thesis words: *vector*, *yours*, *your* basket
 
-Avoid:
+Avoid (union of prior canon and the May 2026 specs):
 
 - "Beat inflation"
 - "Guaranteed"
@@ -80,16 +155,34 @@ Avoid:
 - "The best asset"
 - "Risk-free"
 - "Achieve your dreams"
+- "Supercharge"
+- "Unlock"
+- "In today's economy"
+- "Delve"
+- "Unpack"
+- "Leverage"
 - Doom-driven fear copy
+- Alpha promises
+- Crypto maximalism
+- Advisor cosplay
+- Generic personal finance copy
+
+Banned pattern: *"This isn't X. It's Y."* — except the protected secondary punchline *"Inflation isn't a number. It's a vector."* (used sparingly in Calculator H1, occasional editorial accent, social posts — see `specs/copy.md` §4.0 for tagline placement).
 
 Preferred phrases:
 
 - "the inflation rate of the life you want"
 - "your future has its own inflation rate"
 - "measure the gap"
+- "close the gap"
 - "make the assumptions visible"
+- "at these assumptions" (compliance pairing — required when surfacing a rate or gap)
 - "the cost of optionality"
 - "a planning lens"
+
+Tagline:
+- **Primary tagline** (durable, footer mast, OG card, social profile): *"How much of tomorrow can you afford?"*
+- **Secondary punchline** (Calculator H1, occasional accent): *"Inflation isn't a number. It's a vector."*
 
 ## Compliance Guardrails
 
@@ -101,6 +194,8 @@ Agents must not:
 - Use testimonials or case studies without substantiation and disclosure review.
 - Hide assumptions behind a single confident number.
 - Use outdated market, CPI, rate, tuition, housing, or healthcare data without timestamping the source.
+- Surface Aspire Rate, Target Aspire Rate, money growth, or any rate-comparison number in user-facing copy without pairing it with *"at these assumptions"* or equivalent contextualizing language.
+- Apply gain/loss color treatment to Aspire Gap without showing the underlying assumptions in the same view.
 
 Agents may:
 
@@ -157,3 +252,4 @@ When agents create or edit work, they should state:
 - Which source files informed the change
 - Any assumptions
 - Any compliance or data risks that remain
+- Any conflict surfaced between the existing canon and the May 2026 specs in `specs/` — link the relevant drift-report conflict (`_DRIFT_REPORT_2026-05-11.md` §3 or §4) and recommend a resolution rather than silently picking a side

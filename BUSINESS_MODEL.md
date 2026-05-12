@@ -1,5 +1,7 @@
 # BUSINESS_MODEL.md
 
+> **⚠ Partial supersession (2026-05-11):** The locked tier shape — Aspire Report Premium (v1.5) and Aspire Pro (v2), with explicit feature-by-feature in/out tables — lives in `specs/content-architecture.md` §12 and supersedes the equivalent sections below. The 5 candidate revenue lines below (Consumer Freemium, Advisor Tools, Content/Newsletter, Data/Reports, API/Embedded Widgets) remain in scope as **future surfaces**, but only Consumer Freemium + Content/Newsletter are committed for v1/v1.5/v2. Advisor Tools, Data/Reports, and API are deferred indefinitely. Monetization principles below remain canonical.
+
 ## Business Model Thesis
 
 Aspire Rate can monetize by helping users, advisors, and financial content platforms measure the gap between desired futures and financial trajectories.
