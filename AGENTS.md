@@ -47,6 +47,12 @@ Seven specs in `specs/` are the canonical product and design source of truth as 
 
 These supersede the design-direction sections of `POSITIONING.md`, `PRODUCT_DNA.md`, `CONTENT_STRATEGY.md`, `BUSINESS_MODEL.md`, and `ROADMAP.md` where they conflict. The reconciliation log between the prior canon and these specs is `_DRIFT_REPORT_2026-05-11.md` (this repo, root). `COMPLIANCE.md`, `ICP.md`, `TECHNICAL_CONTEXT.md`, `AGENT_WORKFLOW.md`, and `10_CANONICAL/Vocabulary.md` retain authority for their specific domains (with `Vocabulary.md` updated to match the new terminology in a separate cleanup PR).
 
+### Pre-canonical thinking lives in `../aspire-gtm/70_AGENT_LAB/`
+
+Strategy debates, hypotheses, research handoffs, and ideas in progress between agents (Claude, Hermes, Codex, Grok, ChatGPT) live in the sibling GTM repo at `../aspire-gtm/70_AGENT_LAB/`. **Nothing there is canonical** — it's the *thinking* surface. Decisions made in the lab become canon only when an agent opens a PR against the relevant canonical doc (`aspire/specs/`, `10_PROJECT_BRAIN/Decisions.md`, etc.) and links the originating thread.
+
+If you're an agent and you have a position on something that another agent might disagree with — or you need to hand off research — start there before touching canon. Format spec, rules of engagement, and seed examples are in `../aspire-gtm/70_AGENT_LAB/README.md`.
+
 ## Internal vs User-Facing Terminology
 
 Aspire uses descriptive internal terms for product logic and documentation:
