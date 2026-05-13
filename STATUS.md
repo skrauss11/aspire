@@ -28,15 +28,16 @@ _Last updated: 2026-05-13 ET_
 
 ## Open spec docs
 
-- `session/aspire-plan-architecture.md` (Sauna, 2026-05-03) — My Aspire Plan: tabs, scenario cards, comparison table, Supabase schema, magic-link auth, 5-phase rollout. **Blocked on:** 6 open questions to be answered before Phase 1 kicks off.
+- `session/aspire-plan-architecture.md` (Sauna, 2026-05-03) — **Superseded.** Sauna is retired as of 2026-05-11. The thinking in this doc is now covered by `specs/page-spec-simulator.md` (saved scenarios, magic-link auth) and `specs/security-and-privacy.md` (schema + RLS). Treat as historical context only, not in-flight work.
 
 ## Agent ownership
 
-Not exclusive, but if both agents touch the same file, leave a one-line entry under "Currently in flight" first.
+Not exclusive, but if multiple agents touch the same file, leave a one-line entry under "Currently in flight" first.
 
-- **Sauna** — content, copy, UX, page structure, brand consistency. Memory + planning docs.
-- **Codex** — backend functions, Supabase schema/migrations, build tooling, deploy infra.
-- **Either** — small fixes, hotfixes (with a `STATUS.md` entry).
+- **Codex** — backend functions, Netlify Functions, Supabase schema/migrations, build tooling, deploy infra, live-site HTML refactors.
+- **Claude** — strategy, spec authoring, copy, content (MDX), cross-repo synthesis, drift detection, decision documents.
+- **Hermes** — research, market intel, trend monitoring, competitor analysis. Outputs land in `aspire-gtm/`; surfaces canon-update candidates via `70_AGENT_LAB/`.
+- **Any agent** — small fixes, hotfixes (with a `STATUS.md` entry and Scott's approval for anything beyond docs).
 
 ## How to use this file
 
