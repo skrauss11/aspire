@@ -2,15 +2,15 @@
 title: "Methodology"
 slug: "methodology"
 version: 1
-last_refreshed: 2026-05-11
-status: "PLACEHOLDER SHELL — figures and source links to be finalized before launch"
+last_refreshed: 2026-05-13
+status: "live"
 ---
 
 # Methodology
 
 _How Aspire computes the Aspire Rate, the Aspire Gap, and every figure on this site. Boring on purpose. If a number on Aspire surprises you, it should be defensible here._
 
-**Version 1 — last refreshed 2026-05-11.**
+**Version 1 — last refreshed 2026-05-13.**
 
 ---
 
@@ -50,24 +50,24 @@ The Simulator lets users override component weights via the "Refine basket" pane
 
 ## §3. CAGR sources and methodology
 
-All baseline rates use **5-year trailing CAGR** to smooth volatility while staying current. Refreshed weekly via `aspire/rates.json`. Each figure carries a vintage timestamp.
+All baseline rates use **5-year trailing CAGR** to smooth volatility while staying current. Each figure carries a vintage timestamp and retrieval date. Refresh cadence varies by source (noted below).
 
-| Component | Source | Series | Methodology |
-|---|---|---|---|
-| Housing — National | FRED — Case-Shiller US National Home Price Index | `CSUSHPINSA` | 5-yr trailing CAGR, monthly closes |
-| Housing — Metro (Austin, NYC, LA, etc.) | Zillow ZHVI | Single-family, smoothed, seasonally adjusted | 5-yr trailing CAGR, monthly closes |
-| Equity — broad index (S&P 500) | Yahoo Finance | `SPY` (with reinvested dividends proxy) | 5-yr trailing CAGR, monthly closes |
-| Equity — tech index | Yahoo Finance | `QQQ` | 5-yr trailing CAGR, monthly closes |
-| Tuition — private | College Board, *Trends in College Pricing* | Annual published values | Annual CAGR over 5-year window |
-| Tuition — public in-state | College Board | Annual values | Annual CAGR over 5-year window |
-| Healthcare | CMS National Health Expenditure Accounts | Per-capita NHE | 5-yr trailing CAGR |
-| Childcare | BLS CPI subindex + Care.com Cost of Care | Composite | 5-yr trailing CAGR; weighted average |
-| General CPI (for contrast) | BLS | `CPIAUCSL` (CPI-U) | 5-yr trailing CAGR |
-| Cash / HYSA assumed return | National HYSA average | National rate aggregate | 5-yr trailing |
-| Real estate (general) | FRED | National Case-Shiller | 5-yr trailing CAGR |
-| Other (blended/conservative) | Composite | TBD methodology — placeholder 6.0% | _Finalization pending_ |
+| Component | Source | Series ID | Current value | Retrieval date | Refresh cadence |
+|---|---|---|---|---|---|
+| Housing — National | S&P Cotality Case-Shiller U.S. National Home Price Index (NSA), via FRED | `CSUSHPINSA` | **6.48%** (Feb 2021 → Feb 2026) | 2026-05-13 | Monthly (~2-month lag) |
+| Housing — Metro | Zillow Home Value Index (ZHVI), single-family | Metro-specific | Override; varies by geography | On demand | Monthly |
+| Equity — S&P 500 (equity-linked aspiration) | S&P 500 Total Return Index | `SPXTR` / `^SP500TR` | **13.14%** (Apr 2021 → Apr 2026) | 2026-05-13 | Monthly (month-end) |
+| Childcare | BLS CPI-U Day care and preschool, U.S. city average, NSA | `CUUR0000SEEB03` | **4.83%** (Apr 2021 → Apr 2026) | 2026-05-13 | Monthly (CPI release) |
+| Private K–12 tuition | BLS CPI-U Elementary and high school tuition and fees, U.S. city average, NSA | `CUUR0000SEEB02` | **3.94%** (Apr 2021 → Apr 2026) | 2026-05-13 | Monthly (CPI release) |
+| Healthcare | BLS CPI-U Medical care, U.S. city average, NSA, via FRED | `CUUR0000SAM` / `CPIMEDNS` | **2.44%** (Apr 2021 → Apr 2026) | 2026-05-13 | Monthly (CPI release) |
+| General CPI (for contrast) | BLS CPI-U All items | `CPIAUCSL` | 5-yr trailing | Monthly | Monthly |
+| Other (blended/conservative) | Composite default | — | 6.0% default | — | Reviewed quarterly |
 
-> _Weekly refresh job runs on `aspire/rates.json` (cron). Last known refresh: 2026-04-30. Update cadence: weekly._
+**Childcare lived-experience context.** The BLS `CUUR0000SEEB02` subindex tracks formal childcare market prices. Many families — particularly in HCOL metros or using nannies — experience materially higher cost growth. Care.com's 2026 Cost of Care Report (survey of 3,000 parents, fielded Nov 2025) shows posted rates of $332/week for daycare and $870/week for nanny care nationally, with families spending an average of 20% of household income on childcare. Child Care Aware of America reported a 29% cumulative price rise from 2020 to 2024, versus 22% for overall CPI. Users may configure a custom childcare CAGR in the Simulator for their specific care market.
+
+**S&P 500 as equity-linked aspiration.** The S&P 500 Total Return component represents the cost growth of a future funded by equity exposure — what a life anchored to broad market appreciation actually costs to maintain. It is the aspirational cost component, not a money-growth assumption. Users' actual equity returns are entered separately via the Allocation lever on the Simulator.
+
+**HYSA comparison benchmark.** The savings-account comparison uses an illustrative 4.0% cash/HYSA assumption. FDIC's April 2026 National Rates table reported a 0.38% national savings deposit rate and a 4.39% savings national rate cap as of 2026-04-20, retrieved 2026-05-13. Actual offered HYSA rates vary by institution and date. Users configure their personal cash return in the Simulator.
 
 ---
 
@@ -77,9 +77,9 @@ When the user enters their allocation across the four buckets (Cash & savings / 
 
 | Bucket | Default expected return | Source |
 |---|---|---|
-| Cash & savings | 4.0% | National HYSA average, 5-yr trailing |
-| Stocks & index funds | 10.4% | S&P 500 5-yr trailing CAGR |
-| Real estate | 9.0% | Case-Shiller national, 5-yr trailing |
+| Cash & savings | 4.0% | Illustrative assumption; FDIC April 2026 national savings deposit rate is 0.38%; top HYSA market rates vary by institution |
+| Stocks & index funds | 13.14% | S&P 500 Total Return Index (`SPXTR`), 5-yr trailing CAGR, Apr 2021 → Apr 2026, retrieved 2026-05-13 |
+| Real estate | 6.48% | Case-Shiller U.S. National Home Price Index (`CSUSHPINSA`), 5-yr trailing CAGR, Feb 2021 → Feb 2026, retrieved 2026-05-13 |
 | Other | 6.0% | Conservative blended default |
 
 > _All defaults editable in the Simulator's "Configurable CAGR" lever. Users can switch any asset class to 10-yr trailing, 20-yr trailing, or a custom percentage._
@@ -131,6 +131,7 @@ When this page updates, the change is logged in §8 below.
 | Date | Change |
 |---|---|
 | 2026-05-11 | Methodology page initialized. Aspire Rate / Target Aspire Rate / Aspire Gap definitions established. Basket presets locked (placeholder weights pending final audit). |
+| 2026-05-13 | All five Family-basket component sources locked via multi-agent source audit (Claude, Hermes, Grok). Retired placeholder values. Housing: Case-Shiller `CSUSHPINSA` 6.48%. Equity: S&P 500 Total Return `SPXTR` 13.14% (labeled equity-linked aspiration). Childcare: BLS `CUUR0000SEEB03` 4.83%. K–12 tuition: BLS `CUUR0000SEEB02` 3.94% (replaced College Board higher-ed mismatch). Healthcare: BLS `CUUR0000SAM` 2.44% (replaced CMS NHEA spending mismatch). HYSA reframed as illustrative 4.0% assumption. Basket aggregate: 7.03%. Added lived-experience context for childcare; added S&P equity-linked aspiration explanation; added HYSA framing note. Portfolio-return defaults updated to match locked series. |
 
 ---
 
