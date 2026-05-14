@@ -1,6 +1,6 @@
 # TECHNICAL_CONTEXT.md
 
-_Last updated: 2026-05-06. This file is the authoritative technical reference for Codex and other AI agents working on Aspire Rate._
+_Last updated: 2026-05-14. This file is the authoritative technical reference for Codex and other AI agents working on Aspire Rate._
 
 ---
 
@@ -96,37 +96,19 @@ skrauss11/aspire/
 
 Supabase is the system of record and source of truth for saved scenarios and simulator hydration.
 
-### Table
+### Tables
 
-`public.scenarios`
+Current production functions still read and write the legacy `public.scenarios` token schema. Sprint 1 of the May 2026 security migration adds the authenticated schema from `specs/security-and-privacy.md` while preserving legacy columns on `public.scenarios` so the live `score.js` and `scenario.js` routes do not break before the score refactor lands.
 
-Expected schema:
+New persistence tables:
 
-```sql
-create extension if not exists pgcrypto;
+- `public.users` mirrors Supabase Auth users by UUID and stores email.
+- `public.calculator_states` stores one encrypted calculator baseline per user.
+- `public.scenarios` stores encrypted scenario lever state, derived display values, public sharing flags, and temporary legacy token columns.
+- `public.baseline_overrides` stores encrypted user-selected baseline lever state.
+- `public.account_deletions` stores the 90-day hashed deletion audit trail.
 
-create table if not exists public.scenarios (
-  id uuid primary key default gen_random_uuid(),
-  access_token text unique not null default encode(gen_random_bytes(24), 'hex'),
-  email text not null,
-  basket jsonb not null,
-  score integer not null,
-  aspiration_rate numeric,
-  portfolio_rate numeric,
-  gap numeric,
-  rate_snapshot jsonb,
-  created_at timestamptz not null default now(),
-  last_accessed_at timestamptz
-);
-
-alter table public.scenarios enable row level security;
-
-create index if not exists scenarios_access_token_idx
-  on public.scenarios (access_token);
-
-create index if not exists scenarios_email_created_at_idx
-  on public.scenarios (email, created_at desc);
-```
+Money fields are encrypted server-side before insert using `lib/encryption.js` and libsodium XChaCha20-Poly1305. The encryption key is stored in Supabase Vault as `aspire_field_encryption_key_v1`; Netlify Functions read it over a server-side Postgres connection via `SUPABASE_DB_URL`. `ASPIRE_FIELD_ENCRYPTION_KEY` is allowed only as a local/test fallback.
 
 ### Access Pattern
 
@@ -182,6 +164,8 @@ Response body:
 ```json
 {
   "score": 42,
+  "aspireRate": 6.45,
+  "aspireGap": -3.6,
   "scenarioId": "uuid",
   "simulatorUrl": "https://aspirerate.com/simulator/index.html?t=private_token",
   "emailSent": true
@@ -190,10 +174,13 @@ Response body:
 
 Side effects:
 
-- Inserts scenario into Supabase.
+- Creates or resolves a Supabase Auth-backed `public.users` row for the submitted email.
+- Upserts encrypted calculator baseline fields into `public.calculator_states`.
+- Inserts encrypted scenario lever state into `public.scenarios.levers`, with derived display values in `public.scenarios.derived`.
+- Temporarily also writes legacy `email`, `basket`, `score`, `aspiration_rate`, `portfolio_rate`, `gap`, and `access_token` fields on `public.scenarios` so the current private-link simulator contract survives the schema transition.
 - Upserts subscriber metadata in Beehiiv for newsletter/subscriber workflows.
 - Attempts to send score email through Resend.
-- Returns score and simulator link even if Beehiiv or Resend fails, as long as Supabase scenario save succeeds.
+- Returns Aspire Rate, Aspire Gap, score, token, and simulator link even if Beehiiv or Resend fails, as long as Supabase scenario save succeeds.
 
 ### `scenario.js`
 
@@ -207,8 +194,9 @@ Behavior:
 
 - Validates token format.
 - Fetches scenario from Supabase by `access_token`.
+- Decrypts `public.scenarios.levers` server-side when present; falls back to legacy `basket` rows during the transition.
 - Updates `last_accessed_at` asynchronously.
-- Returns saved score, basket, computed rates, rate snapshot, and created timestamp.
+- Returns saved score, Aspire Rate, Aspire Gap, basket, computed rates, rate snapshot, and created timestamp.
 
 ### `tracker.js`
 
@@ -244,6 +232,9 @@ Set these in Netlify production and local `.env` for `netlify dev`.
 |---|---:|---|---|
 | `SUPABASE_URL` | Yes | `score.js`, `scenario.js`, `tracker.js` | Supabase project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | `score.js`, `scenario.js`, `tracker.js` | Server-only Supabase secret/service role key |
+| `SUPABASE_DB_URL` | Yes for encrypted persistence | `lib/encryption.js` | Server-only Postgres connection string used to read `aspire_field_encryption_key_v1` from Supabase Vault |
+| `SUPABASE_ANON_KEY` | Yes for RLS tests | `tests/rls.test.js` | Browser-safe anon key used by the RLS integration test harness |
+| `ASPIRE_FIELD_ENCRYPTION_KEY` | Local/test only | `lib/encryption.js` | 32-byte hex/base64 fallback key for local encryption tests when Vault is unavailable |
 | `BEEHIIV_API_KEY` | Yes | `score.js`, `tracker.js` | Beehiiv API key |
 | `BEEHIIV_PUB_ID` | Yes | `score.js`, `tracker.js` | Beehiiv publication ID |
 | `RESEND_API_KEY` | Yes for email | `score.js` | Resend API key |

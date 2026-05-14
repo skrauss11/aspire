@@ -1,18 +1,32 @@
 {
-  "updated": "2026-05-11T11:00:54.463Z",
-  "methodology": "Trailing 10-year compound annual growth rate (CAGR). Equities/gold/BTC: monthly closes from Yahoo Finance, adjusted for dividends. CPI sub-indices + national home: FRED monthly series. Metro-level homes: Zillow ZHVI (single-family, smoothed, seasonally adjusted). Tuition: College Board Trends in College Pricing (annual).",
+  "updated": "2026-05-13T00:00:00.000Z",
+  "methodology": "Baseline product components use trailing 5-year compound annual growth rate (CAGR) per the May 2026 source audit. Family preset locked 2026-05-13: 30% housing, 25% S&P 500 Total Return, 20% childcare, 15% private K-12 tuition, 10% healthcare. Legacy long-window market and metro series remain available for advanced assumptions.",
+  "presets": {
+    "family": {
+      "label": "Family",
+      "cagr": 7.03,
+      "retrieved": "2026-05-13",
+      "weights": [
+        { "key": "home", "weight": 0.3 },
+        { "key": "sp500", "weight": 0.25 },
+        { "key": "childcare", "weight": 0.2 },
+        { "key": "tuition_k12_private", "weight": 0.15 },
+        { "key": "health", "weight": 0.1 }
+      ]
+    }
+  },
   "rates": [
     {
       "key": "sp500",
-      "label": "S&P 500 / broad index",
-      "source": "Yahoo Finance",
-      "symbol": "SPY",
-      "cagr": 15.39,
-      "start": "2016-06-01",
-      "end": "2026-05-08",
-      "startValue": 177.972,
-      "endValue": 737.62,
-      "years": 9.93
+      "label": "S&P 500 Total Return",
+      "source": "S&P Dow Jones Indices",
+      "symbol": "SPXTR",
+      "cagr": 13.14,
+      "start": "2021-04-01",
+      "end": "2026-04-01",
+      "years": 5,
+      "retrieved": "2026-05-13",
+      "note": "Locked via multi-agent source audit; total return index, Apr 2021 to Apr 2026."
     },
     {
       "key": "qqq",
@@ -77,26 +91,26 @@
     {
       "key": "home",
       "label": "Home — US national (Case-Shiller)",
-      "source": "FRED",
+      "source": "S&P CoreLogic Case-Shiller U.S. National Home Price NSA Index",
       "id": "CSUSHPINSA",
-      "cagr": 6.45,
-      "start": "2016-02-01",
+      "cagr": 6.48,
+      "start": "2021-02-01",
       "end": "2026-02-01",
-      "startValue": 175.26,
-      "endValue": 327.311,
-      "years": 10
+      "years": 5,
+      "retrieved": "2026-05-13",
+      "note": "Locked via multi-agent source audit."
     },
     {
       "key": "health",
       "label": "Healthcare",
-      "source": "FRED",
-      "id": "CPIMEDSL",
-      "cagr": 2.6,
-      "start": "2016-03-01",
-      "end": "2026-03-01",
-      "startValue": 457.723,
-      "endValue": 591.587,
-      "years": 10
+      "source": "BLS CPI-U Medical care",
+      "id": "CUUR0000SAM",
+      "cagr": 2.44,
+      "start": "2021-04-01",
+      "end": "2026-04-01",
+      "years": 5,
+      "retrieved": "2026-05-13",
+      "note": "Locked via multi-agent source audit."
     },
     {
       "key": "car",
@@ -261,12 +275,36 @@
       "years": 10
     },
     {
+      "key": "childcare",
+      "label": "Childcare",
+      "source": "BLS CPI-U Day care and preschool",
+      "id": "CUUR0000SEEB03",
+      "cagr": 4.83,
+      "start": "2021-04-01",
+      "end": "2026-04-01",
+      "years": 5,
+      "retrieved": "2026-05-13",
+      "note": "Locked via multi-agent source audit."
+    },
+    {
+      "key": "tuition_k12_private",
+      "label": "Private K-12 tuition",
+      "source": "BLS CPI-U Elementary and high school tuition and fees",
+      "id": "CUUR0000SEEB02",
+      "cagr": 3.94,
+      "start": "2021-04-01",
+      "end": "2026-04-01",
+      "years": 5,
+      "retrieved": "2026-05-13",
+      "note": "Locked via multi-agent source audit."
+    },
+    {
       "key": "tuition_private",
       "label": "Tuition — Private 4-year (non-profit)",
       "source": "College Board Trends 2024",
       "cagr": 4.2,
       "years": 10,
-      "note": "10yr average annualized increase in published tuition + fees"
+      "note": "Legacy college tuition assumption; not used in the locked Family preset."
     },
     {
       "key": "tuition_public_in",

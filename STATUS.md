@@ -2,11 +2,13 @@
 
 _Single source of truth for what each agent is currently working on in this repo. Update when you start, stop, or hand off._
 
-_Last updated: 2026-05-13 ET_
+_Last updated: 2026-05-14 ET_
 
 ---
 
 ## Currently in flight
+
+- **Codex — `codex/schema-migration`** — Sprint 1 security foundation + PR 2 score refactor: Supabase migration for authenticated users/calculator states/scenarios/baselines with RLS, server-side field encryption helper, RLS tests, locked 2026-05-13 `rates.json` basket component refresh, and encrypted `score.js`/`scenario.js` persistence. Scope: `supabase/`, `lib/`, `tests/`, `package.json`, `rates.json`, `netlify/functions/score.js`, `netlify/functions/scenario.js`; no `specs/`, strategy docs, or `content/*.mdx`.
 
 - **On hold pending source audit** — `content/methodology/index.mdx` and `content/explainers/savings-account-losing-points.mdx`. The childcare CAGR thread ([aspire-gtm/70_AGENT_LAB/threads/2026-05-13-childcare-cagr-sourcing.md](../aspire-gtm/70_AGENT_LAB/threads/2026-05-13-childcare-cagr-sourcing.md)) resolved 2026-05-13 to use BLS `CUUR0000SEEB03` (~4.83%) as canonical childcare CAGR, retiring the placeholder ~11.8%. That change cascades into the basket aggregate in the savings-account-losing-points explainer (~11.0% → ~7.6%, gap shifts from −7 points to ~−3.6 points), which also exposed that the other Family-basket components are unverified placeholders with two source-fitness mismatches (K–12 tuition cites College Board higher-ed series; healthcare cites CMS NHEA spending, not BLS medical CPI). Source-verification handoff to Hermes opened 2026-05-13 ([aspire-gtm/70_AGENT_LAB/handoffs/2026-05-13-claude-to-hermes-basket-component-audit.md](../aspire-gtm/70_AGENT_LAB/handoffs/2026-05-13-claude-to-hermes-basket-component-audit.md)). **Do not edit these two files until the audit thread lands and the Methodology + explainer PRs go through.** Owner of follow-up PRs: Claude.
 
