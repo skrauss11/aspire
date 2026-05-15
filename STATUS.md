@@ -8,7 +8,7 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-_None._
+- 2026-05-15 — **Codex** — Auth + Account Foundation: implement Supabase magic-link session handling, add an `/account` shell, and begin replacing private-token scenario ownership with authenticated user context.
 
 ## Recently shipped
 

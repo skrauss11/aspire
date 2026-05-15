@@ -140,6 +140,7 @@
     <div class="nav-links">
       <a href="/">Calculator</a>
       <a href="/manifesto">Manifesto</a>
+      <a href="/account/">Account</a>
     </div>
   </div>
 
@@ -354,9 +355,23 @@
     let currentEmail = "";
 
     const $ = id => document.getElementById(id);
+    const AUTH_KEY = "aspire:auth";
 
     function clone(value) {
       return JSON.parse(JSON.stringify(value));
+    }
+
+    function authHeaders() {
+      try {
+        const session = JSON.parse(localStorage.getItem(AUTH_KEY) || "null");
+        return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function isSignedIn() {
+      return Boolean(authHeaders().Authorization);
     }
 
     function totalMonthly(scenario) {
@@ -398,7 +413,7 @@
       const token = params.get("t");
       const fallback = params.get("s");
       if (token) {
-        const res = await fetch(`/api/scenario?t=${encodeURIComponent(token)}`);
+        const res = await fetch(`/api/scenario?t=${encodeURIComponent(token)}`, { headers: authHeaders() });
         if (res.ok) {
           const payload = await res.json();
           savedScenarios = payload.scenarios || [];
@@ -730,7 +745,7 @@
       const scenario = toPersisted(activeScenario);
       $("saveStatus").textContent = "Saving...";
       try {
-        if (!email && !scenarioToken) {
+        if (!email && !scenarioToken && !isSignedIn()) {
           const fallback = encodeFallbackToken(scenario);
           history.replaceState(null, "", `/simulator/?s=${fallback}`);
           $("saveStatus").textContent = "Saved in this browser link.";
@@ -741,7 +756,7 @@
         const method = currentScenarioId ? "PATCH" : "POST";
         const res = await fetch("/api/scenario", {
           method,
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...authHeaders() },
           body: JSON.stringify({
             id: currentScenarioId || undefined,
             email,
@@ -776,7 +791,9 @@
     function openSave() {
       $("modalName").value = $("scenarioName").value || "Untitled scenario";
       $("modalPublic").checked = currentIsPublic;
-      $("saveStatus").textContent = scenarioToken ? "Save to this private scenario link." : "Enter an email to save remotely, or leave it blank to keep a browser link.";
+      $("saveStatus").textContent = isSignedIn()
+        ? "Save to your account."
+        : scenarioToken ? "Save to this private scenario link." : "Enter an email to save remotely, or leave it blank to keep a browser link.";
       if (savedScenarios.length >= maxScenarios && !currentScenarioId) $("saveStatus").textContent = "Delete one to save another. (Cap: 10.)";
       $("saveModal").classList.add("open");
       $("modalName").focus();
@@ -812,7 +829,7 @@
     async function updateSavedScenario(id, patch) {
       const res = await fetch("/api/scenario", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ token: scenarioToken, id, ...patch })
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Scenario update failed");
@@ -830,7 +847,7 @@
     async function deleteSavedScenario(id) {
       const res = await fetch("/api/scenario", {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ token: scenarioToken, id })
       });
       if (!res.ok) throw new Error("Delete failed");
