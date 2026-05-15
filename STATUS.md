@@ -8,10 +8,11 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-- 2026-05-15 — **Codex** — Auth + Account Foundation: implement Supabase magic-link session handling, add an `/account` shell, and begin replacing private-token scenario ownership with authenticated user context.
+_None._
 
 ## Recently shipped
 
+- 2026-05-15 — **Codex** — PR #19 (`aspire`): Auth + Account Foundation. Added Supabase magic-link/session endpoints, `/account` shell, authenticated account summary/delete-account groundwork, authenticated scenario ownership support, and account navigation while preserving private-token Simulator flows.
 - 2026-05-15 — **Codex** — PR #17 (`aspire`): Env-backed production verification. Confirmed Netlify/Supabase env availability, passed all RLS tests with production-loaded env, provisioned the Netlify encryption-key fallback after direct Supabase DB DNS failed in Functions, then reran the production score/scenario happy path through share/revoke/delete with cleanup.
 - 2026-05-15 — **Codex** — PR #15 (`aspire`): Production smoke + launch hardening. Added simulator share copy/revoke controls, preserved private-token usability after deleting the current scenario, paired shared-page Aspire Gap with `AT THESE ASSUMPTIONS`, and reconciled `TECHNICAL_CONTEXT.md` plus the pre-launch checklist with the merged score/scenario contracts.
 - 2026-05-15 — **Codex** — PR #13 (`aspire`): Sprint 4 Simulator persistence/share loop. Added named scenario save/list/load/rename/delete, 10-scenario cap, make-baseline flow, public share links at `/simulator/s/[shareId]`, and a read-only shared scenario view.
