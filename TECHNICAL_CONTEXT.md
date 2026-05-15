@@ -263,9 +263,9 @@ Set these in Netlify production and local `.env` for `netlify dev`.
 |---|---:|---|---|
 | `SUPABASE_URL` | Yes | `score.js`, `scenario.js`, `tracker.js` | Supabase project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | `score.js`, `scenario.js`, `tracker.js` | Server-only Supabase secret/service role key |
-| `SUPABASE_DB_URL` | Yes for encrypted persistence | `lib/encryption.js` | Server-only Postgres connection string used to read `aspire_field_encryption_key_v1` from Supabase Vault |
+| `SUPABASE_DB_URL` | Preferred for encrypted persistence | `lib/encryption.js` | Server-only Postgres connection string used to read `aspire_field_encryption_key_v1` from Supabase Vault |
 | `SUPABASE_ANON_KEY` | Yes for RLS tests | `tests/rls.test.js` | Browser-safe anon key used by the RLS integration test harness |
-| `ASPIRE_FIELD_ENCRYPTION_KEY` | Local/test only | `lib/encryption.js` | 32-byte hex/base64 fallback key for local encryption tests when Vault is unavailable |
+| `ASPIRE_FIELD_ENCRYPTION_KEY` | Required fallback while Netlify cannot resolve the direct Supabase DB host | `lib/encryption.js` | 32-byte hex/base64 fallback key matching `aspire_field_encryption_key_v1`; stored as a secret Netlify env var |
 | `BEEHIIV_API_KEY` | Yes | `score.js`, `tracker.js` | Beehiiv API key |
 | `BEEHIIV_PUB_ID` | Yes | `score.js`, `tracker.js` | Beehiiv publication ID |
 | `RESEND_API_KEY` | Yes for email | `score.js` | Resend API key |

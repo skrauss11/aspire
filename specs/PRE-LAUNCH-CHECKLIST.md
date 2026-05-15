@@ -11,9 +11,10 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
   - [x] `calculator_states` with RLS policy `calc_states_own`, encrypted bytea columns for `total_assets`, `allocation_json`, `monthly_contribution`
   - [x] `scenarios` with RLS policies `scenarios_owner_all` + `scenarios_public_read`, encrypted bytea for `levers`
   - [x] `baseline_overrides` with RLS policy `baselines_own`, encrypted bytea for `levers`
-- [ ] `aspire_field_encryption_key_v1` provisioned in Supabase Vault — requires production env confirmation
+- [x] `aspire_field_encryption_key_v1` provisioned in Supabase Vault
+- [x] `ASPIRE_FIELD_ENCRYPTION_KEY` provisioned as a secret Netlify production fallback because Netlify Functions could not resolve the direct Supabase DB host during smoke testing
 - [x] `aspire/lib/encryption.js` implemented (libsodium xchacha20-poly1305, server-side only)
-- [x] RLS test suite written (`tests/rls.test.js`) — local run skips without Supabase env vars; env-backed pass still required before final launch sign-off
+- [x] RLS test suite written (`tests/rls.test.js`) — env-backed run passed on 2026-05-15
 - [ ] Old `public.scenarios` table dropped (after new flow stable in production for ~1 week)
 
 ## Auth (Codex)
@@ -73,15 +74,15 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
 - [x] `scenario.js` updated to read new schema
 - [x] `scenario.js` supports named save/list/load/rename/delete, make-baseline, public share, revoke share, and 10-scenario cap
 - [x] `tracker.js` compatible with private token lookup
-- [ ] All env vars set in Netlify production:
-  - [ ] `SUPABASE_URL`
-  - [ ] `SUPABASE_SERVICE_ROLE_KEY`
-  - [ ] `BEEHIIV_API_KEY`
-  - [ ] `BEEHIIV_PUB_ID`
-  - [ ] `RESEND_API_KEY`
-  - [ ] `FROM_EMAIL`
-  - [ ] `FROM_NAME`
-  - [ ] (new) encryption key reference for Vault
+- [x] All env vars set in Netlify production:
+  - [x] `SUPABASE_URL`
+  - [x] `SUPABASE_SERVICE_ROLE_KEY`
+  - [x] `BEEHIIV_API_KEY`
+  - [x] `BEEHIIV_PUB_ID`
+  - [x] `RESEND_API_KEY`
+  - [x] `FROM_EMAIL`
+  - [x] `FROM_NAME`
+  - [x] (new) encryption key reference for Vault / Netlify fallback
 
 ## Content surfaces (Codex + Claude)
 

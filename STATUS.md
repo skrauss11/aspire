@@ -8,7 +8,7 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-_None._
+- 2026-05-15 — **Codex** — Env-backed production verification: confirm Netlify/Supabase env availability, run RLS tests when credentials are available, smoke score/scenario happy paths, and patch production-only issues.
 
 ## Recently shipped
 
