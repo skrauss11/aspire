@@ -8,11 +8,11 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-- **Codex — `codex/schema-migration` (PR #8, draft)** — Add encrypted scenario persistence foundation. Scope: `supabase/`, `lib/`, `tests/`, `netlify/functions/scenario.js`.
 - **Codex — `codex/calculator-v2`** — Sprint 2 Calculator refactor stacked on PR #8: rebuild `/` around the canonical 7-input Calculator, reveal panel with non-removable "AT THESE ASSUMPTIONS" pairing, email gate, encrypted `/api/score` handoff, compliance label corrections, server-authoritative score metrics, and Agent Lab/Hermes instruction sync. Scope: `index.html`, `netlify/functions/score.js`, `AGENTS.md`, and supporting `lib/` only if needed; no `specs/`, strategy docs, or `content/*.mdx`.
 
 ## Recently shipped
 
+- 2026-05-15 — **Codex** — PR #8 (`aspire`): encrypted scenario persistence foundation. Added Supabase-backed private scenario storage, encrypted calculator state fields, schema/migration support, RLS tests, and `/api/scenario` hydration groundwork.
 - 2026-05-14 — **Claude** — PR #7 (`aspire`): "Methodology + explainer: lock all Family-basket sources via multi-agent audit" — canon update to `content/methodology/index.mdx` §3–4 and `content/explainers/savings-account-losing-points.mdx` against the locked basket ([audit thread](../aspire-gtm/70_AGENT_LAB/threads/2026-05-13-basket-component-source-audit.md)): Housing 6.48% (Case-Shiller `CSUSHPINSA`), S&P 500 13.14% (`SPXTR` total return, labeled "equity-linked aspiration"), Childcare 4.83% (BLS `CUUR0000SEEB03`), K–12 3.94% (BLS `CUUR0000SEEB02`), Healthcare 2.44% (BLS `CUUR0000SAM`); Family-basket aggregate 7.03%; HYSA reframed as illustrative 4% with FDIC context (national savings rate 0.38%, rate cap 4.39%).
 - 2026-05-14 — **Claude** — PR #6 (`aspire`): STATUS freeze on `content/methodology/index.mdx` and `content/explainers/savings-account-losing-points.mdx` while the Family-basket source audit was pending, preventing methodology/explainer copy updates before Hermes's audit landed.
 - 2026-05-13 — **Claude** — PR #5 (`aspire`) + PR #5 (`aspire-gtm`): 70_AGENT_LAB async-coordination layer + cross-repo AGENTS.md reference paragraph.
