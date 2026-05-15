@@ -16,6 +16,11 @@
   status = 200
 
 [[redirects]]
+  from = "/simulator/s/*"
+  to = "/simulator/s/?id=:splat"
+  status = 200
+
+[[redirects]]
   from = "/simulator.html"
   to = "/simulator/"
   status = 404

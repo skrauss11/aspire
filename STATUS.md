@@ -8,7 +8,7 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-_None._
+- **Codex — `codex/simulator-persistence-sharing`** — Sprint 4 Simulator persistence/share loop: named scenario save/list/load/rename/delete, 10-scenario cap, make-baseline flow, public share links at `/simulator/s/[shareId]`, and read-only shared scenario view. Scope: `simulator/index.html`, `simulator/s/index.html`, `netlify/functions/scenario.js`, and small schema/helpers only if required.
 
 ## Recently shipped
 
