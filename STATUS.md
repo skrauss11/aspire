@@ -8,7 +8,7 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-- 2026-05-15 — **Codex** — PR pending (`aspire`): Fix Calculator Life chip layout so the basket labels fit cleanly across desktop, tablet, and mobile breakpoints.
+- 2026-05-15 — **Codex** — PR pending (`aspire`): Fix Calculator Life chip and Simulator header layouts so labels and action controls fit cleanly across desktop, tablet, and mobile breakpoints.
 
 ## Recently shipped
 
