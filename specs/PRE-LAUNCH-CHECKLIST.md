@@ -19,12 +19,12 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
 
 ## Auth (Codex)
 
-- [ ] Supabase Auth magic-link flow wired up
+- [x] Supabase Auth magic-link flow wired up
 - [ ] Magic-link expiration set to 5 minutes
 - [ ] Rate limit: max 5 magic-link requests per email per hour
 - [ ] Session lifetime: 30-day rolling
 - [ ] New-device login email sends via Resend (subject: *"You signed in to Aspire from a new device"*)
-- [ ] Logout hard-revokes server-side
+- [x] Logout hard-revokes server-side
 - [ ] Confirm Supabase Auth sends magic-links from `send.aspirerate.com` (or wire SMTP through Resend if not)
 
 ## Calculator page `/` (Codex)
@@ -92,7 +92,7 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
 - [ ] `/methodology` route (single page)
 - [ ] `/report` route (Beehiiv archive integration; pulls past issues at build time)
 - [ ] `/report/[slug]` route for individual past issues
-- [ ] `/account` route (settings, delete-my-account flow per `security-and-privacy.md` §8)
+- [x] `/account` route (settings, delete-my-account flow per `security-and-privacy.md` §8)
 - [ ] `/privacy` route (placeholder content from `copy.md` §5.1, flagged for legal review)
 - [ ] `/terms` route (placeholder content from `copy.md` §5.2, flagged for legal review)
 - [ ] `/author/scott` page (bio TBD by Scott)

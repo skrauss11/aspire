@@ -41,6 +41,8 @@ skrauss11/aspire/
 │   ├── index.html                     # Primary private simulator workspace
 │   └── s/
 │       └── index.html                 # Read-only public shared scenario route
+├── account/
+│   └── index.html                     # Magic-link account shell + delete-account flow
 ├── join.html                          # Newsletter sign-up landing page
 ├── manifesto.html                     # Brand manifesto page
 ├── og-card.html                       # Open Graph social preview card
@@ -48,9 +50,11 @@ skrauss11/aspire/
 ├── netlify.toml                       # Netlify config, API redirects, simulator redirect
 ├── netlify/
 │   └── functions/
+│       ├── account.js                 # GET/DELETE /api/account
+│       ├── auth.js                    # POST /api/auth
 │       ├── score.js                   # POST /api/score
 │       ├── scenario.js                # GET/POST/PATCH/DELETE /api/scenario
-│       └── tracker.js                 # POST /api/tracker
+│       └── tracker.js                 # POST /api/tracker (planned/reconcile before use)
 ├── favicon-32.png
 ├── favicon-512.png
 ├── x-profile.png
@@ -214,6 +218,7 @@ Private load behavior:
 - Decrypts `public.scenarios.levers` server-side when present; falls back to legacy `basket` rows during the transition.
 - Updates `last_accessed_at` asynchronously.
 - Returns saved score, Aspire Rate, Aspire Gap, basket, computed rates, rate snapshot, created/updated timestamps, saved scenario list, and `maxScenarios`.
+- When an `Authorization: Bearer <access_token>` header is present, the token must belong to the scenario owner; the returned scenario list uses the authenticated user context.
 
 Public load behavior:
 
@@ -224,10 +229,42 @@ Public load behavior:
 
 Mutation behavior:
 
-- `POST /api/scenario` creates a named scenario for an email or an existing private token.
+- `POST /api/scenario` creates a named scenario for the authenticated user, an email, or an existing private token.
 - `PATCH /api/scenario` renames, updates basket/levers, toggles public sharing, revokes sharing, or saves a baseline override.
-- `DELETE /api/scenario` deletes a named scenario owned by the user resolved from the private token.
+- `DELETE /api/scenario` deletes a named scenario owned by the authenticated user or the user resolved from the private token.
 - The save cap is 10 scenarios per user and is enforced server-side.
+
+### `auth.js`
+
+Endpoint:
+
+```text
+POST /api/auth
+```
+
+Actions:
+
+- `{ "action": "request", "email": "user@example.com" }` sends a Supabase Auth magic link that redirects to `/account/`.
+- `{ "action": "refresh", "refreshToken": "..." }` refreshes a browser-held Supabase session.
+- `{ "action": "logout", "scope": "global" }` revokes the logged-in session server-side with Supabase Auth Admin.
+
+The browser stores only the Supabase access/refresh token pair in localStorage under `aspire:auth`. The service role key never reaches the browser.
+
+### `account.js`
+
+Endpoint:
+
+```text
+GET /api/account
+DELETE /api/account
+```
+
+Behavior:
+
+- Requires `Authorization: Bearer <access_token>`.
+- Verifies the JWT with Supabase Auth before using the user id.
+- `GET` returns account email and a low-sensitivity saved scenario summary. It does not decrypt scenario lever state.
+- `DELETE` writes an `account_deletions.email_sha256` audit row, deletes baseline/calculator/scenario/user rows, signs the user out globally, and deletes the Supabase Auth user.
 
 ### `tracker.js`
 
@@ -261,10 +298,10 @@ Set these in Netlify production and local `.env` for `netlify dev`.
 
 | Variable | Required | Used By | Description |
 |---|---:|---|---|
-| `SUPABASE_URL` | Yes | `score.js`, `scenario.js`, `tracker.js` | Supabase project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes | `score.js`, `scenario.js`, `tracker.js` | Server-only Supabase secret/service role key |
+| `SUPABASE_URL` | Yes | `auth.js`, `account.js`, `score.js`, `scenario.js`, `tracker.js` | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | `account.js`, `score.js`, `scenario.js`, `tracker.js` | Server-only Supabase secret/service role key |
 | `SUPABASE_DB_URL` | Preferred for encrypted persistence | `lib/encryption.js` | Server-only Postgres connection string used to read `aspire_field_encryption_key_v1` from Supabase Vault |
-| `SUPABASE_ANON_KEY` | Yes for RLS tests | `tests/rls.test.js` | Browser-safe anon key used by the RLS integration test harness |
+| `SUPABASE_ANON_KEY` | Yes | `auth.js`, `tests/rls.test.js` | Browser-safe anon key used by magic-link requests, session refresh, and the RLS integration test harness |
 | `ASPIRE_FIELD_ENCRYPTION_KEY` | Required fallback while Netlify cannot resolve the direct Supabase DB host | `lib/encryption.js` | 32-byte hex/base64 fallback key matching `aspire_field_encryption_key_v1`; stored as a secret Netlify env var |
 | `BEEHIIV_API_KEY` | Yes | `score.js`, `tracker.js` | Beehiiv API key |
 | `BEEHIIV_PUB_ID` | Yes | `score.js`, `tracker.js` | Beehiiv publication ID |

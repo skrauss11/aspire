@@ -12,7 +12,7 @@ let supabaseAdmin;
 const headers = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS"
 };
 
@@ -49,6 +49,12 @@ function toByteaHex(buffer) {
 
 function validToken(token = "") {
   return /^[a-f0-9]{48}$/i.test(token);
+}
+
+function bearerToken(event) {
+  const header = event.headers.authorization || event.headers.Authorization || "";
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  return match?.[1] || "";
 }
 
 function cleanName(value = "") {
@@ -128,6 +134,19 @@ async function userForToken(token) {
   };
 }
 
+async function userForBearer(event) {
+  const token = bearerToken(event);
+  if (!token) return null;
+  const client = getSupabaseAdmin();
+  const { data, error } = await client.auth.getUser(token);
+  if (error || !data?.user?.id) return null;
+  return {
+    id: data.user.id,
+    email: data.user.email || "",
+    sourceScenarioId: null
+  };
+}
+
 async function rowToPayload(row, options = {}) {
   let persisted;
   if (row.levers) {
@@ -179,6 +198,7 @@ async function listScenarios(userId, baseUrl) {
 async function loadPrivate(event) {
   const token = event.queryStringParameters?.t;
   if (!token || !validToken(token)) return json(400, { error: "Valid scenario token required" });
+  const authUser = await userForBearer(event);
 
   const client = getSupabaseAdmin();
   const { data: row, error } = await client
@@ -191,6 +211,7 @@ async function loadPrivate(event) {
     return json(500, { error: "Unable to fetch scenario" });
   }
   if (!row) return json(404, { error: "Scenario not found" });
+  if (authUser && row.user_id && row.user_id !== authUser.id) return json(404, { error: "Scenario not found" });
 
   client
     .from("scenarios")
@@ -202,7 +223,8 @@ async function loadPrivate(event) {
 
   try {
     const payload = await rowToPayload(row, { baseUrl: getBaseUrl(event) });
-    const scenarios = row.user_id ? await listScenarios(row.user_id, getBaseUrl(event)) : [];
+    const listUserId = authUser?.id || row.user_id;
+    const scenarios = listUserId ? await listScenarios(listUserId, getBaseUrl(event)) : [];
     return json(200, { ...payload, scenarios, maxScenarios: MAX_SCENARIOS });
   } catch (err) {
     console.error("scenario decrypt failed:", err);
@@ -235,7 +257,9 @@ async function loadPublic(event) {
   }
 }
 
-async function resolveUser(body) {
+async function resolveUser(event, body) {
+  const authUser = await userForBearer(event);
+  if (authUser) return authUser;
   if (body.token) {
     if (!validToken(body.token)) throw Object.assign(new Error("Valid scenario token required"), { statusCode: 400 });
     const user = await userForToken(body.token);
@@ -249,7 +273,7 @@ async function resolveUser(body) {
 async function createScenario(event, body) {
   const validation = validate({ basket: body.basket });
   if (!validation.ok) return json(400, { error: validation.errors[0] });
-  const user = await resolveUser(body);
+  const user = await resolveUser(event, body);
   const client = getSupabaseAdmin();
 
   const { count, error: countError } = await client
@@ -290,7 +314,7 @@ async function createScenario(event, body) {
 }
 
 async function updateScenario(event, body) {
-  const user = await resolveUser(body);
+  const user = await resolveUser(event, body);
   if (!body.id) return json(400, { error: "scenario id required" });
   const client = getSupabaseAdmin();
   const patch = {};
@@ -354,7 +378,7 @@ async function updateScenario(event, body) {
 }
 
 async function deleteScenario(event, body) {
-  const user = await resolveUser(body);
+  const user = await resolveUser(event, body);
   if (!body.id) return json(400, { error: "scenario id required" });
   const client = getSupabaseAdmin();
   const deleted = await client
