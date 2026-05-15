@@ -1,3 +1,12 @@
 {
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "test:rls": "node --test tests/rls.test.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.4",
+    "libsodium-wrappers": "^0.8.4",
+    "pg": "^8.20.0"
+  }
 }
