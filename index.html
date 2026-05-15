@@ -57,7 +57,7 @@
     .helper em { color:var(--muted); }
     .chip-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
     .life-chip { position:relative; min-height:54px; border:1px solid var(--rule); border-radius:8px; background:rgba(255,255,255,.26); color:var(--ink); padding:0 14px; display:flex; align-items:center; justify-content:center; text-align:center; font-size:16px; line-height:1.1; white-space:nowrap; font-weight:800; overflow:visible; }
-    .life-chip span { position:absolute; left:50%; bottom:calc(100% + 8px); width:min(240px, 76vw); transform:translateX(-50%); border:1px solid var(--rule); border-radius:8px; background:var(--paper); color:var(--muted); padding:10px 12px; font-size:12px; font-weight:700; line-height:1.25; opacity:0; pointer-events:none; box-shadow:0 10px 26px rgba(15,14,12,.14); z-index:5; }
+    .life-chip span { position:absolute; left:50%; bottom:calc(100% + 8px); width:min(260px, 76vw); transform:translateX(-50%); border:1px solid var(--rule); border-radius:8px; background:var(--paper); color:var(--muted); padding:10px 12px; font-size:12px; font-weight:700; line-height:1.25; white-space:normal; overflow-wrap:break-word; opacity:0; pointer-events:none; box-shadow:0 10px 26px rgba(15,14,12,.14); z-index:5; }
     .life-chip:hover span, .life-chip:focus-visible span { opacity:1; }
     .life-chip.active { background:var(--ink); color:var(--paper); border-color:var(--ink); }
     .life-chip.active span { color:var(--muted-dark); }
