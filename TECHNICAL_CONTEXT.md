@@ -1,6 +1,6 @@
 # TECHNICAL_CONTEXT.md
 
-_Last updated: 2026-05-14. This file is the authoritative technical reference for Codex and other AI agents working on Aspire Rate._
+_Last updated: 2026-05-15. This file is the authoritative technical reference for Codex and other AI agents working on Aspire Rate._
 
 ---
 
@@ -20,7 +20,7 @@ Aspire Rate is a static Netlify site with serverless functions and Supabase-back
 |---|---|
 | Frontend | Vanilla HTML + CSS + JavaScript |
 | Hosting | Netlify (site ID: `7fc9e061-49d8-4af7-91d9-90c0d70681f9`) |
-| Serverless | Netlify Functions v1 (CommonJS) |
+| Serverless | Netlify Functions, bundled by Netlify/esbuild |
 | System of record / scenario persistence | Supabase Postgres (`public.scenarios`) |
 | Domain | `aspirerate.com` |
 | Repo | `github.com/skrauss11/aspire` (branch: `main`) |
@@ -38,7 +38,9 @@ skrauss11/aspire/
 ├── index.html                         # Landing page + calculator + email score gate
 ├── simulator.html                     # Standalone simulator page fallback
 ├── simulator/
-│   └── index.html                     # Primary simulator route used by score links
+│   ├── index.html                     # Primary private simulator workspace
+│   └── s/
+│       └── index.html                 # Read-only public shared scenario route
 ├── join.html                          # Newsletter sign-up landing page
 ├── manifesto.html                     # Brand manifesto page
 ├── og-card.html                       # Open Graph social preview card
@@ -47,7 +49,7 @@ skrauss11/aspire/
 ├── netlify/
 │   └── functions/
 │       ├── score.js                   # POST /api/score
-│       ├── scenario.js                # GET /api/scenario?t=...
+│       ├── scenario.js                # GET/POST/PATCH/DELETE /api/scenario
 │       └── tracker.js                 # POST /api/tracker
 ├── favicon-32.png
 ├── favicon-512.png
@@ -77,18 +79,18 @@ skrauss11/aspire/
 2. User fills out the goal-first calculator with life goals and holdings.
 3. User submits email through the score gate.
 4. `POST /api/score` runs in `netlify/functions/score.js`.
-5. `score.js` computes the Aspire Score from `basket.computed.fraction`.
+5. `score.js` validates the basket and computes score/rates/gap server-side with `project()`.
 6. `score.js` writes the full scenario to Supabase `public.scenarios`.
 7. `score.js` upserts Beehiiv newsletter/subscriber metadata. Supabase remains the system of record.
 8. `score.js` attempts to send the score email through Resend.
-9. The API returns `{ score, scenarioId, simulatorUrl, emailSent }`.
+9. The API returns `{ score, aspireRate, aspireGap, scenarioId, t, simulatorUrl, emailSent }`.
 10. The calculator shows the score and opens the simulator CTA.
 11. User opens `/simulator/index.html?t={access_token}`.
 12. `simulator/index.html` calls `GET /api/scenario?t={access_token}`.
-13. `scenario.js` fetches the saved scenario from Supabase and returns score, basket, rates, and timestamps.
-14. Simulator hydrates the saved score, goals, holdings, Aspire Rate, Portfolio Rate, and Gap.
-15. User can test scenario paths by changing monthly contribution, time horizon, cost growth assumptions, or money growth assumptions.
-16. User can opt into tracker updates through `POST /api/tracker`, which uses the saved scenario token to look up their email.
+13. `scenario.js` fetches the saved scenario from Supabase, decrypts encrypted lever state when present, and returns the selected scenario plus the user's saved scenario list.
+14. Simulator hydrates the saved score, goals, holdings, Aspire Rate, Money Growth, Gap, saved names, public share state, and 10-scenario cap.
+15. User can test scenario paths by changing savings rate, allocation mix, timeline, target basket, geography, and configurable CAGR assumptions.
+16. User can save named scenarios, rename, delete, make a scenario the baseline, create/revoke public share links, or opt into tracker updates through `POST /api/tracker`, which uses the saved scenario token to look up their email.
 
 ---
 
@@ -98,7 +100,7 @@ Supabase is the system of record and source of truth for saved scenarios and sim
 
 ### Tables
 
-Current production functions still read and write the legacy `public.scenarios` token schema. Sprint 1 of the May 2026 security migration adds the authenticated schema from `specs/security-and-privacy.md` while preserving legacy columns on `public.scenarios` so the live `score.js` and `scenario.js` routes do not break before the score refactor lands.
+Production functions now read and write the May 2026 encrypted persistence schema while preserving temporary legacy columns on `public.scenarios` for private-token compatibility and migration safety.
 
 New persistence tables:
 
@@ -116,19 +118,28 @@ The browser never talks directly to Supabase.
 
 All Supabase reads/writes go through Netlify Functions using `SUPABASE_SERVICE_ROLE_KEY`.
 
-Simulator links use the private `access_token`:
+Private simulator links use the private `access_token`:
 
 ```text
 /simulator/index.html?t={access_token}
 ```
 
-The token is a bearer-style private link. Anyone with the link can load the scenario. Do not expose more sensitive financial data than necessary until account/auth decisions are made.
+The token is a bearer-style private link. Anyone with the link can load the private simulator workspace and the scenario list for that user until full auth is implemented. Do not expose more sensitive financial data than necessary until account/auth decisions are made.
+
+Public shared scenarios use opt-in public IDs:
+
+```text
+/simulator/s/{share_id}
+GET /api/scenario?share={share_id}
+```
+
+Public reads return only the shared scenario payload, not the private token or saved scenario list. Share IDs are 20-character base64url strings generated server-side.
 
 ---
 
 ## Netlify Functions
 
-All functions use CommonJS (`exports.handler`) and run as Netlify Functions v1.
+Functions are authored as ES modules and bundled by Netlify/esbuild.
 
 ### `score.js`
 
@@ -147,11 +158,6 @@ Request body:
     "goals": [{ "goalType": "Home", "goalMode": "life", "label": "Home", "amount": 500000, "horizon": 10, "asset": "home" }],
     "holdings": [{ "label": "S&P 500", "amount": 100000, "asset": "sp500" }],
     "computed": {
-      "fraction": 42,
-      "aspirationRate": 6.45,
-      "portfolioRate": 14.85,
-      "gap": 8.4,
-      "futureBuyingPower": "420k",
       "timeHorizon": 10
     },
     "source": "calculator"
@@ -167,10 +173,17 @@ Response body:
   "aspireRate": 6.45,
   "aspireGap": -3.6,
   "scenarioId": "uuid",
-  "simulatorUrl": "https://aspirerate.com/simulator/index.html?t=private_token",
+  "t": "private_token",
+  "simulatorUrl": "https://aspirerate.com/simulator/?t=private_token",
   "emailSent": true
 }
 ```
+
+Server-authoritative metrics:
+
+- `costRate`, `moneyRate`, and `gap` always come from `project(basket.goals, basket.holdings)` on the server.
+- `basket.computed` from the client is used only as a fallback source for `horizon` / `timeHorizon` when `project()` cannot derive a useful horizon.
+- `applyComputedRates()` writes the server-derived values back into the persisted `scenario.basket.computed`.
 
 Side effects:
 
@@ -188,15 +201,33 @@ Endpoint:
 
 ```text
 GET /api/scenario?t={access_token}
+GET /api/scenario?share={share_id}
+POST /api/scenario
+PATCH /api/scenario
+DELETE /api/scenario
 ```
 
-Behavior:
+Private load behavior:
 
 - Validates token format.
 - Fetches scenario from Supabase by `access_token`.
 - Decrypts `public.scenarios.levers` server-side when present; falls back to legacy `basket` rows during the transition.
 - Updates `last_accessed_at` asynchronously.
-- Returns saved score, Aspire Rate, Aspire Gap, basket, computed rates, rate snapshot, and created timestamp.
+- Returns saved score, Aspire Rate, Aspire Gap, basket, computed rates, rate snapshot, created/updated timestamps, saved scenario list, and `maxScenarios`.
+
+Public load behavior:
+
+- Validates `share_id` format.
+- Fetches only rows where `share_id` matches and `is_public = true`.
+- Decrypts the shared scenario server-side.
+- Returns the shared scenario without `access_token` or the user's scenario list.
+
+Mutation behavior:
+
+- `POST /api/scenario` creates a named scenario for an email or an existing private token.
+- `PATCH /api/scenario` renames, updates basket/levers, toggles public sharing, revokes sharing, or saves a baseline override.
+- `DELETE /api/scenario` deletes a named scenario owned by the user resolved from the private token.
+- The save cap is 10 scenarios per user and is enforced server-side.
 
 ### `tracker.js`
 
@@ -321,19 +352,14 @@ Primary route:
 /simulator/index.html?t={access_token}
 ```
 
-Fallback/static page:
+Netlify redirects:
 
 ```text
-/simulator.html
+/simulator -> /simulator/
+/simulator/s/* -> /simulator/s/?id=:splat
 ```
 
-Netlify redirect:
-
-```text
-/simulator -> /simulator.html
-```
-
-The physical `simulator/index.html` route exists because it works reliably in local Netlify Dev and production static hosting.
+The physical `simulator/index.html` route exists because it works reliably in local Netlify Dev and production static hosting. `/simulator/s/index.html` renders public shared scenarios and calls `/api/scenario?share=...`.
 
 ### Current UX
 
@@ -341,27 +367,30 @@ The simulator is a decision-based planner, not a raw spreadsheet.
 
 Default planner levers:
 
-- Monthly contribution
-- Time horizon
-- Cost growth
-- Money growth assumption
+- Savings rate
+- Allocation mix
+- Timeline
+- Target basket
+- Geography
+- Configurable CAGR
 
 Locked assumptions shown to the user:
 
-- Cost growth
-- Money growth
-- Starting Assets
+- Aspire Rate / Target Aspire Rate
+- Aspire Gap
+- Future cost
+- Projected resources
+- Dollar gap
+- Coverage
 
-The user does not edit cost growth by default. Internally, Aspire Rate is treated as Aspire's measurement from the saved basket.
+The user edits the assumption levers directly. The simulator is educational and must keep the non-removable `AT THESE ASSUMPTIONS` pairing visible near rate/gap outputs.
 
 Main outputs:
 
 - Future goal cost
 - Projected resources
 - Dollar gap
-- Your gap
-- Required additional monthly contribution to close the gap
-- Required money growth assumption to close the gap
+- Aspire Gap
 - Scenario coverage percentage
 
 Supporting outputs:
@@ -369,9 +398,10 @@ Supporting outputs:
 - Dollar trajectory chart comparing future cost against projected resources.
 - In the simulator, dashed baseline lines compare the saved scenario with the current scenario.
 - Gap movement.
-- Plain-English summary.
-- Copy simulator link.
-- Copy summary.
+- Shape of Your Gap observation cards from `lib/simulator/observations.js`.
+- Named scenario save/load/rename/delete.
+- Public share link copy/revoke.
+- Make baseline.
 - Turn on tracker updates.
 
 ### Calculator Schema Notes
@@ -432,11 +462,11 @@ Available asset groups include:
 Aspire Score = clamp(round(fraction), 0, 100)
 
 Aspire Rate    = weighted CAGR of all goal cost categories
-Portfolio Rate = weighted CAGR of all holdings
-Aspire Gap     = Portfolio Rate - Aspire Rate
+Money Growth   = weighted CAGR of all holdings
+Aspire Gap     = Money Growth - Aspire Rate
 ```
 
-`fraction` is computed client-side before posting to `/api/score`.
+Score coverage is computed server-side from `project()` after validating the submitted basket. Client-submitted `computed` rates are not authoritative. `fraction` may appear in older calculator payloads, but it is not trusted as the score source.
 
 V3.1 also computes supporting planning outputs client-side:
 
@@ -481,7 +511,7 @@ The local `.env` file must contain real values, not redacted placeholders.
 
 1. Read `AGENTS.md` first, then `SOUL.md`, `PRODUCT_DNA.md`, `COMPLIANCE.md`, and `design.md`.
 2. Keep the site static unless a deliberate stack decision changes that.
-3. Keep Netlify Functions CommonJS.
+3. Keep Netlify Functions compatible with Netlify's esbuild-bundled function runtime.
 4. Never expose Supabase service role keys in browser code.
 5. Use Supabase for saved scenario persistence.
 6. Use Beehiiv for subscriber/newsletter state.

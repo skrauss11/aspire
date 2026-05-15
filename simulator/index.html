@@ -606,7 +606,9 @@
               <button type="button" data-load-scenario="${item.id}">Load</button>
               <button type="button" data-rename-scenario="${item.id}">Rename</button>
               <button type="button" data-baseline-scenario="${item.id}">Make baseline</button>
-              <button type="button" data-share-scenario="${item.id}">Share link</button>
+              ${item.isPublic
+                ? `<button type="button" data-copy-share="${item.id}">Copy public link</button><button type="button" data-revoke-scenario="${item.id}">Revoke share</button>`
+                : `<button type="button" data-share-scenario="${item.id}">Share link</button>`}
               <button type="button" data-delete-scenario="${item.id}">Delete</button>
             </div>
             <p>${updated}</p>
@@ -834,7 +836,17 @@
       if (!res.ok) throw new Error("Delete failed");
       const data = await res.json();
       savedScenarios = data.scenarios || [];
-      if (currentScenarioId === id) currentScenarioId = "";
+      if (currentScenarioId === id) {
+        currentScenarioId = "";
+        currentShareUrl = "";
+        currentIsPublic = false;
+        scenarioToken = savedScenarios.find(scenario => scenario.token)?.token || "";
+        if (scenarioToken) {
+          history.replaceState(null, "", `/simulator/?t=${scenarioToken}`);
+        } else {
+          history.replaceState(null, "", `/simulator/?s=${encodeFallbackToken(toPersisted(activeScenario))}`);
+        }
+      }
       renderSavedScenarios();
     }
 
@@ -949,6 +961,20 @@
             window.prompt("Public link", url);
             showToast("Copied.");
           }).catch(() => showToast("Share failed."));
+        }
+        const copyShare = event.target.closest("[data-copy-share]");
+        if (copyShare) {
+          const item = savedScenarios.find(scenario => scenario.id === copyShare.dataset.copyShare);
+          const url = item?.shareUrl || (item?.shareId ? `${location.origin}/simulator/s/${item.shareId}` : "");
+          if (url) {
+            navigator.clipboard?.writeText(url).catch(() => {});
+            window.prompt("Public link", url);
+            showToast("Copied.");
+          }
+        }
+        const revoke = event.target.closest("[data-revoke-scenario]");
+        if (revoke && window.confirm("Revoke this public share link?")) {
+          updateSavedScenario(revoke.dataset.revokeScenario, { revokeShare: true }).then(() => showToast("Share revoked.")).catch(() => showToast("Revoke failed."));
         }
         const del = event.target.closest("[data-delete-scenario]");
         if (del && window.confirm("Delete this scenario?")) {

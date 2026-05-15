@@ -8,7 +8,7 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-_None._
+- 2026-05-15 — **Codex** — Production smoke + launch hardening: verify score/scenario Netlify Function contracts, harden persistence/share edge cases, and reconcile launch docs/checklist with the merged simulator flow.
 
 ## Recently shipped
 
