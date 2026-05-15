@@ -8,10 +8,11 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-- 2026-05-15 — **Codex** — Production smoke + launch hardening: verify score/scenario Netlify Function contracts, harden persistence/share edge cases, and reconcile launch docs/checklist with the merged simulator flow.
+_None._
 
 ## Recently shipped
 
+- 2026-05-15 — **Codex** — PR #15 (`aspire`): Production smoke + launch hardening. Added simulator share copy/revoke controls, preserved private-token usability after deleting the current scenario, paired shared-page Aspire Gap with `AT THESE ASSUMPTIONS`, and reconciled `TECHNICAL_CONTEXT.md` plus the pre-launch checklist with the merged score/scenario contracts.
 - 2026-05-15 — **Codex** — PR #13 (`aspire`): Sprint 4 Simulator persistence/share loop. Added named scenario save/list/load/rename/delete, 10-scenario cap, make-baseline flow, public share links at `/simulator/s/[shareId]`, and a read-only shared scenario view.
 - 2026-05-15 — **Codex** — PR #11 (`aspire`): Sprint 3 Simulator v1 refactor. Rebuilt `/simulator` around saved calculator baseline hydration, sticky rate/gap header with non-removable `AT THESE ASSUMPTIONS`, live comparison levers, trajectory chart, comparison patterns, save modal, and a compliance-safe Shape of Your Gap observation panel.
 - 2026-05-15 — **Codex** — PR #9 (`aspire`): Sprint 2 Calculator v2 refactor. Rebuilt `/` around the canonical 7-input Calculator, reveal panel with non-removable "AT THESE ASSUMPTIONS" pairing, email gate, encrypted `/api/score` handoff, compliance label corrections, server-authoritative score metrics, and Agent Lab/Hermes instruction sync.
