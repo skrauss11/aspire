@@ -8,10 +8,11 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-- 2026-05-15 — **Codex** — Env-backed production verification: confirm Netlify/Supabase env availability, run RLS tests when credentials are available, smoke score/scenario happy paths, and patch production-only issues.
+_None._
 
 ## Recently shipped
 
+- 2026-05-15 — **Codex** — PR #17 (`aspire`): Env-backed production verification. Confirmed Netlify/Supabase env availability, passed all RLS tests with production-loaded env, provisioned the Netlify encryption-key fallback after direct Supabase DB DNS failed in Functions, then reran the production score/scenario happy path through share/revoke/delete with cleanup.
 - 2026-05-15 — **Codex** — PR #15 (`aspire`): Production smoke + launch hardening. Added simulator share copy/revoke controls, preserved private-token usability after deleting the current scenario, paired shared-page Aspire Gap with `AT THESE ASSUMPTIONS`, and reconciled `TECHNICAL_CONTEXT.md` plus the pre-launch checklist with the merged score/scenario contracts.
 - 2026-05-15 — **Codex** — PR #13 (`aspire`): Sprint 4 Simulator persistence/share loop. Added named scenario save/list/load/rename/delete, 10-scenario cap, make-baseline flow, public share links at `/simulator/s/[shareId]`, and a read-only shared scenario view.
 - 2026-05-15 — **Codex** — PR #11 (`aspire`): Sprint 3 Simulator v1 refactor. Rebuilt `/simulator` around saved calculator baseline hydration, sticky rate/gap header with non-removable `AT THESE ASSUMPTIONS`, live comparison levers, trajectory chart, comparison patterns, save modal, and a compliance-safe Shape of Your Gap observation panel.

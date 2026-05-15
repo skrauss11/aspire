@@ -74,6 +74,7 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
 - [x] `scenario.js` updated to read new schema
 - [x] `scenario.js` supports named save/list/load/rename/delete, make-baseline, public share, revoke share, and 10-scenario cap
 - [x] `tracker.js` compatible with private token lookup
+- [x] Production score/scenario happy path smoke passed on 2026-05-15: score save, private load, named scenario save, public share read, revoke, revoked 404, delete, and disposable Supabase cleanup
 - [x] All env vars set in Netlify production:
   - [x] `SUPABASE_URL`
   - [x] `SUPABASE_SERVICE_ROLE_KEY`
