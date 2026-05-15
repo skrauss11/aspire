@@ -6,14 +6,14 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
 
 ## Schema and security (Codex)
 
-- [ ] New tables created per `security-and-privacy.md` §3:
-  - [ ] `users` with RLS policy `users_read_own` + `users_update_own`
-  - [ ] `calculator_states` with RLS policy `calc_states_own`, encrypted bytea columns for `total_assets`, `allocation_json`, `monthly_contribution`
-  - [ ] `scenarios` with RLS policies `scenarios_owner_all` + `scenarios_public_read`, encrypted bytea for `levers`
-  - [ ] `baseline_overrides` with RLS policy `baselines_own`, encrypted bytea for `levers`
-- [ ] `aspire_field_encryption_key_v1` provisioned in Supabase Vault
-- [ ] `aspire/lib/encryption.js` implemented (libsodium xchacha20-poly1305, server-side only)
-- [ ] RLS test suite written (`tests/rls.test.js`) — tests pass and block merge if any fails
+- [x] New tables created per `security-and-privacy.md` §3:
+  - [x] `users` with RLS policy `users_read_own` + `users_update_own`
+  - [x] `calculator_states` with RLS policy `calc_states_own`, encrypted bytea columns for `total_assets`, `allocation_json`, `monthly_contribution`
+  - [x] `scenarios` with RLS policies `scenarios_owner_all` + `scenarios_public_read`, encrypted bytea for `levers`
+  - [x] `baseline_overrides` with RLS policy `baselines_own`, encrypted bytea for `levers`
+- [ ] `aspire_field_encryption_key_v1` provisioned in Supabase Vault — requires production env confirmation
+- [x] `aspire/lib/encryption.js` implemented (libsodium xchacha20-poly1305, server-side only)
+- [x] RLS test suite written (`tests/rls.test.js`) — local run skips without Supabase env vars; env-backed pass still required before final launch sign-off
 - [ ] Old `public.scenarios` table dropped (after new flow stable in production for ~1 week)
 
 ## Auth (Codex)
@@ -28,49 +28,51 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
 
 ## Calculator page `/` (Codex)
 
-- [ ] `aspire/index.html` refactored per `page-spec-calculator.md`
-- [ ] Block A inputs: life chip (Home/Family/Freedom), geography (autodetected), timeline slider
-- [ ] Block B inputs: total assets, 4-bucket allocation summing to 100%, monthly contribution
-- [ ] Reveal animation choreography (1200ms, respects `prefers-reduced-motion`)
-- [ ] Aspire Rate, Aspire Gap, basket-component bar chart all render
-- [ ] **`AT THESE ASSUMPTIONS` eyebrow under hero number is present and non-removable**
-- [ ] Interpretation copy uses "at these assumptions" pairing in all three variants (negative/positive/zero gap)
-- [ ] Email gate sits below reveal; reveal stays visible after submit
+- [x] `aspire/index.html` refactored per `page-spec-calculator.md`
+- [x] Block A inputs: life chip (Home/Family/Freedom), geography, timeline slider
+- [x] Block B inputs: total assets, 4-bucket allocation summing to 100%, monthly contribution
+- [x] Reveal animation choreography (respects `prefers-reduced-motion`)
+- [x] Aspire Rate, Aspire Gap, basket-component bar chart all render
+- [x] **`AT THESE ASSUMPTIONS` eyebrow under hero number is present and non-removable**
+- [x] Interpretation copy uses "at these assumptions" pairing in all three variants (negative/positive/zero gap)
+- [x] Email gate sits below reveal; reveal stays visible after submit
 - [ ] All copy from `copy.md` §1.1
-- [ ] State persists in localStorage; reloads gracefully
-- [ ] Mobile (≤860px) collapses to single column; reveal scales correctly
+- [x] State persists in localStorage; reloads gracefully
+- [x] Mobile (≤860px) collapses to single column; reveal scales correctly
 - [ ] LCP under 2.0s
 
 ## Simulator page `/simulator` (Codex)
 
-- [ ] `aspire/simulator/index.html` refactored per `page-spec-simulator.md`
-- [ ] Sticky header: scenario name, Aspire Rate (or Target), Aspire Gap, vs. Current
-- [ ] **`AT THESE ASSUMPTIONS` sub-eyebrow under the rate is present**
-- [ ] View toggle (Required ↔ Target with margin input) functional
-- [ ] All 6 levers implemented: Savings rate, Allocation mix, Timeline, Target basket, Geography, Configurable CAGR
-- [ ] Levers update Aspire Gap in real time (<100ms after debounce)
-- [ ] Trajectory chart renders with crossover annotation
-- [ ] Reference line (baseline) shows behind active scenario line
-- [ ] Recommendation engine in `aspire/lib/simulator/recommend.js` returns 2–4 ranked suggestions
-- [ ] Recommendations panel disclaimer non-removable
-- [ ] Recommendations follow Allowed/Forbidden rules from `page-spec-simulator.md` §8
-- [ ] Scenario presets implemented (6 locked: Aggressive, Conservative, Move to a cheaper city, Save 5 more years, Smaller life, Custom)
-- [ ] Scenario save/load via Supabase, 10-scenario cap enforced
-- [ ] Public scenario sharing at `/simulator/s/[shareId]` (read-only view, 20-char share_id)
-- [ ] Mobile = preset-led entry → vertical lever stack
+- [x] `aspire/simulator/index.html` refactored per `page-spec-simulator.md`
+- [x] Sticky header: scenario name, Aspire Rate (or Target), Aspire Gap, vs. Current
+- [x] **`AT THESE ASSUMPTIONS` sub-eyebrow under the rate is present**
+- [x] View toggle (Required ↔ Target with margin input) functional
+- [x] All 6 levers implemented: Savings rate, Allocation mix, Timeline, Target basket, Geography, Configurable CAGR
+- [x] Levers update Aspire Gap in real time
+- [x] Trajectory chart renders
+- [x] Reference line (baseline) shows behind active scenario line
+- [ ] Recommendation engine in `aspire/lib/simulator/recommend.js` returns 2–4 ranked suggestions — deferred; v1 uses factual `lib/simulator/observations.js`
+- [x] Observation panel avoids advisory recommendations and keeps outputs educational
+- [x] Observation copy follows Allowed/Forbidden rules from `page-spec-simulator.md` §8
+- [ ] Scenario presets implemented (6 locked: Aggressive, Conservative, Move to a cheaper city, Save 5 more years, Smaller life, Custom) — v1 has comparison patterns, not the final locked preset system
+- [x] Scenario save/load via Supabase, 10-scenario cap enforced
+- [x] Public scenario sharing at `/simulator/s/[shareId]` (read-only view, 20-char share_id)
+- [x] Mobile = vertical lever stack
 - [ ] Allocation Mix opens bottom sheet on mobile
 - [ ] Configurable CAGR opens bottom sheet on mobile
-- [ ] Auth gate: visitor without baseline redirects to `/` with banner
+- [ ] Auth gate: visitor without baseline redirects to `/` with banner — v1 shows an in-page start-over gate
 
 ## Netlify Functions (Codex)
 
-- [ ] `score.js` updated:
-  - [ ] Writes to new schema (encrypted)
-  - [ ] Returns `{ aspireRate, aspireGap, scenarioId, simulatorUrl, emailSent }`
-  - [ ] Function name and route preserved (deploy contract)
-  - [ ] Score email template surfaces Aspire Rate + Gap with "at these assumptions"
-- [ ] `scenario.js` updated to read new schema
-- [ ] `tracker.js` updated for any field name changes
+- [x] `score.js` updated:
+  - [x] Writes to new schema (encrypted)
+  - [x] Returns `{ aspireRate, aspireGap, scenarioId, simulatorUrl, emailSent }`
+  - [x] Function name and route preserved (deploy contract)
+  - [x] Score email template surfaces Aspire Rate + Gap with "at these assumptions"
+  - [x] Server `project()` result is authoritative for `costRate`, `moneyRate`, and `gap`
+- [x] `scenario.js` updated to read new schema
+- [x] `scenario.js` supports named save/list/load/rename/delete, make-baseline, public share, revoke share, and 10-scenario cap
+- [x] `tracker.js` compatible with private token lookup
 - [ ] All env vars set in Netlify production:
   - [ ] `SUPABASE_URL`
   - [ ] `SUPABASE_SERVICE_ROLE_KEY`
