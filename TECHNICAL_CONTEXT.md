@@ -43,6 +43,10 @@ skrauss11/aspire/
 │       └── index.html                 # Read-only public shared scenario route
 ├── account/
 │   └── index.html                     # Magic-link account shell + delete-account flow
+├── privacy/
+│   └── index.html                     # Placeholder privacy policy pending legal review
+├── terms/
+│   └── index.html                     # Placeholder terms pending legal review
 ├── join.html                          # Newsletter sign-up landing page
 ├── manifesto.html                     # Brand manifesto page
 ├── og-card.html                       # Open Graph social preview card
@@ -113,6 +117,7 @@ New persistence tables:
 - `public.scenarios` stores encrypted scenario lever state, derived display values, public sharing flags, and temporary legacy token columns.
 - `public.baseline_overrides` stores encrypted user-selected baseline lever state.
 - `public.account_deletions` stores the 90-day hashed deletion audit trail.
+- `public.auth_magic_link_requests` stores SHA-256 hashes of normalized emails and request timestamps for server-side magic-link rate limiting. Anon/authenticated roles have no grants and RLS is enabled without user policies.
 
 Money fields are encrypted server-side before insert using `lib/encryption.js` and libsodium XChaCha20-Poly1305. The encryption key is stored in Supabase Vault as `aspire_field_encryption_key_v1`; Netlify Functions read it over a server-side Postgres connection via `SUPABASE_DB_URL`. `ASPIRE_FIELD_ENCRYPTION_KEY` is allowed only as a local/test fallback.
 
@@ -247,6 +252,8 @@ Actions:
 - `{ "action": "request", "email": "user@example.com" }` sends a Supabase Auth magic link that redirects to `/account/`.
 - `{ "action": "refresh", "refreshToken": "..." }` refreshes a browser-held Supabase session.
 - `{ "action": "logout", "scope": "global" }` revokes the logged-in session server-side with Supabase Auth Admin.
+
+Magic-link requests are limited server-side to 5 requests per normalized email per rolling hour using `public.auth_magic_link_requests`. Only a SHA-256 email hash is stored for the limiter. Supabase's own Auth settings still control magic-link expiration, JWT expiry, session time-boxing, inactivity timeout, and SMTP sender domain; confirm those in the Supabase dashboard before launch.
 
 The browser stores only the Supabase access/refresh token pair in localStorage under `aspire:auth`. The service role key never reaches the browser.
 

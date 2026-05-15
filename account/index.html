@@ -55,6 +55,10 @@
     .modal .ghost { color:#0f0e0c; border-color:#c9bead; }
     .toast { position:fixed; right:18px; bottom:18px; z-index:30; background:var(--paper); color:#0f0e0c; border-radius:999px; padding:12px 16px; font-weight:800; opacity:0; transform:translateY(8px); transition:opacity .18s ease, transform .18s ease; pointer-events:none; }
     .toast.show { opacity:1; transform:translateY(0); }
+    footer { padding:0 0 34px; color:#b8b0a2; font-size:12px; }
+    .foot-row { border-top:1px solid var(--rule); padding-top:18px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .foot-row a { color:#d7cfc2; }
+    .compliance-line { margin:10px 0 0; max-width:620px; }
     .hidden { display:none !important; }
     @media (max-width:820px) {
       .hero, .grid { grid-template-columns:1fr; }
@@ -127,7 +131,10 @@
 
           <section class="panel">
             <h2>Your data</h2>
-            <p class="muted">Sensitive financial fields are encrypted in our database. We don't run ads, aggregate accounts, or sell your data.</p>
+            <p class="muted"><strong>What we keep:</strong> Your email and the numbers you enter — assets, allocation, contributions, geography, goals — so the Simulator can pick up where you left off.</p>
+            <p class="muted"><strong>How we keep it:</strong> Sensitive financial fields are encrypted in our database. Connections use TLS. Magic-link sign-in means we never store passwords.</p>
+            <p class="muted"><strong>What we don't do:</strong> Sell or share your data. Track you with ads. Aggregate accounts. Store your name, IP, or anything you didn't type into Aspire.</p>
+            <p class="muted"><strong>What you can do:</strong> Delete your account anytime at /account. Unsubscribe from the Aspire Report at any time. Email privacy@aspirerate.com with questions.</p>
           </section>
 
           <section class="panel">
@@ -139,6 +146,14 @@
       </section>
     </main>
   </div>
+
+  <footer class="wrap">
+    <div class="foot-row">
+      <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
+      <div><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="mailto:hello@aspirerate.com">Contact</a></div>
+    </div>
+    <p class="compliance-line">Outputs are educational measurements at your current assumptions, not investment advice. Past rates are not guarantees of future results.</p>
+  </footer>
 
   <div class="modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteHeading">
     <div class="modal-card">
@@ -229,8 +244,13 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "request", email })
       });
-      $("signInStatus").textContent = res.ok
-        ? "Check your email. Magic links last five minutes for security."
+      if (res.ok) {
+        $("signInStatus").textContent = "Check your email. Magic links are one-time use.";
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      $("signInStatus").textContent = res.status === 429 && data.retryAfterMinutes
+        ? `Too many sign-in links. Try again in ${data.retryAfterMinutes} minutes.`
         : "Could not send a sign-in link. Try again in a minute.";
     }
 

@@ -21,7 +21,7 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
 
 - [x] Supabase Auth magic-link flow wired up
 - [ ] Magic-link expiration set to 5 minutes
-- [ ] Rate limit: max 5 magic-link requests per email per hour
+- [x] Rate limit: max 5 magic-link requests per email per hour — app-owned limiter in `auth.js` + `public.auth_magic_link_requests`; Supabase dashboard still has its own 60-second default
 - [ ] Session lifetime: 30-day rolling
 - [ ] New-device login email sends via Resend (subject: *"You signed in to Aspire from a new device"*)
 - [x] Logout hard-revokes server-side
@@ -93,8 +93,8 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
 - [ ] `/report` route (Beehiiv archive integration; pulls past issues at build time)
 - [ ] `/report/[slug]` route for individual past issues
 - [x] `/account` route (settings, delete-my-account flow per `security-and-privacy.md` §8)
-- [ ] `/privacy` route (placeholder content from `copy.md` §5.1, flagged for legal review)
-- [ ] `/terms` route (placeholder content from `copy.md` §5.2, flagged for legal review)
+- [x] `/privacy` route (placeholder content from `copy.md` §5.1, flagged for legal review)
+- [x] `/terms` route (placeholder content from `copy.md` §5.2, flagged for legal review)
 - [ ] `/author/scott` page (bio TBD by Scott)
 - [ ] MDX rendering wired for `aspire/content/`
 - [ ] Frontmatter validation in CI (pre-publish lint per `content-architecture.md` §8)
@@ -128,8 +128,8 @@ _Drafted 2026-05-11. Lives at `aspire/specs/PRE-LAUNCH-CHECKLIST.md`. Consolidat
 
 ## Compliance and legal
 
-- [ ] `npm run check:compliance` passes on every shipped surface
-- [ ] Footer compliance line on every page (verbatim from `copy.md` §4.1)
+- [x] `npm run check:compliance` passes on every shipped surface
+- [x] Footer compliance line on every page (verbatim from `copy.md` §4.1)
 - [ ] Methodology disclaimer block at top of `/methodology`
 - [ ] Recommendations panel disclaimer in Simulator
 - [ ] All surfaced rates and gaps paired with "at these assumptions"

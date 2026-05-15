@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy | Aspire</title>
+  <link rel="icon" href="/favicon-32.png" sizes="32x32">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#0f0e0c; --paper:#f5f1ea; --paper-2:#ebe3d6; --muted:#6f675b; --rule:#d8cfbf; --accent:#c8451f; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter,system-ui,sans-serif; line-height:1.6; }
+    a { color:inherit; text-decoration:none; }
+    .wrap { width:min(900px, calc(100% - 40px)); margin:0 auto; }
+    nav { min-height:76px; display:flex; align-items:center; justify-content:space-between; gap:18px; border-bottom:1px solid var(--rule); }
+    .logo, h1, h2 { font-family:Fraunces,serif; letter-spacing:0; }
+    .logo { font-weight:650; font-size:25px; }
+    .logo span, .eyebrow { color:var(--accent); }
+    .links { display:flex; gap:18px; color:var(--muted); font-size:14px; font-weight:700; }
+    main { padding:54px 0 68px; }
+    .eyebrow { text-transform:uppercase; letter-spacing:.16em; font-size:12px; font-weight:800; margin:0 0 16px; }
+    h1 { font-size:clamp(48px, 8vw, 82px); line-height:.96; margin:0 0 16px; font-weight:500; }
+    h2 { font-size:30px; line-height:1.05; margin:38px 0 10px; }
+    p, li { color:var(--muted); }
+    strong { color:var(--ink); }
+    ul { padding-left:22px; }
+    .review { border:1px solid var(--rule); border-radius:8px; background:var(--paper-2); padding:14px 16px; color:var(--muted); font-size:14px; margin:22px 0 10px; }
+    footer { padding:0 0 34px; color:var(--muted); font-size:12px; }
+    .foot-row { border-top:1px solid var(--rule); padding-top:18px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .compliance-line { margin:10px 0 0; max-width:620px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a class="logo" href="/">Aspire<span aria-hidden="true">Δ</span></a>
+      <div class="links">
+        <a href="/">Calculator</a>
+        <a href="/terms/">Terms</a>
+        <a href="/account/">Account</a>
+      </div>
+    </nav>
+
+    <main>
+      <p class="eyebrow">Legal</p>
+      <h1>Privacy</h1>
+      <p><em>Last updated: 2026-05-11. PLACEHOLDER pending legal review.</em></p>
+      <div class="review">This placeholder is written from the canonical copy spec and security model. It should be replaced after review by a US lawyer with consumer-fintech experience.</div>
+
+      <p>Aspire is operated by [Aspire LLC / your legal entity] ("Aspire," "we"). This page describes what data we collect, how we keep it, and what you can do about it. Plain English first; the formal version follows legal review.</p>
+
+      <h2>What we collect</h2>
+      <p>When you use the Calculator and Simulator, we collect:</p>
+      <ul>
+        <li><strong>Your email address</strong>, so we can sign you in (we use magic-link authentication — there are no passwords) and so you can subscribe to the Aspire Report newsletter.</li>
+        <li><strong>The numbers you enter</strong>: total assets, allocation breakdown, monthly contribution, geography (zip or metro), timeline, life-goal selection, and any scenarios you save.</li>
+        <li><strong>Computed values</strong> derived from your inputs (your Aspire Rate and Aspire Gap), cached so pages load quickly when you return.</li>
+      </ul>
+      <p>We do not collect: your name, your IP address (we don't log it with calculator submissions), precise geolocation (zip is the maximum precision), browser fingerprints, income, demographic data, or anything you typed into a form but didn't submit.</p>
+
+      <h2>How we keep it</h2>
+      <ul>
+        <li>Sensitive financial fields (total assets, allocation, contribution, scenario lever data) are encrypted at the application layer using libsodium with a key held in Supabase Vault. Even our database engineers cannot read these fields without the key.</li>
+        <li>All other fields are encrypted at rest by our database provider (Supabase) and in transit via TLS.</li>
+        <li>Row-level security policies prevent any user from reading another user's data.</li>
+        <li>We use magic-link authentication. We never store passwords.</li>
+      </ul>
+
+      <h2>How we use it</h2>
+      <ul>
+        <li>To run the Calculator and Simulator for you.</li>
+        <li>To pick up where you left off when you return.</li>
+        <li>To send you the Aspire Report newsletter, if you subscribed.</li>
+        <li>To compute aggregate, anonymized statistics about how the Aspire user base's personal inflation rates are trending. Aggregate data only — never anything that identifies you individually.</li>
+      </ul>
+
+      <h2>What we don't do</h2>
+      <ul>
+        <li>We don't sell, rent, or share your data with third parties for marketing purposes.</li>
+        <li>We don't run ads on Aspire and we don't allow third-party tracking pixels on the Calculator or Simulator pages.</li>
+        <li>We don't recommend specific investments, funds, or financial products of any kind. (We're not allowed to, and we don't want to.)</li>
+      </ul>
+
+      <h2>Service providers</h2>
+      <p>We use these vendors to operate Aspire. Each has access only to the data they need:</p>
+      <ul>
+        <li><strong>Supabase</strong> — database, authentication. Stores your email and your encrypted scenarios.</li>
+        <li><strong>Beehiiv</strong> — newsletter delivery. Stores your email address only, for the Aspire Report.</li>
+        <li><strong>Netlify</strong> — site hosting. Does not store user data.</li>
+      </ul>
+      <p>Each vendor has its own privacy policy. We work only with vendors whose practices align with the commitments on this page.</p>
+
+      <h2>Your rights</h2>
+      <p>You can:</p>
+      <ul>
+        <li>Access your data at /account.</li>
+        <li>Delete your account and all of your data at /account. Deletion is permanent.</li>
+        <li>Unsubscribe from the Aspire Report from any issue's footer.</li>
+        <li>Email privacy@aspirerate.com with questions.</li>
+      </ul>
+      <p>If you are a California resident, you have additional rights under the CCPA, including the right to request specific data, the right to deletion, and the right to opt out of the sale of personal information (which we do not do anyway). Contact privacy@aspirerate.com to exercise these rights.</p>
+      <p>If you are in the EU/UK, GDPR-equivalent rights apply. We do not currently target users outside the US, but we honor these rights regardless.</p>
+
+      <h2>Children</h2>
+      <p>Aspire is not directed at children under 16. We do not knowingly collect data from children. If you believe we have, contact privacy@aspirerate.com and we will delete it.</p>
+
+      <h2>Changes to this policy</h2>
+      <p>When we update this policy, we'll change the "Last updated" date at the top and announce material changes in the Aspire Report. Continued use of Aspire after a material change means you accept the updated policy.</p>
+
+      <h2>Contact</h2>
+      <p>privacy@aspirerate.com</p>
+    </main>
+
+    <footer>
+      <div class="foot-row">
+        <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
+        <div><a href="/terms/">Terms</a> · <a href="mailto:hello@aspirerate.com">Contact</a></div>
+      </div>
+      <p class="compliance-line">Outputs are educational measurements at your current assumptions, not investment advice. Past rates are not guarantees of future results.</p>
+    </footer>
+  </div>
+</body>
+</html>
