@@ -27,7 +27,7 @@
     .pill.primary { background:var(--accent); color:var(--paper); }
     .pill.ghost { background:transparent; color:var(--paper); border:1px solid var(--grid); }
     .sim-header { position:sticky; top:0; z-index:10; background:rgba(26,24,22,.96); border-top:1px solid var(--rule); border-bottom:1px solid var(--grid); backdrop-filter:blur(14px); }
-    .header-grid { min-height:104px; display:grid; grid-template-columns:minmax(220px,1fr) minmax(420px,1.2fr) auto; gap:24px; align-items:center; }
+    .header-grid { min-height:104px; display:grid; grid-template-columns:minmax(220px,.85fr) minmax(560px,1.45fr) minmax(260px,auto); gap:24px; align-items:center; }
     .scenario-name { display:flex; flex-direction:column; gap:8px; min-width:0; }
     .scenario-name input { width:100%; max-width:360px; min-height:38px; background:transparent; border:1px solid transparent; border-radius:8px; color:var(--paper); padding:0 8px; font-size:18px; font-weight:600; font-style:italic; }
     .scenario-name input:hover, .scenario-name input:focus { border-color:var(--grid); outline:0; background:#141210; }
@@ -39,9 +39,9 @@
     .radio-row label { display:flex; gap:8px; align-items:flex-start; }
     .margin-row { display:grid; gap:5px; }
     .margin-row input { border:1px solid #c9bead; background:#fffaf2; color:#0f0e0c; border-radius:8px; min-height:36px; padding:0 10px; }
-    .metric-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
+    .metric-grid { display:grid; grid-template-columns:minmax(108px,.8fr) minmax(128px,.9fr) minmax(210px,1.2fr); gap:12px; }
     .metric { min-width:0; }
-    .metric strong { display:block; color:var(--paper); font-size:30px; line-height:1; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .metric strong { display:block; color:var(--paper); font-size:clamp(24px, 2.2vw, 30px); line-height:1; font-variant-numeric:tabular-nums; white-space:nowrap; }
     .metric .label { margin-top:8px; }
     .assumptions { color:var(--loss); font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; margin-top:5px; }
     .label { color:var(--muted); font-size:11px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
@@ -118,7 +118,7 @@
     .gate-card { background:var(--elevated); border:1px solid var(--rule); border-radius:8px; padding:24px; max-width:680px; }
     .gate-card h1 { font:650 44px/1 Fraunces,serif; margin:0 0 12px; }
     .hidden { display:none !important; }
-    @media (max-width: 1040px) {
+    @media (max-width: 1180px) {
       .header-grid, .workspace { grid-template-columns:1fr; }
       .workspace > * { min-width:0; }
       .header-actions { justify-content:flex-start; }
