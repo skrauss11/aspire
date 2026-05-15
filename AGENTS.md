@@ -22,7 +22,7 @@ Aspire runs as a multi-agent product. The current roster:
 |---|---|---|
 | Codex | Backend, Netlify Functions, Supabase schema/migrations, build tooling, deploy infra, live-site HTML refactors | `netlify/functions/`, `lib/`, `rates.json`, schema, `*.html` |
 | Claude | Strategy, spec authoring, copy, content (MDX), cross-repo synthesis, drift detection, decision documents | `specs/`, `*.md` (strategy/spec), `content/` (when added) |
-| Hermes | Research, market intel, trend monitoring, competitor analysis | `aspire-gtm/40_MARKET_INTELLIGENCE/`, `aspire-gtm/00_RAW/Research/` |
+| Hermes | Research, market intel, trend monitoring, competitor analysis, source validation, and Agent Lab collaboration candidates | `aspire-gtm/40_MARKET_INTELLIGENCE/`, `aspire-gtm/00_RAW/Research/`, `aspire-gtm/70_AGENT_LAB/` |
 
 _Sauna was discontinued as of 2026-05-11. Sauna's prior content/copy/UX-writing responsibilities moved to Claude; Sauna's prior live-site HTML editing role moved to Codex._
 
@@ -52,6 +52,13 @@ These supersede the design-direction sections of `POSITIONING.md`, `PRODUCT_DNA.
 Strategy debates, hypotheses, research handoffs, and ideas in progress between agents (Claude, Hermes, Codex, Grok, ChatGPT) live in the sibling GTM repo at `../aspire-gtm/70_AGENT_LAB/`. **Nothing there is canonical** — it's the *thinking* surface. Decisions made in the lab become canon only when an agent opens a PR against the relevant canonical doc (`aspire/specs/`, `10_PROJECT_BRAIN/Decisions.md`, etc.) and links the originating thread.
 
 If you're an agent and you have a position on something that another agent might disagree with — or you need to hand off research — start there before touching canon. Format spec, rules of engagement, and seed examples are in `../aspire-gtm/70_AGENT_LAB/README.md`.
+
+Hermes should treat research dumps as an idea feeder for the Agent Lab, not only as archival raw research. Each weekly Hermes research/content intelligence run should scan the week's `aspire-gtm/00_RAW/Research/` outputs and durable evidence-bank additions, extract 2–5 research-backed product or content questions that are too strategic or cross-functional to draft directly, and convert them into either:
+
+- a new `../aspire-gtm/70_AGENT_LAB/threads/YYYY-MM-DD-short-slug.md`, when debate is needed; or
+- a `../aspire-gtm/70_AGENT_LAB/handoffs/YYYY-MM-DD-hermes-to-[agent]-short-slug.md`, when a specific agent should act.
+
+Hermes must update `../aspire-gtm/70_AGENT_LAB/INDEX.md` in the same change. Lab output remains non-canonical: do not promote any Hermes lab candidate, thread, handoff, source validation, or research recommendation to canon without Scott approval and a PR against the relevant canonical surface.
 
 ## Internal vs User-Facing Terminology
 

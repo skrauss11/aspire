@@ -2,18 +2,19 @@
 
 _Single source of truth for what each agent is currently working on in this repo. Update when you start, stop, or hand off._
 
-_Last updated: 2026-05-14 ET_
+_Last updated: 2026-05-15 ET_
 
 ---
 
 ## Currently in flight
 
-- **Codex — `codex/schema-migration`** — Sprint 1 security foundation + PR 2 score refactor: Supabase migration for authenticated users/calculator states/scenarios/baselines with RLS, server-side field encryption helper, RLS tests, locked 2026-05-13 `rates.json` basket component refresh, and encrypted `score.js`/`scenario.js` persistence. Scope: `supabase/`, `lib/`, `tests/`, `package.json`, `rates.json`, `netlify/functions/score.js`, `netlify/functions/scenario.js`; no `specs/`, strategy docs, or `content/*.mdx`.
-
-- **On hold pending source audit** — `content/methodology/index.mdx` and `content/explainers/savings-account-losing-points.mdx`. The childcare CAGR thread ([aspire-gtm/70_AGENT_LAB/threads/2026-05-13-childcare-cagr-sourcing.md](../aspire-gtm/70_AGENT_LAB/threads/2026-05-13-childcare-cagr-sourcing.md)) resolved 2026-05-13 to use BLS `CUUR0000SEEB03` (~4.83%) as canonical childcare CAGR, retiring the placeholder ~11.8%. That change cascades into the basket aggregate in the savings-account-losing-points explainer (~11.0% → ~7.6%, gap shifts from −7 points to ~−3.6 points), which also exposed that the other Family-basket components are unverified placeholders with two source-fitness mismatches (K–12 tuition cites College Board higher-ed series; healthcare cites CMS NHEA spending, not BLS medical CPI). Source-verification handoff to Hermes opened 2026-05-13 ([aspire-gtm/70_AGENT_LAB/handoffs/2026-05-13-claude-to-hermes-basket-component-audit.md](../aspire-gtm/70_AGENT_LAB/handoffs/2026-05-13-claude-to-hermes-basket-component-audit.md)). **Do not edit these two files until the audit thread lands and the Methodology + explainer PRs go through.** Owner of follow-up PRs: Claude.
+- **Codex — `codex/calculator-v2`** — Sprint 2 Calculator refactor stacked on PR #8: rebuild `/` around the canonical 7-input Calculator, reveal panel with non-removable "AT THESE ASSUMPTIONS" pairing, email gate, encrypted `/api/score` handoff, compliance label corrections, server-authoritative score metrics, and Agent Lab/Hermes instruction sync. Scope: `index.html`, `netlify/functions/score.js`, `AGENTS.md`, and supporting `lib/` only if needed; no `specs/`, strategy docs, or `content/*.mdx`.
 
 ## Recently shipped
 
+- 2026-05-15 — **Codex** — PR #8 (`aspire`): encrypted scenario persistence foundation. Added Supabase-backed private scenario storage, encrypted calculator state fields, schema/migration support, RLS tests, and `/api/scenario` hydration groundwork.
+- 2026-05-14 — **Claude** — PR #7 (`aspire`): "Methodology + explainer: lock all Family-basket sources via multi-agent audit" — canon update to `content/methodology/index.mdx` §3–4 and `content/explainers/savings-account-losing-points.mdx` against the locked basket ([audit thread](../aspire-gtm/70_AGENT_LAB/threads/2026-05-13-basket-component-source-audit.md)): Housing 6.48% (Case-Shiller `CSUSHPINSA`), S&P 500 13.14% (`SPXTR` total return, labeled "equity-linked aspiration"), Childcare 4.83% (BLS `CUUR0000SEEB03`), K–12 3.94% (BLS `CUUR0000SEEB02`), Healthcare 2.44% (BLS `CUUR0000SAM`); Family-basket aggregate 7.03%; HYSA reframed as illustrative 4% with FDIC context (national savings rate 0.38%, rate cap 4.39%).
+- 2026-05-14 — **Claude** — PR #6 (`aspire`): STATUS freeze on `content/methodology/index.mdx` and `content/explainers/savings-account-losing-points.mdx` while the Family-basket source audit was pending, preventing methodology/explainer copy updates before Hermes's audit landed.
 - 2026-05-13 — **Claude** — PR #5 (`aspire`) + PR #5 (`aspire-gtm`): 70_AGENT_LAB async-coordination layer + cross-repo AGENTS.md reference paragraph.
 - 2026-05-11 — **Claude** — PR #4 (`aspire`) + companion PR (`aspire-gtm`): May 2026 strategic redirection. Adds `specs/` (7 canonical product/design specs + README-HANDOFF + PRE-LAUNCH-CHECKLIST), `content/` (placeholder Methodology page + 2 Explainer voice exemplars), `CLAUDE.md` and `_DRIFT_REPORT_2026-05-11.md` at repo root, AGENTS.md/AGENT_WORKFLOW.md updates (Sauna discontinued, Claude added to roster, voice rules merged, "at these assumptions" pairing tightened), supersession marks on prior canon docs.
 - 2026-05-04 — **Sauna** — PR #1: Copy/UX refactor + post-submit flow (terminology pass, CTA flip, inline simulator auto-open, Home Alone Aspire Index card, 38 average benchmark, expandable explainer, score email rewrite). Hotfix `2d44912`: post-submit auto-redirect skipping inline experience.

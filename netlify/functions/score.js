@@ -113,6 +113,29 @@ function toByteaHex(buffer) {
   return `\\x${Buffer.from(buffer).toString("hex")}`;
 }
 
+function metricsForBasket(basket) {
+  const metrics = project(basket.goals, basket.holdings);
+  const computed = basket.computed || {};
+  return {
+    ...metrics,
+    horizon: Number(computed.horizon ?? computed.timeHorizon) || metrics.horizon
+  };
+}
+
+function applyComputedRates(scenario, metrics) {
+  scenario.basket.computed = {
+    ...(scenario.basket.computed || {}),
+    moneyRate: metrics.moneyRate,
+    costRate: metrics.costRate,
+    aspirationRate: metrics.costRate,
+    portfolioRate: metrics.moneyRate,
+    gap: metrics.gap,
+    horizon: metrics.horizon,
+    timeHorizon: metrics.horizon
+  };
+  return scenario;
+}
+
 async function saveScenario(email, scenario, metrics) {
   const client = getSupabaseAdmin();
   const user = await ensureUserForEmail(email);
@@ -271,8 +294,11 @@ export const handler = async event => {
 
   const validation = validate({ basket: body.basket });
   if (!validation.ok) return json(400, { error: validation.errors[0] });
-  const metrics = project(validation.scenario.basket.goals, validation.scenario.basket.holdings);
-  const scenario = toPersisted(validation.scenario);
+  const metrics = metricsForBasket({
+    ...validation.scenario.basket,
+    computed: body.basket?.computed || validation.scenario.basket.computed
+  });
+  const scenario = applyComputedRates(toPersisted(validation.scenario), metrics);
 
   let row;
   try {

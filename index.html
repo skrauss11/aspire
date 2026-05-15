@@ -3,319 +3,628 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Aspire | Calculate Your Gap</title>
+  <title>Aspire | Personal Inflation Index</title>
+  <link rel="icon" href="/favicon-32.png" sizes="32x32">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root { --ink:#0f0e0c; --paper:#f5f1ea; --paper2:#ebe3d6; --muted:#6f675b; --rule:#d8cfbf; --accent:#c8451f; --green:#2f7d48; }
-    * { box-sizing: border-box; }
+    :root {
+      --ink:#0f0e0c;
+      --paper:#f5f1ea;
+      --paper-2:#ebe3d6;
+      --muted:#6f675b;
+      --muted-dark:#a79d8d;
+      --rule:#d8cfbf;
+      --rule-dark:#302b25;
+      --accent:#c8451f;
+      --accent-dark:#e26449;
+      --gain:#4f9d68;
+      --loss:#d95b47;
+      --focus:#f0b35b;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
     body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter,system-ui,sans-serif; line-height:1.5; }
     a { color:inherit; text-decoration:none; }
-    .wrap, .wrap-wide { width:min(1120px, calc(100% - 40px)); margin:0 auto; }
-    .wrap { width:min(840px, calc(100% - 40px)); }
-    nav { height:76px; display:flex; justify-content:space-between; align-items:center; }
-    .logo { font-family:Fraunces,serif; font-weight:650; font-size:25px; }
+    button, input { font:inherit; }
+    button { cursor:pointer; }
+    .wrap { width:min(1120px, calc(100% - 40px)); margin:0 auto; }
+    .nav { height:76px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .logo { font-family:Fraunces,serif; font-weight:650; font-size:25px; line-height:1; }
     .logo span { color:var(--accent); margin-left:2px; }
-    .nav-cta, .btn, button { border:0; border-radius:999px; cursor:pointer; font:600 14px/1 Inter,sans-serif; }
-    .nav-cta { background:var(--ink); color:var(--paper); padding:12px 18px; }
-    .hero { padding:70px 0 56px; }
-    .eyebrow { color:var(--accent); text-transform:uppercase; letter-spacing:.16em; font-size:12px; font-weight:700; margin-bottom:18px; }
-    h1, h2, h3 { font-family:Fraunces,serif; margin:0; letter-spacing:0; }
-    h1 { font-size:clamp(42px, 7vw, 76px); line-height:.98; max-width:860px; }
-    .lede { color:var(--muted); font-size:19px; max-width:660px; margin:22px 0 0; }
-    .cta-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:30px; }
-    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding:0 20px; }
-    .btn-primary { background:var(--accent); color:var(--paper); }
-    .btn-ghost { border:1px solid var(--rule); }
-    .proof-strip { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--rule); border-radius:8px; overflow:hidden; margin-bottom:56px; }
-    .proof { padding:22px; border-right:1px solid var(--rule); background:rgba(255,255,255,.24); }
-    .proof:last-child { border-right:0; }
-    .proof .n { font-family:Fraunces,serif; font-size:36px; line-height:1; }
-    .proof .unit { color:var(--muted); font-size:18px; }
-    .proof .l { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.12em; margin-top:8px; }
-    .product-flow { background:var(--ink); color:var(--paper); padding:66px 0 76px; }
-    .product-flow h2 { font-size:42px; }
-    .product-flow .sub { color:#b8b0a2; max-width:680px; margin:12px 0 26px; }
-    .scenario-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
-    .scenario-btn { background:#24211d; color:var(--paper); padding:12px 18px; border:1px solid #342f28; }
-    .scenario-btn.active { background:var(--paper); color:var(--ink); }
-    .calc-grid { display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:22px; align-items:start; }
-    .block, .summary-card { background:#171512; border:1px solid #2a2722; border-radius:8px; padding:22px; }
-    .block + .block { margin-top:18px; }
-    .block-title { font-size:24px; }
-    .block-sub, .hint { color:#9f9688; font-size:13px; margin-top:4px; }
-    .row-head, .goal-row, .holding-row { display:grid; gap:10px; align-items:center; }
-    .row-head { color:#8f8778; font-size:11px; text-transform:uppercase; letter-spacing:.12em; margin:18px 0 8px; }
-    .goal-row { grid-template-columns:120px minmax(130px,1.05fr) 82px 130px minmax(140px,1.15fr) 34px; margin-bottom:10px; }
-    .holding-row { grid-template-columns:1.15fr 120px 100px 1.15fr 34px; margin-bottom:10px; }
-    input, select { width:100%; min-height:42px; border:1px solid #37322b; border-radius:8px; padding:0 11px; background:#0f0e0c; color:var(--paper); font:500 14px Inter,sans-serif; }
-    select { color:#f5f1ea; }
-    .remove { width:34px; height:34px; background:#24211d; color:#b8b0a2; border-radius:50%; }
-    .add-goal { background:transparent; color:#d7cfc2; border:1px solid #37322b; padding:11px 14px; border-radius:8px; }
-    .basket-meta { display:flex; justify-content:space-between; border-top:1px solid #2a2722; margin-top:18px; padding-top:14px; color:#b8b0a2; }
-    .basket-meta strong { color:var(--paper); font-family:Fraunces,serif; font-size:23px; }
-    .summary-card { position:sticky; top:20px; }
-    .summary-card .label { color:#8f8778; text-transform:uppercase; letter-spacing:.14em; font-size:11px; }
-    .summary-card .gap { font-family:Fraunces,serif; font-size:58px; line-height:1; margin:10px 0; color:#f0b35b; transition:color .2s ease; }
-    .summary-card .gap.good { color:#7fb98a; }
-    .metric { display:flex; justify-content:space-between; padding:13px 0; border-top:1px solid #2a2722; color:#b8b0a2; }
-    .metric strong { color:var(--paper); }
-    #summaryChart { margin-top:16px; min-height:120px; border-top:1px solid #2a2722; padding-top:12px; }
-    .submit-row { margin-top:22px; display:grid; gap:10px; }
-    .submit-row button { background:var(--accent); color:var(--paper); min-height:48px; }
-    .error { color:#ffb199; min-height:20px; font-size:13px; }
-    footer { padding:28px 0; color:var(--muted); font-size:13px; }
+    .nav-links { display:flex; align-items:center; gap:20px; color:var(--muted); font-size:14px; font-weight:600; }
+    .nav-cta { min-height:40px; display:inline-flex; align-items:center; justify-content:center; padding:0 16px; border-radius:999px; background:var(--ink); color:var(--paper); }
+    .hero { padding:54px 0 30px; }
+    .eyebrow { color:var(--accent); text-transform:uppercase; letter-spacing:.16em; font-size:12px; font-weight:800; margin:0 0 16px; }
+    h1, h2, h3 { font-family:Fraunces,serif; letter-spacing:0; margin:0; }
+    h1 { max-width:880px; font-size:clamp(46px, 7vw, 82px); line-height:.96; font-weight:500; }
+    em { font-style:italic; }
+    .lede { max-width:690px; margin:22px 0 0; color:var(--muted); font-size:19px; }
+    .calculator { padding:18px 0 0; }
+    .calc-band { border-top:1px solid var(--rule); padding:34px 0 42px; }
+    .step-grid { display:grid; grid-template-columns:240px minmax(0,1fr); gap:32px; align-items:start; }
+    .step-kicker { color:var(--accent); text-transform:uppercase; letter-spacing:.15em; font-size:11px; font-weight:800; margin-bottom:12px; }
+    .step-title { font-size:clamp(30px, 4vw, 46px); line-height:1; }
+    .control-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .control-grid.two { grid-template-columns:1fr 1fr; }
+    .field, .allocation { min-width:0; }
+    .field label, .allocation-label { display:block; color:var(--muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; margin-bottom:8px; }
+    .field input { width:100%; min-height:48px; border:1px solid var(--rule); border-radius:8px; background:rgba(255,255,255,.28); color:var(--ink); padding:0 13px; font-weight:700; outline:none; }
+    .field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(200,69,31,.16); }
+    .helper { margin:7px 0 0; color:var(--muted); font-size:13px; }
+    .helper em { color:var(--muted); }
+    .chip-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .life-chip { position:relative; min-height:48px; border:1px solid var(--rule); border-radius:8px; background:rgba(255,255,255,.26); color:var(--ink); padding:0 12px; text-align:center; font-weight:800; }
+    .life-chip span { position:absolute; left:50%; bottom:calc(100% + 8px); width:min(240px, 76vw); transform:translateX(-50%); border:1px solid var(--rule); border-radius:8px; background:var(--paper); color:var(--muted); padding:10px 12px; font-size:12px; font-weight:700; line-height:1.25; opacity:0; pointer-events:none; box-shadow:0 10px 26px rgba(15,14,12,.14); z-index:5; }
+    .life-chip:hover span, .life-chip:focus-visible span { opacity:1; }
+    .life-chip.active { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+    .life-chip.active span { color:var(--muted-dark); }
+    .range-wrap { display:grid; grid-template-columns:minmax(0,1fr) 76px; gap:12px; align-items:center; }
+    input[type="range"] { width:100%; accent-color:var(--accent); }
+    .range-value { min-height:48px; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule); border-radius:8px; background:rgba(255,255,255,.28); font-weight:800; font-variant-numeric:tabular-nums; }
+    .allocation-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+    .allocation input { text-align:right; font-variant-numeric:tabular-nums; }
+    .allocation small { display:block; min-height:32px; margin-top:6px; color:var(--muted); font-size:11px; line-height:1.3; }
+    .warning { color:var(--loss); font-size:13px; min-height:20px; margin-top:8px; }
+    .reveal { background:var(--ink); color:var(--paper); padding:58px 0 62px; }
+    .reveal-inner { display:grid; grid-template-columns:minmax(280px, .9fr) minmax(0, 1.1fr); gap:42px; align-items:center; }
+    .rate-lockup { text-align:center; }
+    .rate-eyebrow { color:var(--accent-dark); text-transform:uppercase; letter-spacing:.16em; font-size:12px; font-weight:800; }
+    .rate-value { font-family:Fraunces,serif; font-size:clamp(72px, 10vw, 112px); line-height:.9; margin:14px 0 8px; font-variant-numeric:tabular-nums; }
+    .assumption { color:var(--muted-dark); text-transform:uppercase; letter-spacing:.16em; font-size:11px; font-weight:800; }
+    .gap-line { margin:30px auto 0; width:min(340px,100%); border-top:1px solid var(--rule-dark); border-bottom:1px solid var(--rule-dark); padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .gap-line span { color:var(--muted-dark); text-transform:uppercase; letter-spacing:.13em; font-size:11px; font-weight:800; }
+    .gap-line strong { font-family:Fraunces,serif; font-size:42px; line-height:1; font-weight:500; font-variant-numeric:tabular-nums; }
+    .gap-line strong.gain { color:var(--gain); }
+    .gap-line strong.loss { color:var(--loss); }
+    .driver-panel { min-width:0; }
+    .driver-title { color:var(--muted-dark); text-transform:uppercase; letter-spacing:.15em; font-size:12px; font-weight:800; margin-bottom:18px; }
+    .driver-list { display:grid; gap:12px; }
+    .driver-row { display:grid; grid-template-columns:minmax(130px, 1fr) minmax(120px, 2fr) 56px; gap:12px; align-items:center; }
+    .driver-name { color:var(--paper); font-size:14px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .driver-bar { height:10px; background:#2c2721; border-radius:999px; overflow:hidden; }
+    .driver-bar span { display:block; height:100%; background:rgba(245,241,234,.84); border-radius:999px; }
+    .driver-rate { color:var(--paper); font-size:14px; font-weight:800; text-align:right; font-variant-numeric:tabular-nums; }
+    .interpretation { max-width:560px; margin:24px 0 0; color:var(--paper); font-size:18px; }
+    .reveal-actions { margin-top:26px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .primary-button, .secondary-button { min-height:48px; border:0; border-radius:999px; padding:0 20px; font-weight:800; }
+    .primary-button { background:var(--accent); color:var(--paper); }
+    .primary-button:disabled { opacity:.45; cursor:not-allowed; }
+    .secondary-button { background:transparent; color:var(--paper); border:1px solid var(--rule-dark); }
+    .gate { display:none; padding:48px 0 56px; border-top:1px solid var(--rule); }
+    .gate.open { display:block; }
+    .gate h2 { font-size:clamp(32px, 5vw, 52px); line-height:1; }
+    .gate p { max-width:590px; color:var(--muted); font-size:18px; margin:12px 0 22px; }
+    .gate-form { display:grid; grid-template-columns:minmax(260px, 360px) auto; gap:10px; align-items:start; }
+    .gate-form input { min-height:48px; border:0; border-bottom:2px solid var(--ink); border-radius:0; background:transparent; padding:0 4px; font-weight:700; color:var(--ink); outline:none; }
+    .gate-form button { min-height:48px; border:0; border-radius:999px; background:var(--accent); color:var(--paper); padding:0 18px; font-weight:800; }
+    .privacy { color:var(--muted); font-size:13px; margin-top:12px; }
+    .error { min-height:20px; color:var(--loss); font-size:13px; margin-top:8px; }
+    .reset-row { display:none; margin-top:18px; }
+    .reset-row.show { display:block; }
+    .reset-link { border:0; background:transparent; color:var(--muted); padding:0; text-decoration:underline; font-weight:700; }
+    footer { padding:32px 0; color:var(--muted); font-size:13px; }
     .foot-row { display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; border-top:1px solid var(--rule); padding-top:22px; }
-    @media (max-width: 860px) {
-      .proof-strip, .calc-grid { grid-template-columns:1fr; }
-      .proof { border-right:0; border-bottom:1px solid var(--rule); }
-      .proof:last-child { border-bottom:0; }
-      .summary-card { position:static; }
-      .goal-row, .holding-row, .row-head { grid-template-columns:1fr; }
-      .row-head { display:none; }
+    @media (max-width: 900px) {
+      .step-grid, .reveal-inner { grid-template-columns:1fr; }
+      .control-grid, .control-grid.two, .allocation-grid { grid-template-columns:1fr; }
+      .chip-row { grid-template-columns:1fr; }
+      .gate-form { grid-template-columns:1fr; }
+      .nav-links a:not(.nav-cta) { display:none; }
+      .driver-row { grid-template-columns:1fr 1fr 52px; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal.revealed .rate-value { animation:riseIn .45s ease-out both; }
+      .reveal.revealed .gap-line, .reveal.revealed .driver-panel { animation:fadeIn .5s ease-out .15s both; }
+      @keyframes riseIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+      @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
     }
   </style>
 </head>
 <body>
-  <div class="wrap-wide">
-    <nav>
+  <header class="wrap">
+    <nav class="nav">
       <a class="logo" href="/">Aspire<span aria-hidden="true">Δ</span></a>
-      <div style="display:flex;align-items:center;gap:18px;">
+      <div class="nav-links">
         <a href="/manifesto">Manifesto</a>
-        <a class="nav-cta" href="#calculator">Calculate yours</a>
+        <a class="nav-cta" href="#calculator">See your number</a>
       </div>
     </nav>
-  </div>
+  </header>
 
   <section class="hero">
     <div class="wrap">
-      <div class="eyebrow">Personal inflation index</div>
-      <h1>What life are you trying to afford?</h1>
-      <p class="lede">Price the future you are working toward, then compare it with the money you have and the contributions you plan to make.</p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="#calculator">See your gap</a>
-        <a class="btn btn-ghost" href="/manifesto">Read the manifesto</a>
+      <p class="eyebrow">PERSONAL INFLATION INDEX</p>
+      <h1>Inflation isn't a number. It's a <em>vector</em>.</h1>
+      <p class="lede">CPI says 3%. The life you're working toward inflates closer to 12%. Find your number below — then find out what it'll take to close the gap.</p>
+      <div class="reset-row" id="resetRow">
+        <button class="reset-link" type="button" id="resetState">Not your numbers? Reset →</button>
       </div>
     </div>
   </section>
 
-  <div class="wrap-wide">
-    <div class="proof-strip" id="proofStrip">
-      <div class="proof"><div class="n" data-rate="cpi">3.3<span class="unit">%</span></div><div class="l">US CPI, 10yr</div></div>
-      <div class="proof"><div class="n" data-rate="home">6.5<span class="unit">%</span></div><div class="l">US home prices</div></div>
-      <div class="proof"><div class="n" data-rate="qqq">20.7<span class="unit">%</span></div><div class="l">Nasdaq 100, 10yr</div></div>
-      <div class="proof"><div class="n" data-rate="btc">61.6<span class="unit">%</span></div><div class="l">Bitcoin, 10yr</div></div>
-    </div>
-  </div>
-
-  <main class="product-flow" id="calculator">
-    <div class="wrap-wide">
-      <h2>Price the life you want</h2>
-      <p class="sub">Choose cost and money-growth assumptions for this scenario. They are planning inputs, not predictions.</p>
-      <div class="scenario-row">
-        <button class="scenario-btn active" type="button" data-scenario="home">Buy a home</button>
-        <button class="scenario-btn" type="button" data-scenario="future">Plan your future</button>
+  <main id="calculator" class="calculator">
+    <section class="calc-band">
+      <div class="wrap step-grid">
+        <div>
+          <p class="step-kicker">STEP 1 — THE LIFE YOU WANT</p>
+          <h2 class="step-title">What basket are you pricing?</h2>
+        </div>
+        <div class="control-grid">
+          <div class="field">
+            <label>Life</label>
+            <div class="chip-row" id="lifeChips">
+              <button class="life-chip" type="button" data-life="home">A home<span>A house in your zip, plus a normal life around it.</span></button>
+              <button class="life-chip" type="button" data-life="family">A family<span>Kids, school, healthcare, and the house to fit them.</span></button>
+              <button class="life-chip" type="button" data-life="freedom">Freedom<span>Stop working when you want to, in the zip you want to.</span></button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="geography">Where?</label>
+            <input id="geography" autocomplete="postal-code" placeholder="Zip code or metro">
+            <p class="helper" id="geoHelper">Using national average — enter a US zip for local data.</p>
+          </div>
+          <div class="field">
+            <label for="timeline">When?</label>
+            <div class="range-wrap">
+              <input id="timeline" type="range" min="5" max="30" step="1" value="10">
+              <div class="range-value"><span id="timelineValue">10</span>&nbsp;years</div>
+            </div>
+            <p class="helper">Used in the Simulator to project your trajectory. Doesn't change today's number.</p>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div class="calc-grid">
-        <section>
-          <div class="block">
-            <h3 class="block-title">What life are you trying to afford?</h3>
-            <p class="block-sub">Life goal, timing, estimated cost today, and cost growth assumption.</p>
-            <div class="row-head goal-row"><div>Goal type</div><div>Goal name</div><div>When</div><div>Estimated cost today</div><div>Cost grows like</div><div></div></div>
-            <div id="goals"></div>
-            <button class="add-goal" type="button" id="addGoal">+ Add a goal</button>
-            <div class="basket-meta"><span>Estimated cost today</span><strong id="totalToday">$0</strong></div>
-            <div class="basket-meta" style="border-top:0;margin-top:4px;padding-top:0;"><span>Estimated future cost</span><strong id="totalFuture">$0</strong></div>
+    <section class="calc-band">
+      <div class="wrap step-grid">
+        <div>
+          <p class="step-kicker">STEP 2 — WHAT YOU'RE WORKING WITH</p>
+          <h2 class="step-title">And what's working for you?</h2>
+        </div>
+        <div>
+          <div class="control-grid two">
+            <div class="field">
+              <label for="totalAssets">Total assets</label>
+              <input id="totalAssets" inputmode="numeric" placeholder="$0">
+              <p class="helper">What you've got working toward your goal. Round numbers are fine.</p>
+            </div>
+            <div class="field">
+              <label for="monthlyContribution">Adding monthly</label>
+              <input id="monthlyContribution" inputmode="numeric" placeholder="$0">
+              <p class="helper">Optional. Used for trajectory projection in the Simulator.</p>
+            </div>
           </div>
-
-          <div class="block">
-            <h3 class="block-title">What money do you have working toward it?</h3>
-            <p class="block-sub">Current resources, planned contributions, and money-growth assumption.</p>
-            <div class="row-head holding-row"><div>Account or asset</div><div>Amount today</div><div>Monthly</div><div>Money grows like</div><div></div></div>
-            <div id="holdings"></div>
-            <button class="add-goal" type="button" id="addHolding">+ Add a holding</button>
-            <button class="add-goal" type="button" id="toggleAdvanced" style="margin-left:8px;">Show advanced assumptions</button>
-            <div class="basket-meta"><span>Total available today</span><strong id="totalHoldings">$0</strong></div>
+          <div class="allocation" style="margin-top:18px;">
+            <div class="allocation-label">How it's split</div>
+            <div class="allocation-grid">
+              <div class="field">
+                <label for="cashPct">Cash & savings</label>
+                <input id="cashPct" inputmode="numeric" value="25">
+                <small id="cashHelp">assumed 4.0% — illustrative cash/HYSA assumption (FDIC national savings rate: 0.38%, Apr 2026)</small>
+              </div>
+              <div class="field">
+                <label for="stocksPct">Stocks & index funds</label>
+                <input id="stocksPct" inputmode="numeric" value="50">
+                <small id="stocksHelp">assumed 13.1% — S&P 500 Total Return, 5-yr trailing</small>
+              </div>
+              <div class="field">
+                <label for="realEstatePct">Real estate</label>
+                <input id="realEstatePct" inputmode="numeric" value="20">
+                <small id="realEstateHelp">assumed 6.5% — Case-Shiller, 5-yr trailing</small>
+              </div>
+              <div class="field">
+                <label for="otherPct">Other</label>
+                <input id="otherPct" inputmode="numeric" value="5">
+                <small>assumed 6.0% — configurable blended default</small>
+              </div>
+            </div>
+            <div class="warning" id="allocationWarning"></div>
           </div>
-        </section>
-
-        <aside class="summary-card">
-          <div class="label">Your gap</div>
-          <div class="gap" id="gapValue">—</div>
-          <p class="hint" id="gapCopy">Add goals and holdings to preview the rate gap.</p>
-          <div class="metric"><span>Future goal cost</span><strong id="futureCostMetric">—</strong></div>
-          <div class="metric"><span>Projected resources</span><strong id="resourcesMetric">—</strong></div>
-          <div class="metric"><span>Dollar gap</span><strong id="dollarGapMetric">—</strong></div>
-          <div class="metric"><span>Money growth</span><strong id="moneyRate">—</strong></div>
-          <div class="metric"><span>Cost growth</span><strong id="costRate">—</strong></div>
-          <div id="summaryChart"></div>
-          <div class="submit-row">
-            <button type="button" id="submitScenario">See your gap</button>
-            <div class="error" id="formError"></div>
-          </div>
-        </aside>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <section class="reveal" id="reveal">
+      <div class="wrap reveal-inner">
+        <div class="rate-lockup">
+          <div class="rate-eyebrow">YOUR ASPIRE RATE</div>
+          <div class="rate-value" id="aspireRate">—</div>
+          <div class="assumption">AT THESE ASSUMPTIONS</div>
+          <div class="gap-line">
+            <span>ASPIRE GAP</span>
+            <strong id="aspireGap">—</strong>
+          </div>
+        </div>
+        <div class="driver-panel">
+          <div class="driver-title">WHAT'S DRIVING IT</div>
+          <div class="driver-list" id="driverList"></div>
+          <p class="interpretation" id="interpretation">Choose a basket and enter your assets to see your Aspire Rate and Aspire Gap.</p>
+          <div class="reveal-actions">
+            <button class="primary-button" id="openGate" type="button" disabled>Open the Simulator →</button>
+            <button class="secondary-button" id="editInputs" type="button">Edit inputs</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="gate" id="gate">
+      <div class="wrap">
+        <h2>Explore your gap</h2>
+        <p>The Simulator lets you measure how your gap responds to different assumptions — savings rate, allocation, timeline, geography — at these assumptions.</p>
+        <form class="gate-form" id="gateForm">
+          <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+          <button type="submit">Open the Simulator</button>
+        </form>
+        <div class="error" id="gateError" role="alert"></div>
+        <div class="privacy">We'll send you the Aspire Report. One email a week. Unsubscribe anytime.</div>
+      </div>
+    </section>
   </main>
 
   <footer>
-    <div class="wrap-wide">
+    <div class="wrap">
       <div class="foot-row">
         <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
-        <div>© 2026 · <a href="/manifesto">Manifesto</a> · <a href="mailto:hello@aspirerate.com">hello@aspirerate.com</a></div>
+        <div><a href="/manifesto">Manifesto</a> · <a href="mailto:hello@aspirerate.com">Contact</a></div>
       </div>
       <p>Outputs are educational measurements, not investment advice. Past rates are not guarantees of future results.</p>
     </div>
   </footer>
 
   <script type="module">
-    import { project, projectionSeries } from "/lib/aspire.js";
-    import { DRAFT_KEY, toPersisted } from "/lib/schema.js";
-    import { loadRates, ratesByKey, rateForKey, goalRateOptions, holdingRateOptions } from "/lib/rates.js";
-    import { renderDollarChart } from "/lib/chart-rate.js";
-    import { money, shortMoney, signedPct, pct } from "/lib/format.js";
+    import { project } from "/lib/aspire.js";
+    import { loadRates, ratesByKey, rateForKey } from "/lib/rates.js";
+    import { pct, signedPct } from "/lib/format.js";
 
-    const goalTypes = ["Home", "College", "Car", "Retirement", "Wedding", "Children", "Time off work", "Business investment", "Medical", "Custom"];
-    const scenarios = {
+    const STORAGE_KEY = "aspire:calculator:v2";
+    const FALLBACK_LIFE = "family";
+    const OTHER_RATE = 6;
+    const CASH_RATE = 4;
+    const PRESETS = {
       home: {
-        goals: [{ goalType: "Home", label: "Home in Denver", amount: 800000, horizon: 5, asset: "home_denver" }],
-        holdings: [{ label: "Cash / HYSA", amount: 120000, asset: "cash" }, { label: "Index funds", amount: 180000, asset: "sp500" }]
+        label: "A home",
+        components: [
+          { key: "home", label: "Housing", weight: .5 },
+          { key: "sp500", label: "S&P 500 Total Return", weight: .25 },
+          { key: "cpi", label: "CPI-U", weight: .15 },
+          { key: "childcare", label: "Childcare", weight: .1 }
+        ]
       },
-      future: {
-        goals: [{ goalType: "Home", label: "Future home", amount: 900000, horizon: 7, asset: "home" }, { goalType: "College", label: "Education fund", amount: 300000, horizon: 18, asset: "tuition_private" }],
-        holdings: [{ label: "Cash / HYSA", amount: 100000, asset: "cash" }, { label: "Index funds", amount: 250000, asset: "sp500" }]
+      family: {
+        label: "A family",
+        components: [
+          { key: "home", label: "Housing", weight: .3 },
+          { key: "sp500", label: "S&P 500 Total Return", weight: .25 },
+          { key: "childcare", label: "Childcare", weight: .2 },
+          { key: "tuition_k12_private", label: "Private K-12 tuition", weight: .15 },
+          { key: "health", label: "Healthcare", weight: .1 }
+        ]
+      },
+      freedom: {
+        label: "Freedom",
+        components: [
+          { key: "sp500", label: "S&P 500 Total Return", weight: .35 },
+          { key: "home", label: "Housing", weight: .3 },
+          { key: "health", label: "Healthcare", weight: .2 },
+          { key: "cpi", label: "CPI-U", weight: .15 }
+        ]
       }
     };
+    const els = {
+      lifeChips: document.getElementById("lifeChips"),
+      geography: document.getElementById("geography"),
+      geoHelper: document.getElementById("geoHelper"),
+      timeline: document.getElementById("timeline"),
+      timelineValue: document.getElementById("timelineValue"),
+      totalAssets: document.getElementById("totalAssets"),
+      monthlyContribution: document.getElementById("monthlyContribution"),
+      cashPct: document.getElementById("cashPct"),
+      stocksPct: document.getElementById("stocksPct"),
+      realEstatePct: document.getElementById("realEstatePct"),
+      otherPct: document.getElementById("otherPct"),
+      allocationWarning: document.getElementById("allocationWarning"),
+      aspireRate: document.getElementById("aspireRate"),
+      aspireGap: document.getElementById("aspireGap"),
+      driverList: document.getElementById("driverList"),
+      interpretation: document.getElementById("interpretation"),
+      openGate: document.getElementById("openGate"),
+      gate: document.getElementById("gate"),
+      gateForm: document.getElementById("gateForm"),
+      gateError: document.getElementById("gateError"),
+      email: document.getElementById("email"),
+      reveal: document.getElementById("reveal"),
+      resetRow: document.getElementById("resetRow")
+    };
     let rateMap = {};
-    let rateList = [];
-    let goals = structuredClone(scenarios.home.goals);
-    let holdings = structuredClone(scenarios.home.holdings);
-    let showAdvancedAssumptions = false;
+    let selectedLife = FALLBACK_LIFE;
+    let lastResult = null;
+    let shouldPersistState = false;
 
-    const withGrowth = item => ({ ...item, growth: rateForKey(rateMap, item.asset) });
+    await loadRates();
+    rateMap = await ratesByKey();
+    restoreState();
+    refreshRateHelpers();
+    recompute();
 
-    function renderRows() {
-      document.getElementById("goals").innerHTML = goals.map((goal, index) => `
-        <div class="goal-row">
-          <select data-list="goals" data-index="${index}" data-field="goalType" aria-label="Goal type">${goalTypeOptions(goal.goalType)}</select>
-          <input data-list="goals" data-index="${index}" data-field="label" value="${escapeHtml(goal.label)}" aria-label="Goal label">
-          <input type="number" data-list="goals" data-index="${index}" data-field="horizon" value="${goal.horizon}" min="1" step="1" aria-label="Goal horizon">
-          <input type="number" data-list="goals" data-index="${index}" data-field="amount" value="${goal.amount}" min="0" step="1000" aria-label="Estimated cost today">
-          <select data-list="goals" data-index="${index}" data-field="asset" aria-label="Cost growth assumption">${goalRateOptions(rateList, goal.asset)}</select>
-          <button class="remove" type="button" data-remove="goals" data-index="${index}" aria-label="Remove goal">×</button>
-        </div>
-      `).join("");
-      document.getElementById("holdings").innerHTML = holdings.map((asset, index) => `
-        <div class="holding-row">
-          <input data-list="holdings" data-index="${index}" data-field="label" value="${escapeHtml(asset.label)}" aria-label="Holding label">
-          <input type="number" data-list="holdings" data-index="${index}" data-field="amount" value="${asset.amount}" min="0" step="1000" aria-label="Holding amount">
-          <input type="number" data-list="holdings" data-index="${index}" data-field="monthly" value="${asset.monthly || 0}" min="0" step="50" aria-label="Monthly contribution">
-          <select data-list="holdings" data-index="${index}" data-field="asset" aria-label="Money growth assumption">${holdingRateOptions(rateList, asset.asset, showAdvancedAssumptions)}</select>
-          <button class="remove" type="button" data-remove="holdings" data-index="${index}" aria-label="Remove holding">×</button>
-        </div>
-      `).join("");
+    document.addEventListener("input", event => {
+      if (event.target.matches("input")) {
+        shouldPersistState = true;
+        if (["totalAssets", "monthlyContribution"].includes(event.target.id)) formatMoneyInput(event.target);
+        recompute();
+      }
+    });
+    els.lifeChips.addEventListener("click", event => {
+      const chip = event.target.closest("[data-life]");
+      if (!chip) return;
+      shouldPersistState = true;
+      selectedLife = chip.dataset.life;
       recompute();
+    });
+    els.openGate.addEventListener("click", () => {
+      if (!lastResult?.valid) return;
+      els.gate.classList.add("open");
+      els.gate.scrollIntoView({ block: "start", behavior: "smooth" });
+      window.setTimeout(() => els.email.focus(), 250);
+    });
+    document.getElementById("editInputs").addEventListener("click", () => {
+      document.getElementById("calculator").scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+    document.getElementById("resetState").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      shouldPersistState = false;
+      selectedLife = FALLBACK_LIFE;
+      els.geography.value = "";
+      els.timeline.value = "10";
+      els.totalAssets.value = "";
+      els.monthlyContribution.value = "";
+      els.cashPct.value = "25";
+      els.stocksPct.value = "50";
+      els.realEstatePct.value = "20";
+      els.otherPct.value = "5";
+      recompute();
+      els.resetRow.classList.remove("show");
+    });
+    els.gateForm.addEventListener("submit", submitEmail);
+
+    function recompute() {
+      const allocation = readAllocation();
+      const allocationTotal = allocation.cash + allocation.stocks + allocation.realEstate + allocation.other;
+      const totalAssets = parseMoney(els.totalAssets.value);
+      const monthlyContribution = parseMoney(els.monthlyContribution.value);
+      const timeline = Number(els.timeline.value) || 10;
+      const components = componentsForLife(selectedLife);
+      const aspireRate = weightedComponentRate(components);
+      const moneyRate = weightedMoneyRate(allocation);
+      const gap = moneyRate - aspireRate;
+      const valid = Boolean(selectedLife && totalAssets > 0 && Math.round(allocationTotal) === 100);
+      lastResult = { allocation, allocationTotal, totalAssets, monthlyContribution, timeline, components, aspireRate, moneyRate, gap, valid };
+
+      els.timelineValue.textContent = timeline;
+      updateLifeChips();
+      updateGeography();
+      updateAllocationWarning(allocationTotal);
+      renderReveal(lastResult);
+      persistState();
     }
 
-    function currentState() {
+    function componentsForLife(life) {
+      return (PRESETS[life] || PRESETS[FALLBACK_LIFE]).components.map(component => ({
+        ...component,
+        rate: rateForKey(rateMap, component.key, "trailing")
+      }));
+    }
+
+    function weightedComponentRate(components) {
+      return components.reduce((sum, component) => sum + component.weight * component.rate, 0);
+    }
+
+    function weightedMoneyRate(allocation) {
+      const stocks = rateForKey(rateMap, "sp500", "trailing");
+      const realEstate = rateForKey(rateMap, "home", "trailing");
+      return (allocation.cash / 100 * CASH_RATE)
+        + (allocation.stocks / 100 * stocks)
+        + (allocation.realEstate / 100 * realEstate)
+        + (allocation.other / 100 * OTHER_RATE);
+    }
+
+    function renderReveal(result) {
+      els.aspireRate.textContent = result.valid ? pct(result.aspireRate) : "—";
+      els.aspireGap.textContent = result.valid ? signedPts(result.gap) : "—";
+      els.aspireGap.className = result.gap >= 0 ? "gain" : "loss";
+      els.openGate.disabled = !result.valid;
+      els.driverList.innerHTML = driverRows(result.components);
+      els.interpretation.textContent = interpretation(result);
+      if (result.valid) els.reveal.classList.add("revealed");
+    }
+
+    function driverRows(components) {
+      const max = Math.max(...components.map(component => component.rate), 1);
+      return [...components]
+        .sort((a, b) => b.rate - a.rate)
+        .map(component => `
+          <div class="driver-row">
+            <div class="driver-name">${escapeHtml(component.label)}</div>
+            <div class="driver-bar"><span style="width:${Math.max(5, component.rate / max * 100).toFixed(1)}%"></span></div>
+            <div class="driver-rate">${pct(component.rate)}</div>
+          </div>
+        `).join("");
+    }
+
+    function interpretation(result) {
+      if (!result.valid) {
+        if (Math.round(result.allocationTotal) !== 100) return `Allocations should add up to 100%. Currently ${result.allocationTotal.toFixed(0)}%.`;
+        return "Choose a basket and enter your assets to see your Aspire Rate and Aspire Gap.";
+      }
+      if (Math.abs(result.gap) < .05) return "At these assumptions, your money is keeping pace with the life you're building.";
+      if (result.gap > 0) return `At these assumptions, your money is growing at ~${result.moneyRate.toFixed(1)}% — outpacing the life you're building by ${Math.abs(result.gap).toFixed(1)} points a year. Watch the rates change every quarter.`;
+      return `At these assumptions, your money is growing at ~${result.moneyRate.toFixed(1)}%. You're ${Math.abs(result.gap).toFixed(1)} points behind the rate the life you want requires.`;
+    }
+
+    async function submitEmail(event) {
+      event.preventDefault();
+      if (!lastResult?.valid) return;
+      const email = els.email.value.trim();
+      if (!email) return;
+      const button = els.gateForm.querySelector("button");
+      button.disabled = true;
+      button.textContent = "Opening...";
+      els.gateError.textContent = "";
+      try {
+        const res = await fetch("/api/score", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            lifeChip: selectedLife,
+            geography: els.geography.value.trim(),
+            timeline: lastResult.timeline,
+            basket: buildBasket()
+          })
+        });
+        if (!res.ok) throw new Error("Save failed");
+        const data = await res.json();
+        window.location.href = data.simulatorUrl || `/simulator/?t=${data.t}`;
+      } catch (err) {
+        console.error(err);
+        els.gateError.textContent = "The save service did not respond. Try again in a moment.";
+        button.disabled = false;
+        button.textContent = "Open the Simulator";
+      }
+    }
+
+    function buildBasket() {
+      const amountBase = Math.max(lastResult.totalAssets, 1);
+      const monthly = lastResult.monthlyContribution;
       return {
-        goals: goals.map(goal => ({ ...withGrowth(goal), goalType: goal.goalType || "Custom", goalMode: goal.goalMode || "life" })),
-        holdings: holdings.map(asset => ({ ...withGrowth(asset), monthly: Number(asset.monthly) || 0 }))
+        lifeChip: selectedLife,
+        geography: els.geography.value.trim() || "US national",
+        goals: lastResult.components.map(component => ({
+          goalType: PRESETS[selectedLife].label,
+          goalMode: "life",
+          label: component.label,
+          amount: Math.round(amountBase * component.weight),
+          horizon: lastResult.timeline,
+          asset: component.key,
+          growth: component.rate
+        })),
+        holdings: [
+          holding("Cash & savings", "cash", lastResult.allocation.cash, CASH_RATE, amountBase, monthly),
+          holding("Stocks & index funds", "sp500", lastResult.allocation.stocks, rateForKey(rateMap, "sp500", "trailing"), amountBase, monthly),
+          holding("Real estate", "home", lastResult.allocation.realEstate, rateForKey(rateMap, "home", "trailing"), amountBase, monthly),
+          holding("Other", "other", lastResult.allocation.other, OTHER_RATE, amountBase, monthly)
+        ].filter(item => item.amount > 0 || item.monthly > 0),
+        computed: {
+          moneyRate: lastResult.moneyRate,
+          costRate: lastResult.aspireRate,
+          aspirationRate: lastResult.aspireRate,
+          portfolioRate: lastResult.moneyRate,
+          gap: lastResult.gap,
+          horizon: lastResult.timeline,
+          timeHorizon: lastResult.timeline,
+          source: "calculator-v2"
+        }
       };
     }
 
-    function recompute() {
-      const state = currentState();
-      const result = project(state.goals, state.holdings);
-      document.getElementById("totalToday").textContent = money(result.totalGoalToday);
-      document.getElementById("totalFuture").textContent = shortMoney(result.totalGoals);
-      document.getElementById("totalHoldings").textContent = money(result.totalAssetsToday);
-      document.getElementById("gapValue").textContent = result.totalGoals && result.totalAssets ? `${signedPct(result.gap)} / yr` : "—";
-      document.getElementById("gapValue").classList.toggle("good", result.gap >= 0);
-      document.getElementById("futureCostMetric").textContent = result.totalGoals ? shortMoney(result.totalGoals) : "—";
-      document.getElementById("resourcesMetric").textContent = result.totalAssets ? shortMoney(result.totalAssets) : "—";
-      document.getElementById("dollarGapMetric").textContent = result.totalGoals && result.totalAssets ? shortMoney(result.dollarGap) : "—";
-      document.getElementById("moneyRate").textContent = result.totalAssets ? pct(result.moneyRate) : "—";
-      document.getElementById("costRate").textContent = result.totalGoals ? pct(result.costRate) : "—";
-      document.getElementById("gapCopy").textContent = result.totalGoals && result.totalAssets
-        ? `At these assumptions, your money is growing ${Math.abs(result.gap).toFixed(1)} percentage points ${result.gap >= 0 ? "faster" : "slower"} than your future life is becoming more expensive.`
-        : "Add at least one goal and one holding to measure your gap.";
-      renderDollarChart(document.getElementById("summaryChart"), projectionSeries(state.goals, state.holdings, result.horizon), { height: 120, mini: true });
+    function holding(label, asset, pctValue, growth, totalAssets, monthly) {
+      const share = Math.max(0, pctValue) / 100;
+      return {
+        label,
+        amount: Math.round(totalAssets * share),
+        monthly: Math.round(monthly * share),
+        asset,
+        growth
+      };
     }
 
-    function updateItem(target) {
-      const list = target.dataset.list === "goals" ? goals : holdings;
-      const item = list[Number(target.dataset.index)];
-      if (!item) return;
-      item[target.dataset.field] = ["label", "asset", "goalType"].includes(target.dataset.field) ? target.value : Number(target.value) || 0;
-      recompute();
+    function readAllocation() {
+      return {
+        cash: readPct(els.cashPct),
+        stocks: readPct(els.stocksPct),
+        realEstate: readPct(els.realEstatePct),
+        other: readPct(els.otherPct)
+      };
     }
 
-    function removeItem(button) {
-      const list = button.dataset.remove === "goals" ? goals : holdings;
-      if (list.length <= 1) return;
-      list.splice(Number(button.dataset.index), 1);
-      renderRows();
+    function readPct(input) {
+      return Math.max(0, Number(String(input.value).replace(/[^\d.]/g, "")) || 0);
     }
 
-    function submitScenario() {
-      const scenario = toPersisted(currentState());
-      const validGoal = scenario.basket.goals.some(goal => goal.amount > 0 && goal.horizon > 0);
-      const validHolding = scenario.basket.holdings.some(asset => asset.amount > 0);
-      if (!validGoal || !validHolding) {
-        document.getElementById("formError").textContent = "Add at least one goal and one holding with amounts above zero.";
+    function updateLifeChips() {
+      document.querySelectorAll("[data-life]").forEach(chip => chip.classList.toggle("active", chip.dataset.life === selectedLife));
+    }
+
+    function updateGeography() {
+      const value = els.geography.value.trim();
+      els.geoHelper.textContent = value ? `Resolved: ${value}` : "Using national average — enter a US zip for local data.";
+    }
+
+    function updateAllocationWarning(total) {
+      els.allocationWarning.textContent = Math.round(total) === 100 ? "" : `Allocations should add up to 100%. Currently ${total.toFixed(0)}%.`;
+    }
+
+    function refreshRateHelpers() {
+      document.getElementById("stocksHelp").textContent = `assumed ${rateForKey(rateMap, "sp500", "trailing").toFixed(1)}% — S&P 500 Total Return, 5-yr trailing`;
+      document.getElementById("realEstateHelp").textContent = `assumed ${rateForKey(rateMap, "home", "trailing").toFixed(1)}% — Case-Shiller, 5-yr trailing`;
+    }
+
+    function persistState() {
+      if (!shouldPersistState) return;
+      const state = {
+        selectedLife,
+        geography: els.geography.value,
+        timeline: els.timeline.value,
+        totalAssets: els.totalAssets.value,
+        monthlyContribution: els.monthlyContribution.value,
+        allocation: readAllocation()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      els.resetRow.classList.add("show");
+    }
+
+    function restoreState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        selectedLife = FALLBACK_LIFE;
         return;
       }
-      sessionStorage.setItem(DRAFT_KEY, JSON.stringify(scenario));
-      window.location.href = "/score/";
+      try {
+        const state = JSON.parse(saved);
+        selectedLife = state.selectedLife || FALLBACK_LIFE;
+        els.geography.value = state.geography || "";
+        els.timeline.value = state.timeline || "10";
+        els.totalAssets.value = state.totalAssets || "";
+        els.monthlyContribution.value = state.monthlyContribution || "";
+        els.cashPct.value = state.allocation?.cash ?? "25";
+        els.stocksPct.value = state.allocation?.stocks ?? "50";
+        els.realEstatePct.value = state.allocation?.realEstate ?? "20";
+        els.otherPct.value = state.allocation?.other ?? "5";
+        shouldPersistState = true;
+        els.resetRow.classList.add("show");
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+        selectedLife = FALLBACK_LIFE;
+      }
+    }
+
+    function parseMoney(value) {
+      return Number(String(value || "").replace(/[^\d.]/g, "")) || 0;
+    }
+
+    function formatMoneyInput(input) {
+      const raw = parseMoney(input.value);
+      input.value = raw ? `$${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(raw)}` : "";
+    }
+
+    function signedPts(value) {
+      const formatted = signedPct(value).replace("%", "");
+      return `${formatted} pts`;
     }
 
     function escapeHtml(value) {
       return String(value || "").replace(/[&<>"']/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[char]));
-    }
-
-    document.addEventListener("input", event => {
-      if (event.target.matches("[data-list]")) updateItem(event.target);
-    });
-    document.addEventListener("click", event => {
-      if (event.target.matches("[data-remove]")) removeItem(event.target);
-    });
-    document.getElementById("addGoal").addEventListener("click", () => {
-      goals.push({ goalType: "Custom", label: "New goal", amount: 0, horizon: 10, asset: "cpi" });
-      renderRows();
-    });
-    document.getElementById("addHolding").addEventListener("click", () => {
-      holdings.push({ label: "New holding", amount: 0, monthly: 0, asset: "sp500" });
-      renderRows();
-    });
-    document.getElementById("toggleAdvanced").addEventListener("click", event => {
-      showAdvancedAssumptions = !showAdvancedAssumptions;
-      event.currentTarget.textContent = showAdvancedAssumptions ? "Hide advanced assumptions" : "Show advanced assumptions";
-      renderRows();
-    });
-    document.getElementById("submitScenario").addEventListener("click", submitScenario);
-    document.querySelectorAll(".scenario-btn").forEach(button => {
-      button.addEventListener("click", () => {
-        goals = structuredClone(scenarios[button.dataset.scenario].goals);
-        holdings = structuredClone(scenarios[button.dataset.scenario].holdings);
-        document.querySelectorAll(".scenario-btn").forEach(btn => btn.classList.toggle("active", btn === button));
-        renderRows();
-      });
-    });
-
-    const data = await loadRates();
-    rateMap = await ratesByKey();
-    rateList = data.rates;
-    document.querySelectorAll("[data-rate]").forEach(el => {
-      const rate = rateMap[el.dataset.rate];
-      if (rate) el.innerHTML = `${Number(rate.cagrTrailing).toFixed(1)}<span class="unit">%</span>`;
-    });
-    renderRows();
-
-    function goalTypeOptions(selected = "Custom") {
-      return goalTypes.map(type => `<option value="${type}" ${type === selected ? "selected" : ""}>${type}</option>`).join("");
     }
   </script>
 </body>
