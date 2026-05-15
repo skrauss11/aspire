@@ -113,6 +113,10 @@
     .modal-actions .ghost { min-height:40px; border-radius:999px; padding:0 16px; background:transparent; border:1px solid #c9bead; color:#0f0e0c; }
     .toast { position:fixed; right:18px; bottom:18px; z-index:40; background:var(--paper); color:#0f0e0c; border-radius:999px; padding:12px 16px; font-weight:800; opacity:0; transform:translateY(8px); transition:opacity .18s ease, transform .18s ease; pointer-events:none; }
     .toast.show { opacity:1; transform:translateY(0); }
+    footer { padding:0 0 34px; color:var(--muted); font-size:12px; }
+    .foot-row { border-top:1px solid var(--rule); padding-top:18px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .foot-row a { color:#d7cfc2; }
+    .compliance-line { margin:10px 0 0; max-width:620px; }
     .gate { padding:70px 0; display:none; }
     .gate.open { display:block; }
     .gate-card { background:var(--elevated); border:1px solid var(--rule); border-radius:8px; padding:24px; max-width:680px; }
@@ -286,6 +290,14 @@
       </section>
     </section>
   </main>
+
+  <footer class="wrap">
+    <div class="foot-row">
+      <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
+      <div><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="mailto:hello@aspirerate.com">Contact</a></div>
+    </div>
+    <p class="compliance-line">Outputs are educational measurements at your current assumptions, not investment advice. Past rates are not guarantees of future results.</p>
+  </footer>
 
   <div class="save-modal" id="saveModal" role="dialog" aria-modal="true" aria-labelledby="saveHeading">
     <div class="modal-card">

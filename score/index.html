@@ -57,6 +57,10 @@
     .save-gate-row button { min-height:46px; }
     .save-gate-form p, .gate-error { color:var(--muted); font-size:13px; }
     .secondary { display:inline-flex; margin-top:18px; color:var(--accent); font-weight:700; }
+    footer { padding:0 0 34px; color:var(--muted); font-size:12px; }
+    .foot-row { border-top:1px solid var(--rule); padding-top:18px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .foot-row a { color:var(--muted); }
+    .compliance-line { margin:10px 0 0; max-width:620px; }
     @media (max-width: 880px) {
       .score-grid, .below, .stats { grid-template-columns:1fr; }
       .chart-card { order:2; }
@@ -127,6 +131,14 @@
       </div>
     </section>
   </main>
+
+  <footer class="wrap-wide">
+    <div class="foot-row">
+      <div class="logo">Aspire<span aria-hidden="true">Δ</span></div>
+      <div><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="mailto:hello@aspirerate.com">Contact</a></div>
+    </div>
+    <p class="compliance-line">Outputs are educational measurements at your current assumptions, not investment advice. Past rates are not guarantees of future results.</p>
+  </footer>
 
   <script type="module">
     import { project, projectionSeries } from "/lib/aspire.js";

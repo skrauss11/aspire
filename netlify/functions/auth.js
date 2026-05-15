@@ -1,10 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
+import { createHash } from "node:crypto";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 let supabaseAnon;
 let supabaseAdmin;
+const MAGIC_LINK_LIMIT = 5;
+const MAGIC_LINK_WINDOW_MS = 60 * 60 * 1000;
 
 const headers = {
   "Content-Type": "application/json",
@@ -33,6 +36,56 @@ function bearerToken(event) {
   return match?.[1] || "";
 }
 
+function sha256(value) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+function retryAfterMinutes(rows = []) {
+  const oldest = rows
+    .map(row => new Date(row.requested_at).getTime())
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b)[0];
+  if (!oldest) return 60;
+  const msUntilOpen = oldest + MAGIC_LINK_WINDOW_MS - Date.now();
+  return Math.max(1, Math.ceil(msUntilOpen / 60000));
+}
+
+async function enforceMagicLinkLimit(email) {
+  const admin = getSupabaseAdmin();
+  const emailHash = sha256(email);
+  const cutoff = new Date(Date.now() - MAGIC_LINK_WINDOW_MS).toISOString();
+
+  const recent = await admin
+    .from("auth_magic_link_requests")
+    .select("requested_at")
+    .eq("email_sha256", emailHash)
+    .gte("requested_at", cutoff)
+    .order("requested_at", { ascending: true });
+  if (recent.error) throw recent.error;
+
+  if ((recent.data || []).length >= MAGIC_LINK_LIMIT) {
+    return {
+      allowed: false,
+      retryAfterMinutes: retryAfterMinutes(recent.data)
+    };
+  }
+
+  const insert = await admin
+    .from("auth_magic_link_requests")
+    .insert({ email_sha256: emailHash });
+  if (insert.error) throw insert.error;
+
+  admin
+    .from("auth_magic_link_requests")
+    .delete()
+    .lt("requested_at", new Date(Date.now() - 2 * MAGIC_LINK_WINDOW_MS).toISOString())
+    .then(({ error }) => {
+      if (error) console.warn("magic link rate-limit cleanup failed:", error.message);
+    });
+
+  return { allowed: true };
+}
+
 function getSupabaseAnon() {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) throw new Error("Supabase anon env vars are not configured");
   if (!supabaseAnon) {
@@ -56,6 +109,14 @@ function getSupabaseAdmin() {
 async function requestMagicLink(event, body) {
   const email = normalizeEmail(body.email);
   if (!email || !email.includes("@")) return json(400, { error: "Valid email required" });
+
+  const limit = await enforceMagicLinkLimit(email);
+  if (!limit.allowed) {
+    return json(429, {
+      error: `We've sent five magic links to this email in the past hour. Try again in ${limit.retryAfterMinutes} minutes.`,
+      retryAfterMinutes: limit.retryAfterMinutes
+    });
+  }
 
   const { error } = await getSupabaseAnon().auth.signInWithOtp({
     email,

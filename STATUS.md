@@ -8,7 +8,7 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-_None._
+- 2026-05-15 — **Codex** — PR pending (`aspire`): Auth hardening + legal surfaces. Add server-side magic-link rate limiting, placeholder Privacy/Terms pages, footer compliance copy, and compliance surface checks.
 
 ## Recently shipped
 
