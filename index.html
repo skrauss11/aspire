@@ -47,6 +47,7 @@
     .step-kicker { color:var(--accent); text-transform:uppercase; letter-spacing:.15em; font-size:11px; font-weight:800; margin-bottom:12px; }
     .step-title { font-size:clamp(30px, 4vw, 46px); line-height:1; }
     .control-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .control-grid.life-controls { grid-template-columns:minmax(340px, 1.25fr) minmax(200px, .85fr) minmax(200px, .85fr); align-items:start; }
     .control-grid.two { grid-template-columns:1fr 1fr; }
     .field, .allocation { min-width:0; }
     .field label, .allocation-label { display:block; color:var(--muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; margin-bottom:8px; }
@@ -55,7 +56,7 @@
     .helper { margin:7px 0 0; color:var(--muted); font-size:13px; }
     .helper em { color:var(--muted); }
     .chip-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
-    .life-chip { position:relative; min-height:48px; border:1px solid var(--rule); border-radius:8px; background:rgba(255,255,255,.26); color:var(--ink); padding:0 12px; text-align:center; font-weight:800; }
+    .life-chip { position:relative; min-height:54px; border:1px solid var(--rule); border-radius:8px; background:rgba(255,255,255,.26); color:var(--ink); padding:0 14px; display:flex; align-items:center; justify-content:center; text-align:center; font-size:16px; line-height:1.1; white-space:nowrap; font-weight:800; overflow:visible; }
     .life-chip span { position:absolute; left:50%; bottom:calc(100% + 8px); width:min(240px, 76vw); transform:translateX(-50%); border:1px solid var(--rule); border-radius:8px; background:var(--paper); color:var(--muted); padding:10px 12px; font-size:12px; font-weight:700; line-height:1.25; opacity:0; pointer-events:none; box-shadow:0 10px 26px rgba(15,14,12,.14); z-index:5; }
     .life-chip:hover span, .life-chip:focus-visible span { opacity:1; }
     .life-chip.active { background:var(--ink); color:var(--paper); border-color:var(--ink); }
@@ -106,9 +107,13 @@
     .reset-link { border:0; background:transparent; color:var(--muted); padding:0; text-decoration:underline; font-weight:700; }
     footer { padding:32px 0; color:var(--muted); font-size:13px; }
     .foot-row { display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; border-top:1px solid var(--rule); padding-top:22px; }
+    @media (max-width: 1080px) {
+      .step-grid { grid-template-columns:1fr; gap:22px; }
+      .step-title { max-width:520px; }
+    }
     @media (max-width: 900px) {
       .step-grid, .reveal-inner { grid-template-columns:1fr; }
-      .control-grid, .control-grid.two, .allocation-grid { grid-template-columns:1fr; }
+      .control-grid, .control-grid.life-controls, .control-grid.two, .allocation-grid { grid-template-columns:1fr; }
       .chip-row { grid-template-columns:1fr; }
       .gate-form { grid-template-columns:1fr; }
       .nav-links a:not(.nav-cta) { display:none; }
@@ -152,7 +157,7 @@
           <p class="step-kicker">STEP 1 — THE LIFE YOU WANT</p>
           <h2 class="step-title">What basket are you pricing?</h2>
         </div>
-        <div class="control-grid">
+        <div class="control-grid life-controls">
           <div class="field">
             <label>Life</label>
             <div class="chip-row" id="lifeChips">
