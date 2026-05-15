@@ -8,10 +8,11 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-- **Codex — `codex/simulator-persistence-sharing`** — Sprint 4 Simulator persistence/share loop: named scenario save/list/load/rename/delete, 10-scenario cap, make-baseline flow, public share links at `/simulator/s/[shareId]`, and read-only shared scenario view. Scope: `simulator/index.html`, `simulator/s/index.html`, `netlify/functions/scenario.js`, and small schema/helpers only if required.
+_None._
 
 ## Recently shipped
 
+- 2026-05-15 — **Codex** — PR #13 (`aspire`): Sprint 4 Simulator persistence/share loop. Added named scenario save/list/load/rename/delete, 10-scenario cap, make-baseline flow, public share links at `/simulator/s/[shareId]`, and a read-only shared scenario view.
 - 2026-05-15 — **Codex** — PR #11 (`aspire`): Sprint 3 Simulator v1 refactor. Rebuilt `/simulator` around saved calculator baseline hydration, sticky rate/gap header with non-removable `AT THESE ASSUMPTIONS`, live comparison levers, trajectory chart, comparison patterns, save modal, and a compliance-safe Shape of Your Gap observation panel.
 - 2026-05-15 — **Codex** — PR #9 (`aspire`): Sprint 2 Calculator v2 refactor. Rebuilt `/` around the canonical 7-input Calculator, reveal panel with non-removable "AT THESE ASSUMPTIONS" pairing, email gate, encrypted `/api/score` handoff, compliance label corrections, server-authoritative score metrics, and Agent Lab/Hermes instruction sync.
 - 2026-05-15 — **Codex** — PR #8 (`aspire`): encrypted scenario persistence foundation. Added Supabase-backed private scenario storage, encrypted calculator state fields, schema/migration support, RLS tests, and `/api/scenario` hydration groundwork.
