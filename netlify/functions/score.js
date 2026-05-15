@@ -116,16 +116,8 @@ function toByteaHex(buffer) {
 function metricsForBasket(basket) {
   const metrics = project(basket.goals, basket.holdings);
   const computed = basket.computed || {};
-  const costRate = Number(computed.costRate ?? computed.aspirationRate);
-  const moneyRate = Number(computed.moneyRate ?? computed.portfolioRate);
-  const gap = Number(computed.gap);
   return {
     ...metrics,
-    costRate: Number.isFinite(costRate) ? costRate : metrics.costRate,
-    moneyRate: Number.isFinite(moneyRate) ? moneyRate : metrics.moneyRate,
-    gap: Number.isFinite(gap)
-      ? gap
-      : (Number.isFinite(moneyRate) && Number.isFinite(costRate) ? moneyRate - costRate : metrics.gap),
     horizon: Number(computed.horizon ?? computed.timeHorizon) || metrics.horizon
   };
 }

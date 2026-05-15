@@ -2,14 +2,14 @@
 
 _Single source of truth for what each agent is currently working on in this repo. Update when you start, stop, or hand off._
 
-_Last updated: 2026-05-14 ET_
+_Last updated: 2026-05-15 ET_
 
 ---
 
 ## Currently in flight
 
 - **Codex — `codex/schema-migration` (PR #8, draft)** — Add encrypted scenario persistence foundation. Scope: `supabase/`, `lib/`, `tests/`, `netlify/functions/scenario.js`.
-- **Codex — `codex/calculator-v2`** — Sprint 2 Calculator refactor stacked on PR #8: rebuild `/` around the canonical 7-input Calculator, reveal panel with non-removable "AT THESE ASSUMPTIONS" pairing, email gate, and encrypted `/api/score` handoff. Scope: `index.html` and supporting `lib/` only if needed; no `specs/`, strategy docs, or `content/*.mdx`.
+- **Codex — `codex/calculator-v2`** — Sprint 2 Calculator refactor stacked on PR #8: rebuild `/` around the canonical 7-input Calculator, reveal panel with non-removable "AT THESE ASSUMPTIONS" pairing, email gate, encrypted `/api/score` handoff, compliance label corrections, server-authoritative score metrics, and Agent Lab/Hermes instruction sync. Scope: `index.html`, `netlify/functions/score.js`, `AGENTS.md`, and supporting `lib/` only if needed; no `specs/`, strategy docs, or `content/*.mdx`.
 
 ## Recently shipped
 
