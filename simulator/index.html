@@ -8,195 +8,376 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { --ink:#0f0e0c; --paper:#f5f1ea; --paper2:#ebe3d6; --muted:#8f8778; --rule:#2a2722; --accent:#c8451f; --green:#7fb98a; --yellow:#f0b35b; }
+    :root {
+      --ink:#0a0908; --surface:#11100e; --elevated:#1a1816; --panel:#201d19;
+      --paper:#f5f1ea; --muted:#9f9688; --rule:#302b25; --grid:#403a32;
+      --accent:#c8451f; --gain:#7fb98a; --loss:#f0b35b; --blue:#6e91aa; --violet:#8b789d;
+    }
     * { box-sizing:border-box; }
-    body { margin:0; background:var(--ink); color:var(--paper); font-family:Inter,system-ui,sans-serif; line-height:1.5; }
+    body { margin:0; background:var(--ink); color:var(--paper); font-family:Inter,system-ui,sans-serif; line-height:1.45; }
     a { color:inherit; text-decoration:none; }
-    .wrap-wide { width:min(1180px, calc(100% - 36px)); margin:0 auto; }
-    nav { height:74px; display:flex; justify-content:space-between; align-items:center; }
-    .logo, h1, h2, h3, .score-number, .gap-now { font-family:Fraunces,serif; letter-spacing:0; }
-    .logo { font-weight:650; font-size:25px; }
-    .logo span { color:var(--accent); }
-    .button, button { border:0; border-radius:999px; cursor:pointer; font:700 14px/1 Inter,sans-serif; }
-    .button { display:inline-flex; min-height:44px; align-items:center; justify-content:center; padding:0 18px; }
-    .primary { background:var(--accent); color:var(--paper); }
-    .ghost { border:1px solid #39342d; color:var(--paper); }
-    .top { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:22px; align-items:end; padding:26px 0 18px; }
-    .eyebrow { color:var(--yellow); text-transform:uppercase; letter-spacing:.16em; font-size:12px; font-weight:700; margin-bottom:12px; }
-    h1 { margin:0; font-size:clamp(42px, 7vw, 78px); line-height:.96; max-width:820px; }
-    .lede { color:#b8b0a2; max-width:680px; font-size:18px; margin:18px 0 0; }
-    .score-card, .panel, .chart-shell { background:#171512; border:1px solid var(--rule); border-radius:8px; }
-    .score-card { padding:20px; position:sticky; top:14px; }
-    .label { color:var(--muted); text-transform:uppercase; letter-spacing:.13em; font-size:11px; }
-    .score-number { font-size:62px; line-height:1; margin:10px 0; color:var(--yellow); transition:color .2s ease; }
-    .score-number.good { color:var(--green); }
-    .meta { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; border-top:1px solid var(--rule); padding-top:14px; margin-top:14px; }
-    .meta strong { display:block; font-family:Fraunces,serif; font-size:23px; margin-top:3px; }
-    .canvas { display:grid; grid-template-columns:minmax(0,1fr) minmax(300px, 360px); gap:22px; align-items:start; padding-bottom:42px; }
-    .chart-shell { padding:22px; min-width:0; }
-    .gap-header { display:flex; justify-content:space-between; gap:18px; align-items:flex-end; margin-bottom:18px; }
-    .gap-header h2 { font-size:30px; margin:0; }
-    .gap-now { color:var(--yellow); font-size:42px; line-height:1; transition:color .2s ease; }
-    .gap-now.good { color:var(--green); }
-    .answer-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0 18px; }
-    .answer-card { border:1px solid var(--rule); border-radius:8px; padding:13px; background:#12100e; min-width:0; }
-    .answer-card span { display:block; color:var(--muted); text-transform:uppercase; letter-spacing:.12em; font-size:10px; }
-    .answer-card strong { display:block; font-family:Fraunces,serif; font-size:25px; line-height:1.05; margin-top:6px; color:var(--paper); overflow-wrap:anywhere; }
-    .chart-legend { display:flex; gap:14px; flex-wrap:wrap; color:var(--muted); font-size:12px; margin-top:8px; }
-    .chart-legend i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
-    .rate-path, .rate-gap-area { transition:d .2s ease; }
-    .summary { color:#d7cfc2; font-size:18px; margin:18px 0 0; }
-    .rail { display:grid; gap:14px; }
-    .panel { padding:18px; }
-    .rail-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
-    .panel h3 { margin:0; font-size:25px; }
-    .panel-sub { color:var(--muted); font-size:13px; margin:4px 0 14px; }
-    .lever { border-top:1px solid var(--rule); padding:16px 0; }
-    .lever:first-child { border-top:0; padding-top:0; }
-    .lever-head { display:flex; justify-content:space-between; gap:12px; align-items:baseline; margin-bottom:10px; }
-    .lever-label { display:flex; align-items:center; gap:5px; }
-    .info { position:relative; display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; color:var(--yellow); font-size:12px; cursor:help; }
-    .info-pop { position:absolute; left:50%; bottom:calc(100% + 8px); width:min(260px, 72vw); transform:translateX(-50%); padding:10px 12px; border-radius:8px; background:var(--paper); color:var(--ink); font-size:12px; font-weight:600; line-height:1.35; opacity:0; pointer-events:none; transition:opacity .15s ease; z-index:5; }
-    .info:hover .info-pop, .info:focus .info-pop, .info:focus-within .info-pop { opacity:1; }
-    .lever-value { font-weight:800; color:var(--paper); }
-    input[type="range"] { width:100%; height:20px; appearance:none; background:transparent; cursor:pointer; }
-    input[type="range"]::-webkit-slider-runnable-track { height:8px; background:var(--paper); border-radius:999px; overflow:hidden; }
-    input[type="range"]::-webkit-slider-thumb { appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent); border:2px solid var(--paper); margin-top:-5px; box-shadow:-100vw 0 0 100vw var(--ink); }
-    input[type="range"]::-moz-range-track { height:8px; background:var(--paper); border-radius:999px; }
-    input[type="range"]::-moz-range-progress { height:8px; background:var(--ink); border-radius:999px; }
+    button, input, select { font:600 14px Inter,system-ui,sans-serif; }
+    button { border:0; cursor:pointer; }
+    .wrap { width:min(1220px, calc(100% - 36px)); margin:0 auto; }
+    .nav { height:72px; display:flex; align-items:center; justify-content:space-between; }
+    .logo { font-family:Fraunces,serif; font-size:25px; font-weight:650; }
+    .logo span { color:var(--accent); margin-left:2px; }
+    .nav-links { display:flex; align-items:center; gap:18px; color:#d7cfc2; font-size:14px; }
+    .pill { min-height:40px; border-radius:999px; padding:0 16px; display:inline-flex; align-items:center; justify-content:center; gap:8px; font-weight:800; }
+    .pill.primary { background:var(--accent); color:var(--paper); }
+    .pill.ghost { background:transparent; color:var(--paper); border:1px solid var(--grid); }
+    .sim-header { position:sticky; top:0; z-index:10; background:rgba(26,24,22,.96); border-top:1px solid var(--rule); border-bottom:1px solid var(--grid); backdrop-filter:blur(14px); }
+    .header-grid { min-height:104px; display:grid; grid-template-columns:minmax(220px,1fr) minmax(420px,1.2fr) auto; gap:24px; align-items:center; }
+    .scenario-name { display:flex; flex-direction:column; gap:8px; min-width:0; }
+    .scenario-name input { width:100%; max-width:360px; min-height:38px; background:transparent; border:1px solid transparent; border-radius:8px; color:var(--paper); padding:0 8px; font-size:18px; font-weight:600; font-style:italic; }
+    .scenario-name input:hover, .scenario-name input:focus { border-color:var(--grid); outline:0; background:#141210; }
+    .view-toggle { position:relative; }
+    .view-toggle > button { background:#141210; color:#d7cfc2; border:1px solid var(--grid); }
+    .view-menu { display:none; position:absolute; left:0; top:46px; width:330px; padding:14px; border:1px solid var(--grid); border-radius:8px; background:#f5f1ea; color:#0f0e0c; box-shadow:0 18px 50px rgba(0,0,0,.3); }
+    .view-menu.open { display:grid; gap:12px; }
+    .radio-row { display:grid; gap:8px; font-size:13px; }
+    .radio-row label { display:flex; gap:8px; align-items:flex-start; }
+    .margin-row { display:grid; gap:5px; }
+    .margin-row input { border:1px solid #c9bead; background:#fffaf2; color:#0f0e0c; border-radius:8px; min-height:36px; padding:0 10px; }
+    .metric-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
+    .metric { min-width:0; }
+    .metric strong { display:block; color:var(--paper); font-size:30px; line-height:1; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .metric .label { margin-top:8px; }
+    .assumptions { color:var(--loss); font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; margin-top:5px; }
+    .label { color:var(--muted); font-size:11px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
+    .gain { color:var(--gain) !important; }
+    .loss { color:var(--loss) !important; }
+    .header-actions { display:flex; align-items:center; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+    .reset-link { background:transparent; color:#d7cfc2; padding:0; text-decoration:underline; text-underline-offset:3px; }
+    .workspace { display:grid; grid-template-columns:minmax(300px, 430px) minmax(0,1fr); gap:20px; padding:24px 0 34px; }
+    .lever-stack, .right-stack { display:grid; gap:14px; align-content:start; min-width:0; }
+    .lever, .panel, .scenario-strip { background:var(--elevated); border:1px solid var(--rule); border-radius:8px; padding:16px; min-width:0; }
+    .lever-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:12px; }
+    .delta-tag { color:var(--muted); font-size:12px; font-weight:800; white-space:nowrap; }
+    .delta-tag.active.good { color:var(--gain); }
+    .delta-tag.active.bad { color:var(--loss); }
+    .control-row { display:grid; grid-template-columns:1fr 96px; gap:10px; align-items:center; }
+    input, select { width:100%; min-height:38px; border:1px solid var(--grid); border-radius:8px; padding:0 10px; background:#0f0e0c; color:var(--paper); }
+    input[type="range"] { appearance:none; height:20px; padding:0; border:0; background:transparent; cursor:pointer; }
+    input[type="range"]::-webkit-slider-runnable-track { height:8px; background:#38322b; border-radius:999px; }
+    input[type="range"]::-webkit-slider-thumb { appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent); border:2px solid var(--paper); margin-top:-5px; }
+    input[type="range"]::-moz-range-track { height:8px; background:#38322b; border-radius:999px; }
     input[type="range"]::-moz-range-thumb { width:18px; height:18px; border-radius:50%; background:var(--accent); border:2px solid var(--paper); }
-    .lever-foot { display:flex; justify-content:space-between; color:var(--muted); font-size:12px; margin-top:6px; }
-    .reset { background:transparent; color:#d7cfc2; padding:0; text-decoration:underline; }
-    .reset-all { background:transparent; color:var(--yellow); padding:4px 0; text-decoration:underline; white-space:nowrap; }
-    details { border-top:1px solid var(--rule); padding:14px 0; }
-    details:first-of-type { border-top:0; }
-    summary { cursor:pointer; font-weight:800; color:#d7cfc2; }
-    .edit-row { display:grid; grid-template-columns:1fr 92px 92px 92px; gap:8px; align-items:center; padding:10px 0; border-top:1px solid #24211d; }
-    .edit-row:first-child { border-top:0; }
-    .edit-row label { font-size:13px; color:#d7cfc2; }
-    .field-edit { display:grid; gap:3px; }
-    .default-note { color:var(--muted); font-size:10px; line-height:1.2; }
-    .default-note.edited { color:var(--yellow); }
-    input { width:100%; min-height:38px; border:1px solid #37322b; border-radius:8px; padding:0 10px; background:#0f0e0c; color:var(--paper); font:600 13px Inter,sans-serif; }
-    .footer-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
-    .save-panel { display:none; margin-top:14px; }
-    .save-panel.open { display:block; }
-    .save-row { display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:8px; }
-    .save-row button { background:var(--paper); color:var(--ink); padding:0 14px; min-height:38px; }
-    .nudge { color:var(--muted); font-size:13px; margin:10px 0 0; }
-    .hidden { display:none !important; }
-    .toast { position:fixed; right:18px; bottom:18px; background:var(--paper); color:var(--ink); border-radius:999px; padding:12px 16px; font-weight:800; opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .18s ease, transform .18s ease; z-index:20; }
+    .reference { color:var(--muted); font-size:12px; font-style:italic; margin-top:8px; }
+    .helper { color:#b8b0a2; font-size:12px; margin:8px 0 0; }
+    .bucket-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .bucket { display:grid; gap:5px; }
+    .bucket label { color:#d7cfc2; font-size:12px; font-weight:700; }
+    .bucket small { color:var(--muted); font-size:10px; min-height:22px; }
+    .stacked-bar { display:flex; height:34px; border-radius:8px; overflow:hidden; border:1px solid var(--grid); margin:0 0 10px; }
+    .segment { display:flex; align-items:center; justify-content:center; min-width:28px; color:#fff; font-size:11px; font-weight:800; overflow:hidden; white-space:nowrap; }
+    .seg-cash { background:#3a4a5a; } .seg-stocks { background:#2d5a3a; } .seg-realEstate { background:#5a4a2d; } .seg-other { background:#4a3a5a; }
+    .chip-row { display:flex; gap:8px; flex-wrap:wrap; }
+    .chip { min-height:36px; border-radius:999px; padding:0 13px; background:#141210; color:#d7cfc2; border:1px solid var(--grid); font-weight:800; }
+    .chip.active { background:var(--paper); color:#0f0e0c; border-color:var(--paper); }
+    details { border-top:1px solid var(--rule); margin-top:12px; padding-top:12px; }
+    summary { cursor:pointer; color:#d7cfc2; font-weight:800; }
+    .weight-row, .cagr-row { display:grid; grid-template-columns:1fr 86px; gap:8px; align-items:center; padding:8px 0; border-top:1px solid #28241f; }
+    .weight-row:first-child, .cagr-row:first-child { border-top:0; }
+    .chart-head { display:flex; justify-content:space-between; gap:16px; align-items:flex-end; margin-bottom:14px; }
+    .chart-head h1 { margin:0; font:650 34px/1.05 Fraunces,serif; letter-spacing:0; }
+    .chart-caption { color:var(--muted); font-size:12px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
+    #trajectoryChart { min-height:360px; }
+    #trajectoryChart svg { max-width:100%; overflow:hidden !important; }
+    .summary-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px; }
+    .summary-card { background:#141210; border:1px solid var(--rule); border-radius:8px; padding:12px; min-width:0; }
+    .summary-card strong { display:block; font:650 24px/1.05 Fraunces,serif; margin-top:5px; overflow-wrap:anywhere; }
+    .observation-list { display:grid; gap:10px; margin-top:14px; }
+    .observation { background:#141210; border-radius:8px; padding:14px; }
+    .observation p { margin:0; color:#efe7da; font-size:16px; font-weight:600; }
+    .observation a { display:inline-block; margin-top:10px; color:#d7cfc2; font-size:14px; font-weight:700; }
+    .observation a:hover { color:var(--accent); }
+    .disclaimer { color:var(--muted); font-size:12px; margin:14px 0 0; }
+    .pattern-row, .saved-row { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(190px,1fr); gap:10px; overflow:auto; padding-bottom:4px; }
+    .pattern, .saved-card { border:1px solid var(--rule); border-radius:8px; background:#141210; padding:13px; min-height:138px; display:flex; flex-direction:column; justify-content:space-between; }
+    .pattern h3, .saved-card h3 { margin:0; font:650 20px/1.1 Fraunces,serif; }
+    .pattern p, .saved-card p { color:#b8b0a2; font-size:12px; margin:8px 0 0; }
+    .pattern button { margin-top:12px; min-height:34px; border-radius:999px; background:#29241f; color:var(--paper); font-weight:800; }
+    .save-modal { position:fixed; inset:0; display:none; place-items:center; padding:20px; background:rgba(0,0,0,.58); z-index:30; }
+    .save-modal.open { display:grid; }
+    .modal-card { width:min(470px,100%); background:var(--paper); color:#0f0e0c; border-radius:8px; padding:22px; }
+    .modal-card h2 { font:650 28px/1 Fraunces,serif; margin:0 0 14px; }
+    .modal-card label { display:block; font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.1em; margin-top:12px; }
+    .modal-card input { background:#fffaf2; color:#0f0e0c; border-color:#c9bead; }
+    .modal-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+    .modal-actions .primary { min-height:40px; border-radius:999px; padding:0 16px; }
+    .modal-actions .ghost { min-height:40px; border-radius:999px; padding:0 16px; background:transparent; border:1px solid #c9bead; color:#0f0e0c; }
+    .toast { position:fixed; right:18px; bottom:18px; z-index:40; background:var(--paper); color:#0f0e0c; border-radius:999px; padding:12px 16px; font-weight:800; opacity:0; transform:translateY(8px); transition:opacity .18s ease, transform .18s ease; pointer-events:none; }
     .toast.show { opacity:1; transform:translateY(0); }
-    @media (max-width: 1100px) {
-      .top, .canvas { grid-template-columns:1fr; }
-      .score-card { position:static; }
+    .gate { padding:70px 0; display:none; }
+    .gate.open { display:block; }
+    .gate-card { background:var(--elevated); border:1px solid var(--rule); border-radius:8px; padding:24px; max-width:680px; }
+    .gate-card h1 { font:650 44px/1 Fraunces,serif; margin:0 0 12px; }
+    .hidden { display:none !important; }
+    @media (max-width: 1040px) {
+      .header-grid, .workspace { grid-template-columns:1fr; }
+      .workspace > * { min-width:0; }
+      .header-actions { justify-content:flex-start; }
+      .sim-header { position:static; }
+      .summary-grid { grid-template-columns:repeat(2,1fr); }
     }
-    @media (max-width: 920px) {
-      .gap-header { display:block; }
-      .answer-grid { grid-template-columns:repeat(2,1fr); }
-      .edit-row { grid-template-columns:1fr; }
-      .save-row { grid-template-columns:1fr; }
-    }
-    @media (max-width: 560px) {
-      .answer-grid { grid-template-columns:1fr; }
+    @media (max-width: 680px) {
+      .wrap { width:min(100% - 28px, 1220px); }
+      .metric-grid, .summary-grid, .bucket-grid { grid-template-columns:1fr; }
+      .control-row { grid-template-columns:1fr; }
+      .pattern-row, .saved-row { grid-auto-columns:minmax(220px,84vw); }
+      .view-menu { width:min(330px, calc(100vw - 36px)); }
     }
   </style>
 </head>
 <body>
-  <div class="wrap-wide">
-    <nav>
-      <a class="logo" href="/">Aspire<span aria-hidden="true">Δ</span></a>
-      <a class="button ghost" href="/manifesto">Manifesto</a>
-    </nav>
+  <div class="wrap nav">
+    <a class="logo" href="/">Aspire<span aria-hidden="true">Δ</span></a>
+    <div class="nav-links">
+      <a href="/">Calculator</a>
+      <a href="/manifesto">Manifesto</a>
+    </div>
   </div>
 
-  <header class="wrap-wide top">
-    <div>
-      <div class="eyebrow">Sensitivity simulator</div>
-      <h1>Move the assumptions. Watch your gap move.</h1>
-      <p class="lede">Model a scenario by changing contributions, timing, or assumptions. Aspire shows the gap; it does not recommend investments.</p>
+  <section class="gate wrap" id="authGate">
+    <div class="gate-card">
+      <div class="label">Simulator</div>
+      <h1>Run the Calculator first to see your gap.</h1>
+      <p class="helper">Then come back here to close it.</p>
+      <p><a class="pill primary" href="/">Open the Calculator</a></p>
     </div>
-    <aside class="score-card">
-      <div class="label">Saved scenario</div>
-      <div class="score-number" id="savedGap">—</div>
-      <p id="savedCopy" style="color:#b8b0a2;margin:0;">Loading your saved scenario.</p>
-      <div class="meta">
-        <div><span class="label">Money</span><strong id="savedMoney">—</strong></div>
-        <div><span class="label">Cost</span><strong id="savedCost">—</strong></div>
-        <div><span class="label">Gap</span><strong id="savedGapSmall">—</strong></div>
+  </section>
+
+  <header class="sim-header hidden" id="simHeader">
+    <div class="wrap header-grid">
+      <div class="scenario-name">
+        <input id="scenarioName" value="Untitled scenario" aria-label="Scenario name">
+        <div class="view-toggle">
+          <button class="pill ghost" type="button" id="viewToggle">View: Required ▾</button>
+          <div class="view-menu" id="viewMenu">
+            <div class="radio-row">
+              <label><input type="radio" name="viewMode" value="required" checked> Required (the floor — what you need to break even)</label>
+              <label><input type="radio" name="viewMode" value="target"> Target (Required + margin of safety)</label>
+            </div>
+            <div class="margin-row">
+              <label for="marginInput">Margin of safety</label>
+              <input id="marginInput" type="number" min="0" max="5" step="0.1" value="1.0">
+              <small>Default 1.0%. Conservative: 2.0%. Aggressive: 0.5%.</small>
+            </div>
+          </div>
+        </div>
       </div>
-    </aside>
+      <div class="metric-grid" aria-live="polite">
+        <div class="metric">
+          <strong id="aspireRate">—</strong>
+          <div class="label" id="rateLabel">Aspire Rate</div>
+          <div class="assumptions">AT THESE ASSUMPTIONS</div>
+        </div>
+        <div class="metric">
+          <strong id="aspireGap">—</strong>
+          <div class="label">Aspire Gap</div>
+        </div>
+        <div class="metric">
+          <strong id="vsCurrent">—</strong>
+          <div class="label">vs. Current</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="pill primary" type="button" id="saveScenario">Save scenario</button>
+        <button class="reset-link" type="button" id="resetCurrent">Reset to current</button>
+      </div>
+    </div>
   </header>
 
-  <main class="wrap-wide canvas">
-    <section class="chart-shell">
-      <div class="gap-header">
-        <div>
-          <div class="label">Gap delta</div>
-          <h2 id="gapHeader">Your gap was —. With these changes, it is —.</h2>
+  <main class="wrap workspace hidden" id="workspace">
+    <aside class="lever-stack" id="leverStack">
+      <section class="lever" id="lever-savings">
+        <div class="lever-head"><div class="label">Savings rate</div><div class="delta-tag" data-delta="savings">0.0 unchanged</div></div>
+        <div class="control-row">
+          <input id="savingsRange" type="range" min="0" max="20000" step="50">
+          <input id="savingsInput" type="number" min="0" step="50" aria-label="Monthly contribution">
         </div>
-        <div class="gap-now" id="currentGap">—</div>
-      </div>
-      <div class="answer-grid">
-        <div class="answer-card"><span>Extra monthly to close</span><strong id="requiredMonthly">—</strong></div>
-        <div class="answer-card"><span>Required money growth</span><strong id="requiredGrowth">—</strong></div>
-        <div class="answer-card"><span>Dollar gap</span><strong id="dollarGap">—</strong></div>
-        <div class="answer-card"><span>Scenario coverage</span><strong id="coverage">—</strong></div>
-      </div>
-      <div id="rateChart"></div>
-      <p class="summary" id="summary">Move a lever to see the scenario respond.</p>
-      <p class="nudge" id="firstRunNudge">Try moving Monthly contribution to see your gap respond.</p>
-    </section>
-
-    <aside class="rail">
-      <section class="panel">
-        <div class="rail-head">
-          <div>
-            <h3>Adjust your assumptions</h3>
-            <p class="panel-sub">Each slider shifts one planning assumption. Watch the scenario respond.</p>
-          </div>
-          <button class="reset-all" type="button" id="resetAll">Reset all</button>
-        </div>
-        <div id="leverRail"></div>
+        <p class="helper">How much you're adding per month.</p>
+        <div class="reference" id="savingsReference">current: —</div>
       </section>
-      <section class="panel">
-        <details>
-          <summary>Edit per-goal assumptions</summary>
-          <div id="goalEdits"></div>
-        </details>
-        <details>
-          <summary>Edit per-asset assumptions</summary>
-          <div id="assetEdits"></div>
-        </details>
-        <div class="footer-actions">
-          <button class="button primary" type="button" id="saveUpdated">Save updated scenario</button>
-          <a class="button ghost" href="/manifesto">Read the manifesto</a>
+
+      <section class="lever" id="lever-allocation">
+        <div class="lever-head"><div class="label">Allocation mix</div><div class="delta-tag" data-delta="allocation">0.0 unchanged</div></div>
+        <div class="stacked-bar" id="allocationBar"></div>
+        <div class="bucket-grid" id="allocationInputs"></div>
+        <p class="helper">Edit percentages to rebalance. Assumed rates are set in Configurable CAGR.</p>
+        <div class="reference" id="allocationReference">current: —</div>
+      </section>
+
+      <section class="lever" id="lever-timeline">
+        <div class="lever-head"><div class="label">Timeline</div><div class="delta-tag" data-delta="timeline">0.0 unchanged</div></div>
+        <div class="control-row">
+          <input id="timelineRange" type="range" min="1" max="40" step="1">
+          <input id="timelineInput" type="number" min="1" max="40" step="1" aria-label="Timeline">
         </div>
-        <div class="save-panel" id="savePanel">
-          <label class="label" for="saveEmail">Email</label>
-          <div class="save-row">
-            <input id="saveEmail" type="email" placeholder="Enter your email">
-            <button type="button" id="saveEmailButton">Save</button>
-          </div>
-          <p id="saveStatus" style="color:#b8b0a2;font-size:12px;"></p>
-        </div>
+        <p class="helper">Used to project your trajectory. Doesn't change today's number.</p>
+        <div class="reference" id="timelineReference">current: —</div>
+      </section>
+
+      <section class="lever" id="lever-basket">
+        <div class="lever-head"><div class="label">Target basket</div><div class="delta-tag" data-delta="basket">0.0 unchanged</div></div>
+        <div class="chip-row" id="basketChips"></div>
+        <p class="helper">Pick a life. Refine the components below if you want to tune the weights.</p>
+        <details>
+          <summary>Refine basket weights →</summary>
+          <div id="basketWeights"></div>
+        </details>
+        <div class="reference" id="basketReference">current: —</div>
+      </section>
+
+      <section class="lever" id="lever-geography">
+        <div class="lever-head"><div class="label">Geography</div><div class="delta-tag" data-delta="geography">0.0 unchanged</div></div>
+        <select id="geographySelect" aria-label="Geography"></select>
+        <p class="helper">Drives the housing CAGR. Try a comparable metro to see the swing.</p>
+        <div class="reference" id="geographyReference">current: —</div>
+      </section>
+
+      <section class="lever" id="lever-cagr">
+        <div class="lever-head"><div class="label">Configurable CAGR</div><div class="delta-tag" data-delta="cagr">0.0 unchanged</div></div>
+        <p class="helper">Smooth out volatility, or set a custom rate if you have a stronger view.</p>
+        <div id="cagrInputs"></div>
+        <div class="reference">current: saved assumptions</div>
       </section>
     </aside>
+
+    <section class="right-stack">
+      <section class="panel" id="trajectory">
+        <div class="chart-head">
+          <div>
+            <div class="chart-caption" id="chartCaption">Trajectory</div>
+            <h1 id="chartHeadline">What you're building vs. what you need</h1>
+          </div>
+          <button class="pill ghost" type="button" id="chartToggle">Show as %</button>
+        </div>
+        <div id="trajectoryChart"></div>
+        <div class="summary-grid">
+          <div class="summary-card"><span class="label">Future cost</span><strong id="futureCost">—</strong></div>
+          <div class="summary-card"><span class="label">Projected resources</span><strong id="projectedResources">—</strong></div>
+          <div class="summary-card"><span class="label">Dollar gap</span><strong id="dollarGap">—</strong></div>
+          <div class="summary-card"><span class="label">Coverage</span><strong id="coverage">—</strong></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="label">The Shape of Your Gap — AT THESE ASSUMPTIONS</div>
+        <div class="observation-list" id="observations"></div>
+        <p class="disclaimer">Aspire shows you the shape of your gap at your current assumptions. It does not recommend specific assets, allocations, or actions. Talk to a fiduciary advisor before acting on anything you see here.</p>
+      </section>
+
+      <section class="scenario-strip">
+        <div class="label">Compare to a pattern</div>
+        <p class="helper">Each pattern bundles assumptions you could compare against your current scenario.</p>
+        <div class="pattern-row" id="patternRow"></div>
+      </section>
+
+      <section class="scenario-strip">
+        <div class="label">Your scenarios</div>
+        <div class="saved-row" id="savedRow"></div>
+      </section>
+    </section>
   </main>
+
+  <div class="save-modal" id="saveModal" role="dialog" aria-modal="true" aria-labelledby="saveHeading">
+    <div class="modal-card">
+      <h2 id="saveHeading">Name this scenario</h2>
+      <label for="modalName">Scenario name</label>
+      <input id="modalName" placeholder="Untitled scenario">
+      <label for="modalEmail">Email</label>
+      <input id="modalEmail" type="email" placeholder="you@example.com">
+      <p class="helper">Anyone with your private simulator link can open this scenario. Public sharing comes in the next save/share pass.</p>
+      <div class="modal-actions">
+        <button class="primary" type="button" id="modalSave">Save</button>
+        <button class="ghost" type="button" id="modalCancel">Cancel</button>
+      </div>
+      <p class="helper" id="saveStatus"></p>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite">Saved.</div>
 
   <script type="module">
-    import { additionalMonthlyRequired, project, projectionSeries, requiredMoneyGrowthRate } from "/lib/aspire.js";
-    import { fromPersisted, decodeFallbackToken, toPersisted, encodeFallbackToken } from "/lib/schema.js";
-    import { renderDollarChart } from "/lib/chart-rate.js";
-    import { money, pct, shortMoney, signedPct } from "/lib/format.js";
+    import { project, projectionSeries } from "/lib/aspire.js";
+    import { DRAFT_KEY, decodeFallbackToken, encodeFallbackToken, fromPersisted, toPersisted } from "/lib/schema.js";
+    import { money, pct, shortMoney } from "/lib/format.js";
+    import { renderDollarChart, renderRateChart } from "/lib/chart-rate.js";
+    import { loadRates, rateForKey } from "/lib/rates.js";
+    import { observe } from "/lib/simulator/observations.js";
 
-    let baseScenario;
-    let currentScenario;
-    let savedScenario;
-    let baseResult;
+    const basketPresets = {
+      home: { label: "Home", weights: { housing: 70, cpi: 20, healthcare: 10 } },
+      family: { label: "Family", weights: { housing: 30, stocks: 25, childcare: 20, tuition: 15, healthcare: 10 } },
+      freedom: { label: "Freedom", weights: { cpi: 40, housing: 20, healthcare: 20, stocks: 20 } }
+    };
+    const patterns = [
+      { id:"aggressive", title:"Aggressive", copy:"Higher savings and higher equity weighting. See how it compares to your current.", patch:{ savingsMultiplier:1.25, stocks:70, cash:10, realEstate:15, other:5 } },
+      { id:"conservative", title:"Conservative", copy:"Lower equity, longer timeline. See how it compares to your current.", patch:{ timelineDelta:5, stocks:35, cash:40, realEstate:20, other:5 } },
+      { id:"cheaper-city", title:"Move to a cheaper city", copy:"Same life, different zip. Compare your current geography against a lower-CAGR metro.", patch:{ geography:"home_chicago" } },
+      { id:"save-five", title:"Save 5 more years", copy:"Same plan, longer horizon. Compare what an extra five years does.", patch:{ timelineDelta:5 } },
+      { id:"smaller-life", title:"Smaller life", copy:"Downgrade the basket one tier. Compare a smaller-life basket against your current.", patch:{ basket:"freedom" } },
+      { id:"custom", title:"Custom", copy:"Start clean. Tune everything yourself.", patch:{} }
+    ];
+    const bucketMeta = [
+      { id:"cash", label:"Cash", asset:"cash", color:"seg-cash" },
+      { id:"stocks", label:"Stocks", asset:"sp500", color:"seg-stocks" },
+      { id:"realEstate", label:"Real estate", asset:"home", color:"seg-realEstate" },
+      { id:"other", label:"Other", asset:"gold", color:"seg-other" }
+    ];
+
+    let rates = {};
+    let baselineScenario;
+    let activeScenario;
     let scenarioToken = new URLSearchParams(location.search).get("t") || "";
-    const leverValues = { contribution: 0, horizon: 0, costGrowth: 0, moneyGrowth: 0 };
+    let viewMode = "required";
+    let margin = 1;
+    let chartMode = "dollars";
+    let scenarioName = "Untitled scenario";
+    let controls;
+    let baselineControls;
+
+    const $ = id => document.getElementById(id);
+
+    function clone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function totalMonthly(scenario) {
+      return scenario.basket.holdings.reduce((sum, asset) => sum + (Number(asset.monthly) || 0), 0);
+    }
+
+    function totalAssets(scenario) {
+      return scenario.basket.holdings.reduce((sum, asset) => sum + (Number(asset.amount) || 0), 0);
+    }
+
+    function weightedGoalRate(weights) {
+      const map = {
+        housing: rateForKey(rates, controls.geography || "home"),
+        cpi: rateForKey(rates, "cpi"),
+        healthcare: rateForKey(rates, "health"),
+        stocks: rateForKey(rates, "sp500"),
+        childcare: rateForKey(rates, "childcare"),
+        tuition: rateForKey(rates, "tuition_k12_private")
+      };
+      const total = Object.values(weights).reduce((sum, value) => sum + (Number(value) || 0), 0) || 100;
+      return Object.entries(weights).reduce((sum, [key, value]) => sum + (Number(value) || 0) / total * (map[key] || 0), 0);
+    }
+
+    function scenarioRate(scenario) {
+      const result = project(scenario.basket.goals, scenario.basket.holdings);
+      return result.costRate;
+    }
+
+    function currentResultBundle(scenario) {
+      const result = project(scenario.basket.goals, scenario.basket.holdings);
+      const rate = scenarioRate(scenario);
+      const displayedRate = viewMode === "target" ? rate + margin : rate;
+      const gap = result.moneyRate - displayedRate;
+      return { ...result, aspireRate: rate, displayedRate, displayedGap: gap };
+    }
 
     async function loadScenario() {
       const params = new URLSearchParams(location.search);
@@ -207,209 +388,452 @@
         if (res.ok) return fromPersisted(await res.json());
       }
       if (fallback) return decodeFallbackToken(fallback);
-      location.replace("/");
+      const draft = localStorage.getItem(DRAFT_KEY);
+      if (draft) return fromPersisted(JSON.parse(draft));
       return null;
     }
 
-    const leverRegistry = [
-      { id:"contribution", label:"Monthly contribution", tip:"Additional savings added each month, distributed across your holdings.", min:0, max:5000, step:50, value:v => money(v), defaultText:"$0", apply:(s,v) => s.basket.holdings.forEach(asset => asset.monthly += v / Math.max(1, s.basket.holdings.length)) },
-      { id:"horizon", label:"Time horizon", tip:"Shifts every goal's timeline earlier or later by this many years.", min:-10, max:20, step:1, value:v => `${v > 0 ? "+" : ""}${v} yr`, defaultText:"0 yr", apply:(s,v) => s.basket.goals.forEach(goal => goal.horizon = Math.max(1, goal.horizon + v)) },
-      { id:"costGrowth", label:"Cost growth", tip:"Adjusts how fast your goals are becoming more expensive — shifts the cost growth rate up or down.", min:-5, max:5, step:.1, value:v => `${v > 0 ? "+" : ""}${Number(v).toFixed(1)} pp`, defaultText:"0 pp", apply:(s,v) => s.basket.goals.forEach(goal => goal.growth = Math.max(-5, goal.growth + v)) },
-      { id:"moneyGrowth", label:"Money growth assumption", tip:"Adjusts the hypothetical growth rate used for your resources in this scenario.", min:-5, max:5, step:.1, value:v => `${v > 0 ? "+" : ""}${Number(v).toFixed(1)} pp`, defaultText:"0 pp", apply:(s,v) => s.basket.holdings.forEach(asset => asset.growth = Math.max(-5, asset.growth + v)) }
-    ];
-
-    function cloneScenario(scenario) {
-      return JSON.parse(JSON.stringify(scenario));
+    function inferControls(scenario) {
+      const assets = scenario.basket.holdings;
+      const total = totalAssets(scenario) || 1;
+      const allocation = Object.fromEntries(bucketMeta.map(bucket => [bucket.id, 0]));
+      for (const asset of assets) {
+        const key = bucketForAsset(asset.asset);
+        allocation[key] += ((Number(asset.amount) || 0) / total) * 100;
+      }
+      normalizeAllocation(allocation);
+      const firstGoal = scenario.basket.goals[0] || {};
+      const geography = firstGoal.asset && String(firstGoal.asset).startsWith("home") ? firstGoal.asset : "home";
+      return {
+        savings: totalMonthly(scenario),
+        allocation,
+        timeline: Math.max(1, Math.round(project(scenario.basket.goals, scenario.basket.holdings).horizon || 10)),
+        basket: inferBasket(firstGoal.goalType || firstGoal.label),
+        weights: clone(basketPresets[inferBasket(firstGoal.goalType || firstGoal.label)].weights),
+        geography,
+        cagr: {
+          cash: growthForAsset(assets, "cash", 4),
+          stocks: growthForAsset(assets, "sp500", rateForKey(rates, "sp500")),
+          realEstate: rateForKey(rates, geography),
+          other: growthForAsset(assets, "gold", 6)
+        }
+      };
     }
 
-    function applyLevers() {
-      currentScenario = cloneScenario(baseScenario);
-      for (const lever of leverRegistry) lever.apply(currentScenario, Number(leverValues[lever.id]) || 0);
+    function bucketForAsset(asset = "") {
+      if (asset === "cash" || asset === "checking") return "cash";
+      if (asset === "sp500" || asset === "qqq") return "stocks";
+      if (String(asset).startsWith("home")) return "realEstate";
+      return "other";
     }
 
-    function renderLevers() {
-      document.getElementById("leverRail").innerHTML = leverRegistry.map(lever => `
-        <div class="lever">
-          <div class="lever-head">
-            <label class="lever-label" for="${lever.id}">${lever.label} <span class="info" tabindex="0">ⓘ<span class="info-pop">${lever.tip}</span></span></label>
-            <span class="lever-value" id="${lever.id}Value">${lever.value(leverValues[lever.id])}</span>
+    function inferBasket(value = "") {
+      const text = String(value).toLowerCase();
+      if (text.includes("child") || text.includes("family") || text.includes("college")) return "family";
+      if (text.includes("freedom") || text.includes("time off") || text.includes("business")) return "freedom";
+      return "home";
+    }
+
+    function growthForAsset(assets, assetKey, fallback) {
+      const match = assets.find(asset => asset.asset === assetKey || bucketForAsset(asset.asset) === bucketForAsset(assetKey));
+      return Number(match?.growth) || fallback || 0;
+    }
+
+    function normalizeAllocation(allocation) {
+      const keys = Object.keys(allocation);
+      let total = keys.reduce((sum, key) => sum + Math.max(0, Number(allocation[key]) || 0), 0);
+      if (!total) {
+        allocation.cash = 25; allocation.stocks = 50; allocation.realEstate = 20; allocation.other = 5;
+        return allocation;
+      }
+      for (const key of keys) allocation[key] = Math.round((Math.max(0, Number(allocation[key]) || 0) / total) * 1000) / 10;
+      total = keys.reduce((sum, key) => sum + allocation[key], 0);
+      allocation[keys[0]] += Math.round((100 - total) * 10) / 10;
+      return allocation;
+    }
+
+    function applyControls() {
+      activeScenario = clone(baselineScenario);
+      const total = totalAssets(activeScenario);
+      activeScenario.basket.holdings = bucketMeta.map(bucket => ({
+        id: `asset-${bucket.id}`,
+        label: bucket.label,
+        amount: total * (Number(controls.allocation[bucket.id]) || 0) / 100,
+        monthly: controls.savings * (Number(controls.allocation[bucket.id]) || 0) / 100,
+        asset: bucket.asset,
+        growth: controls.cagr[bucket.id] ?? rateForKey(rates, bucket.asset)
+      })).filter(asset => asset.amount > 0 || asset.monthly > 0);
+      const goalRate = weightedGoalRate(controls.weights);
+      activeScenario.basket.goals = activeScenario.basket.goals.map(goal => ({
+        ...goal,
+        horizon: controls.timeline,
+        asset: controls.geography,
+        growth: goalRate || Number(goal.growth) || 0,
+        goalType: basketPresets[controls.basket].label
+      }));
+    }
+
+    function renderShell() {
+      $("simHeader").classList.remove("hidden");
+      $("workspace").classList.remove("hidden");
+      $("authGate").classList.remove("open");
+      $("scenarioName").value = scenarioName;
+      $("savingsRange").value = controls.savings;
+      $("savingsInput").value = Math.round(controls.savings);
+      $("timelineRange").value = controls.timeline;
+      $("timelineInput").value = controls.timeline;
+      $("savingsReference").textContent = `current: ${money(baselineControls.savings)}/mo`;
+      $("timelineReference").textContent = `current: ${baselineControls.timeline} yr`;
+      renderAllocationInputs();
+      renderBasketControls();
+      renderGeography();
+      renderCagrInputs();
+      renderPatterns();
+      renderSavedScenarios();
+      renderAll();
+    }
+
+    function renderAllocationInputs() {
+      $("allocationBar").innerHTML = bucketMeta.map(bucket => `
+        <div class="segment ${bucket.color}" style="width:${Math.max(4, controls.allocation[bucket.id])}%">${Math.round(controls.allocation[bucket.id])}%</div>
+      `).join("");
+      $("allocationInputs").innerHTML = bucketMeta.map(bucket => `
+        <div class="bucket">
+          <label for="alloc-${bucket.id}">${bucket.label}</label>
+          <input id="alloc-${bucket.id}" data-allocation="${bucket.id}" type="number" min="0" max="100" step="1" value="${Math.round(controls.allocation[bucket.id])}">
+          <small>assumed ${(Number(controls.cagr[bucket.id]) || 0).toFixed(1)}% — set in Configurable CAGR</small>
+        </div>
+      `).join("");
+      $("allocationReference").textContent = `current: ${bucketMeta.map(bucket => `${bucket.label} ${Math.round(baselineControls.allocation[bucket.id])}%`).join(" / ")}`;
+    }
+
+    function renderBasketControls() {
+      $("basketChips").innerHTML = Object.entries(basketPresets).map(([key, preset]) => `
+        <button class="chip ${controls.basket === key ? "active" : ""}" type="button" data-basket="${key}">${preset.label}</button>
+      `).join("");
+      $("basketWeights").innerHTML = Object.entries(controls.weights).map(([key, value]) => `
+        <div class="weight-row">
+          <label for="weight-${key}">${labelForWeight(key)}</label>
+          <input id="weight-${key}" data-weight="${key}" type="number" min="0" max="100" step="1" value="${Math.round(value)}">
+        </div>
+      `).join("");
+      $("basketReference").textContent = `current: ${basketPresets[baselineControls.basket].label}`;
+    }
+
+    function labelForWeight(key) {
+      return ({ housing:"Housing", cpi:"CPI", healthcare:"Healthcare", stocks:"Equity-linked", childcare:"Childcare", tuition:"Private K-12" })[key] || key;
+    }
+
+    function renderGeography() {
+      const metros = Object.values(rates)
+        .filter(rate => rate.key?.startsWith("home"))
+        .sort((a, b) => (a.label || "").localeCompare(b.label || ""));
+      $("geographySelect").innerHTML = metros.map(rate => `
+        <option value="${rate.key}" ${controls.geography === rate.key ? "selected" : ""}>${rate.label} (${(Number(rate.cagrForwardSuggested) || 0).toFixed(1)}%)</option>
+      `).join("");
+      $("geographyReference").textContent = `current: ${rates[baselineControls.geography]?.label || "US national"}`;
+    }
+
+    function renderCagrInputs() {
+      $("cagrInputs").innerHTML = bucketMeta.map(bucket => `
+        <div class="cagr-row">
+          <label for="cagr-${bucket.id}">${bucket.label}</label>
+          <input id="cagr-${bucket.id}" data-cagr="${bucket.id}" type="number" min="-5" max="40" step="0.1" value="${Number(controls.cagr[bucket.id]).toFixed(1)}">
+        </div>
+      `).join("");
+    }
+
+    function renderPatterns() {
+      $("patternRow").innerHTML = patterns.map(pattern => {
+        const delta = previewPattern(pattern) - currentResultBundle(baselineScenario).displayedGap;
+        const tag = Math.abs(delta) < 0.05 ? "0.0 unchanged" : `${delta >= 0 ? "+" : "−"}${Math.abs(delta).toFixed(1)} pts vs. current`;
+        return `
+          <article class="pattern">
+            <div>
+              <h3>${pattern.title}</h3>
+              <p>${pattern.copy}</p>
+              <p>At these assumptions, this pattern shifts your gap by ${tag}.</p>
+            </div>
+            <button type="button" data-pattern="${pattern.id}">Load to compare</button>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderSavedScenarios() {
+      $("savedRow").innerHTML = `
+        <article class="saved-card">
+          <div>
+            <h3>${escapeHtml(scenarioName)}</h3>
+            <p>${currentResultBundle(activeScenario).displayedGap.toFixed(1)} pts at these assumptions</p>
           </div>
-          <input id="${lever.id}" type="range" min="${lever.min}" max="${lever.max}" step="${lever.step}" value="${leverValues[lever.id]}">
-          <div class="lever-foot"><span>Default ${lever.defaultText}</span><button class="reset" type="button" data-reset="${lever.id}">reset</button></div>
-        </div>
-      `).join("");
-    }
-
-    function renderEdits() {
-      document.getElementById("goalEdits").innerHTML = currentScenario.basket.goals.map((goal, index) => `
-        <div class="edit-row">
-          <label>${escapeHtml(goal.label)}</label>
-          ${editField("goal", index, "amount", goal.amount, savedScenario.basket.goals[index]?.amount, "1000", `${goal.label} amount`)}
-          ${editField("goal", index, "horizon", goal.horizon, savedScenario.basket.goals[index]?.horizon, "1", `${goal.label} years`)}
-          ${editField("goal", index, "growth", goal.growth, savedScenario.basket.goals[index]?.growth, ".1", `${goal.label} growth`, true)}
-        </div>
-      `).join("");
-      document.getElementById("assetEdits").innerHTML = currentScenario.basket.holdings.map((asset, index) => `
-        <div class="edit-row">
-          <label>${escapeHtml(asset.label)}</label>
-          ${editField("asset", index, "amount", asset.amount, savedScenario.basket.holdings[index]?.amount, "1000", `${asset.label} amount`)}
-          ${editField("asset", index, "monthly", asset.monthly, savedScenario.basket.holdings[index]?.monthly, "50", `${asset.label} monthly`)}
-          ${editField("asset", index, "growth", asset.growth, savedScenario.basket.holdings[index]?.growth, ".1", `${asset.label} growth`, true)}
-        </div>
-      `).join("");
-    }
-
-    function editField(kind, index, field, value, defaultValue = 0, step, label, percent = false) {
-      const current = Number(value) || 0;
-      const saved = Number(defaultValue) || 0;
-      const edited = Math.abs(current - saved) > 0.0001;
-      const shown = percent ? current.toFixed(1) : Math.round(current);
-      const savedShown = percent ? `${saved.toFixed(1)}%` : field === "horizon" ? `${Math.round(saved)} yr` : money(saved);
-      return `
-        <div class="field-edit">
-          <input type="number" data-kind="${kind}" data-index="${index}" data-field="${field}" value="${shown}" min="${field === "growth" ? "-5" : "0"}" step="${step}" aria-label="${escapeHtml(label)}">
-          <small class="default-note ${edited ? "edited" : ""}">Default ${savedShown}</small>
-        </div>
+          <p>Last edited now</p>
+        </article>
+        <article class="saved-card">
+          <div>
+            <h3>No saved scenarios yet.</h3>
+            <p>Tinker, then hit Save.</p>
+          </div>
+        </article>
       `;
     }
 
     function renderAll() {
-      const result = project(currentScenario.basket.goals, currentScenario.basket.holdings);
-      const requiredMonthly = additionalMonthlyRequired(currentScenario.basket.goals, currentScenario.basket.holdings);
-      const requiredGrowth = requiredMoneyGrowthRate(currentScenario.basket.goals, currentScenario.basket.holdings);
-      document.getElementById("currentGap").textContent = `${signedPct(result.gap)} / yr`;
-      document.getElementById("currentGap").classList.toggle("good", result.gap >= 0);
-      document.getElementById("gapHeader").textContent = `Your gap was ${signedPct(baseResult.gap)} / yr. With these changes, it is ${signedPct(result.gap)} / yr.`;
-      document.getElementById("requiredMonthly").textContent = requiredMonthly ? `${money(requiredMonthly)}/mo` : "$0/mo";
-      document.getElementById("requiredGrowth").textContent = result.dollarGap >= 0 ? "Covered" : pct(requiredGrowth);
-      document.getElementById("dollarGap").textContent = shortMoney(result.dollarGap);
-      document.getElementById("coverage").textContent = `${Math.round(Math.max(0, result.coverage))}%`;
-      const delta = result.gap - baseResult.gap;
-      document.getElementById("summary").textContent = delta >= 0
-        ? `This scenario closes your rate gap by ${Math.abs(delta).toFixed(1)} percentage points and leaves a projected dollar gap of ${shortMoney(result.dollarGap)}.`
-        : `This scenario widens your rate gap by ${Math.abs(delta).toFixed(1)} percentage points and leaves a projected dollar gap of ${shortMoney(result.dollarGap)}.`;
-      renderDollarChart(
-        document.getElementById("rateChart"),
-        projectionSeries(currentScenario.basket.goals, currentScenario.basket.holdings, result.horizon),
-        { height: 360, baseline: projectionSeries(baseScenario.basket.goals, baseScenario.basket.holdings, baseResult.horizon) }
-      );
-      for (const lever of leverRegistry) {
-        const value = document.getElementById(`${lever.id}Value`);
-        if (value) value.textContent = lever.value(leverValues[lever.id]);
-      }
-      renderEdits();
-    }
-
-    function renderSavedCard() {
-      document.getElementById("savedGap").textContent = `${signedPct(baseResult.gap)} / yr`;
-      document.getElementById("savedGap").classList.toggle("good", baseResult.gap >= 0);
-      document.getElementById("savedCopy").textContent = `Saved assumptions over ${baseResult.horizon.toFixed(1)} years.`;
-      document.getElementById("savedMoney").textContent = pct(baseResult.moneyRate);
-      document.getElementById("savedCost").textContent = pct(baseResult.costRate);
-      document.getElementById("savedGapSmall").textContent = signedPct(baseResult.gap);
-    }
-
-    function updateEdit(target) {
-      const list = target.dataset.kind === "goal" ? currentScenario.basket.goals : currentScenario.basket.holdings;
-      const item = list[Number(target.dataset.index)];
-      if (!item) return;
-      item[target.dataset.field] = Number(target.value) || 0;
-      baseScenario = cloneScenario(currentScenario);
-      baseResult = project(baseScenario.basket.goals, baseScenario.basket.holdings);
-      Object.keys(leverValues).forEach(key => leverValues[key] = 0);
-      renderLevers();
-      renderSavedCard();
-      renderAll();
-    }
-
-    async function saveScenario(email, token = "") {
-      const scenario = toPersisted(currentScenario);
-      if (!email && !token) {
-        history.replaceState(null, "", `/simulator/?s=${encodeFallbackToken(scenario)}`);
-        document.getElementById("saveStatus").textContent = "Saved in this browser link.";
-        return;
-      }
-      const res = await fetch("/api/score", {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body:JSON.stringify({ email, token, basket: scenario.basket })
-      });
-      if (!res.ok) throw new Error("save failed");
-      const data = await res.json();
-      if (token) {
-        scenarioToken = data.t || token;
-        history.replaceState(null, "", `/simulator/?t=${scenarioToken}`);
-        showToast("Saved.");
+      applyControls();
+      const current = currentResultBundle(activeScenario);
+      const baseline = currentResultBundle(baselineScenario);
+      const vs = current.displayedGap - baseline.displayedGap;
+      $("viewToggle").textContent = `View: ${viewMode === "target" ? "Target" : "Required"} ▾`;
+      $("rateLabel").textContent = viewMode === "target" ? "Target Aspire Rate" : "Aspire Rate";
+      $("aspireRate").textContent = pct(current.displayedRate);
+      $("aspireGap").textContent = `${signedPoints(current.displayedGap)} pts`;
+      $("aspireGap").classList.toggle("gain", current.displayedGap > 0);
+      $("aspireGap").classList.toggle("loss", current.displayedGap < 0);
+      $("vsCurrent").textContent = Math.abs(vs) < 0.05 ? "0.0 unchanged" : `${vs >= 0 ? "+" : "−"}${Math.abs(vs).toFixed(1)} closed`;
+      $("vsCurrent").classList.toggle("gain", vs > 0);
+      $("vsCurrent").classList.toggle("loss", vs < 0);
+      $("futureCost").textContent = shortMoney(current.totalGoals);
+      $("projectedResources").textContent = shortMoney(current.totalAssets);
+      $("dollarGap").textContent = shortMoney(current.dollarGap);
+      $("coverage").textContent = `${Math.round(Math.max(0, current.coverage))}%`;
+      $("chartCaption").textContent = `Trajectory over ${Math.round(current.horizon)} years`;
+      const series = projectionSeries(activeScenario.basket.goals, activeScenario.basket.holdings, current.horizon);
+      const baselineSeries = projectionSeries(baselineScenario.basket.goals, baselineScenario.basket.holdings, baseline.horizon);
+      if (chartMode === "dollars") {
+        renderDollarChart($("trajectoryChart"), series, { height: 360, baseline: baselineSeries });
       } else {
-        window.location.href = data.simulatorUrl || `/simulator/?t=${data.t}`;
+        renderRateChart($("trajectoryChart"), series, { height: 360 });
+      }
+      $("chartToggle").textContent = chartMode === "dollars" ? "Show as %" : "Show as $";
+      renderObservations();
+      updateDeltaTags();
+      renderAllocationInputs();
+      renderCagrInputs();
+      renderSavedScenarios();
+    }
+
+    function renderObservations() {
+      const cards = observe(activeScenario, baselineScenario);
+      $("observations").innerHTML = cards.map(card => `
+        <article class="observation">
+          <p>${escapeHtml(card.observation)}</p>
+          ${card.pointer ? `<a href="${targetHref(card.pointer.target)}">${escapeHtml(card.pointer.label)}</a>` : ""}
+        </article>
+      `).join("");
+    }
+
+    function targetHref(target) {
+      if (!target) return "#observations";
+      if (target.type === "chart") return "#trajectory";
+      return `#lever-${target.name}`;
+    }
+
+    function updateDeltaTags() {
+      const baseline = currentResultBundle(baselineScenario).displayedGap;
+      const current = currentResultBundle(activeScenario).displayedGap;
+      const overall = current - baseline;
+      const moved = {
+        savings: Math.abs(controls.savings - baselineControls.savings) > 1,
+        allocation: bucketMeta.some(bucket => Math.abs(controls.allocation[bucket.id] - baselineControls.allocation[bucket.id]) > 0.5),
+        timeline: Math.abs(controls.timeline - baselineControls.timeline) >= 1,
+        basket: controls.basket !== baselineControls.basket,
+        geography: controls.geography !== baselineControls.geography,
+        cagr: bucketMeta.some(bucket => Math.abs(controls.cagr[bucket.id] - baselineControls.cagr[bucket.id]) > 0.05)
+      };
+      document.querySelectorAll("[data-delta]").forEach(tag => {
+        const key = tag.dataset.delta;
+        tag.className = "delta-tag";
+        if (!moved[key] || Math.abs(overall) < 0.05) {
+          tag.textContent = "0.0 unchanged";
+          return;
+        }
+        tag.textContent = `Δ ${overall >= 0 ? "+" : "−"}${Math.abs(overall).toFixed(1)} ${overall >= 0 ? "closed" : "widened"}`;
+        tag.classList.add("active", overall >= 0 ? "good" : "bad");
+      });
+    }
+
+    function previewPattern(pattern) {
+      const saved = clone(controls);
+      loadPattern(pattern, false);
+      applyControls();
+      const gap = currentResultBundle(activeScenario).displayedGap;
+      controls = saved;
+      applyControls();
+      return gap;
+    }
+
+    function loadPattern(pattern, shouldRender = true) {
+      const patch = pattern.patch || {};
+      if (patch.savingsMultiplier) controls.savings = Math.round(baselineControls.savings * patch.savingsMultiplier);
+      if (patch.timelineDelta) controls.timeline = Math.min(40, baselineControls.timeline + patch.timelineDelta);
+      if (patch.geography) controls.geography = patch.geography;
+      if (patch.basket) {
+        controls.basket = patch.basket;
+        controls.weights = clone(basketPresets[patch.basket].weights);
+      }
+      for (const bucket of bucketMeta) {
+        if (patch[bucket.id] != null) controls.allocation[bucket.id] = patch[bucket.id];
+      }
+      normalizeAllocation(controls.allocation);
+      if (shouldRender) renderShell();
+    }
+
+    async function saveScenario() {
+      const email = $("modalEmail").value.trim();
+      const scenario = toPersisted(activeScenario);
+      $("saveStatus").textContent = "Saving...";
+      try {
+        if (!email && !scenarioToken) {
+          const fallback = encodeFallbackToken(scenario);
+          history.replaceState(null, "", `/simulator/?s=${fallback}`);
+          $("saveStatus").textContent = "Saved in this browser link.";
+          showToast("Saved. Find it under Your Scenarios below.");
+          closeSave();
+          return;
+        }
+        const res = await fetch("/api/score", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, token: scenarioToken, basket: scenario.basket })
+        });
+        if (!res.ok) throw new Error("Save failed");
+        const data = await res.json();
+        scenarioToken = data.t || scenarioToken;
+        if (scenarioToken) history.replaceState(null, "", `/simulator/?t=${scenarioToken}`);
+        showToast("Saved. Find it under Your Scenarios below.");
+        closeSave();
+      } catch {
+        $("saveStatus").textContent = "Save failed. Check the email or try again.";
       }
     }
 
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.classList.add("show");
-      window.clearTimeout(showToast.timer);
-      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+    function openSave() {
+      $("modalName").value = $("scenarioName").value || "Untitled scenario";
+      $("saveStatus").textContent = scenarioToken ? "Save to this private scenario link." : "Enter an email to save remotely, or leave it blank to keep a browser link.";
+      $("saveModal").classList.add("open");
+      $("modalName").focus();
     }
 
-    function resetAllLevers() {
-      Object.keys(leverValues).forEach(key => leverValues[key] = 0);
-      applyLevers();
-      renderLevers();
-      renderAll();
+    function closeSave() {
+      scenarioName = $("modalName").value.trim() || "Untitled scenario";
+      $("scenarioName").value = scenarioName;
+      $("saveModal").classList.remove("open");
+    }
+
+    function resetToCurrent() {
+      controls = clone(baselineControls);
+      applyControls();
+      renderShell();
+      showToast("Reset to your current state.");
+    }
+
+    function signedPoints(value) {
+      const n = Number(value) || 0;
+      return `${n >= 0 ? "+" : "−"}${Math.abs(n).toFixed(1)}`;
     }
 
     function escapeHtml(value) {
       return String(value || "").replace(/[&<>"']/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[char]));
     }
 
-    baseScenario = await loadScenario();
-    if (baseScenario) {
-      savedScenario = cloneScenario(baseScenario);
-      baseResult = project(baseScenario.basket.goals, baseScenario.basket.holdings);
-      currentScenario = cloneScenario(baseScenario);
-      renderSavedCard();
-      renderLevers();
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function bindEvents() {
+      $("viewToggle").addEventListener("click", () => $("viewMenu").classList.toggle("open"));
+      $("marginInput").addEventListener("input", event => {
+        margin = Math.min(5, Math.max(0, Number(event.target.value) || 0));
+        renderAll();
+      });
+      document.addEventListener("change", event => {
+        if (event.target.name === "viewMode") {
+          viewMode = event.target.value;
+          renderAll();
+        }
+      });
+      $("scenarioName").addEventListener("input", event => scenarioName = event.target.value || "Untitled scenario");
+      $("savingsRange").addEventListener("input", event => setSavings(event.target.value));
+      $("savingsInput").addEventListener("input", event => setSavings(event.target.value));
+      $("timelineRange").addEventListener("input", event => setTimeline(event.target.value));
+      $("timelineInput").addEventListener("input", event => setTimeline(event.target.value));
+      $("geographySelect").addEventListener("change", event => {
+        controls.geography = event.target.value;
+        controls.cagr.realEstate = rateForKey(rates, controls.geography);
+        renderAll();
+      });
+      $("chartToggle").addEventListener("click", () => {
+        chartMode = chartMode === "dollars" ? "rates" : "dollars";
+        renderAll();
+      });
+      $("resetCurrent").addEventListener("click", resetToCurrent);
+      $("saveScenario").addEventListener("click", openSave);
+      $("modalCancel").addEventListener("click", closeSave);
+      $("modalSave").addEventListener("click", saveScenario);
+      document.addEventListener("input", event => {
+        if (event.target.dataset.allocation) {
+          controls.allocation[event.target.dataset.allocation] = Number(event.target.value) || 0;
+          normalizeAllocation(controls.allocation);
+          renderAll();
+        }
+        if (event.target.dataset.weight) {
+          controls.weights[event.target.dataset.weight] = Number(event.target.value) || 0;
+          renderAll();
+        }
+        if (event.target.dataset.cagr) {
+          controls.cagr[event.target.dataset.cagr] = Number(event.target.value) || 0;
+          renderAll();
+        }
+      });
+      document.addEventListener("click", event => {
+        const basket = event.target.closest("[data-basket]");
+        if (basket) {
+          controls.basket = basket.dataset.basket;
+          controls.weights = clone(basketPresets[controls.basket].weights);
+          renderShell();
+        }
+        const pattern = event.target.closest("[data-pattern]");
+        if (pattern) {
+          const found = patterns.find(item => item.id === pattern.dataset.pattern);
+          if (found) loadPattern(found);
+        }
+      });
+    }
+
+    function setSavings(value) {
+      controls.savings = Math.max(0, Number(value) || 0);
+      $("savingsRange").value = controls.savings;
+      $("savingsInput").value = Math.round(controls.savings);
       renderAll();
     }
 
-    document.addEventListener("input", event => {
-      const lever = leverRegistry.find(item => item.id === event.target.id);
-      if (lever) {
-        document.getElementById("firstRunNudge")?.classList.add("hidden");
-        leverValues[lever.id] = Number(event.target.value) || 0;
-        applyLevers();
-        renderAll();
-      }
-      if (event.target.matches("[data-kind]")) updateEdit(event.target);
-    });
-    document.addEventListener("click", event => {
-      if (event.target.matches("[data-reset]")) {
-        leverValues[event.target.dataset.reset] = 0;
-        applyLevers();
-        renderLevers();
-        renderAll();
-      }
-    });
-    document.getElementById("saveUpdated").addEventListener("click", () => {
-      if (scenarioToken) {
-        saveScenario("", scenarioToken).catch(() => showToast("Save failed."));
-        return;
-      }
-      document.getElementById("savePanel").classList.toggle("open");
-      document.getElementById("saveStatus").textContent = "Enter an email to save remotely, or leave it blank to keep a browser link.";
-    });
-    document.getElementById("resetAll").addEventListener("click", resetAllLevers);
-    document.getElementById("saveEmailButton").addEventListener("click", async () => {
-      const status = document.getElementById("saveStatus");
-      status.textContent = "Saving...";
-      try {
-        await saveScenario(document.getElementById("saveEmail").value.trim());
-      } catch {
-        await saveScenario("");
-      }
-    });
+    function setTimeline(value) {
+      controls.timeline = Math.min(40, Math.max(1, Math.round(Number(value) || 1)));
+      $("timelineRange").value = controls.timeline;
+      $("timelineInput").value = controls.timeline;
+      renderAll();
+    }
+
+    const rateData = await loadRates();
+    rates = Object.fromEntries((rateData.rates || []).map(rate => [rate.key, rate]));
+    baselineScenario = await loadScenario();
+    if (!baselineScenario) {
+      $("authGate").classList.add("open");
+    } else {
+      baselineControls = inferControls(baselineScenario);
+      controls = clone(baselineControls);
+      applyControls();
+      baselineScenario = clone(activeScenario);
+      baselineControls = clone(controls);
+      activeScenario = clone(baselineScenario);
+      bindEvents();
+      renderShell();
+      showToast(`Picking up where you left off — ${scenarioName}.`);
+    }
   </script>
 </body>
 </html>

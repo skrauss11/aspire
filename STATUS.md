@@ -8,7 +8,7 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-_None._
+- **Codex — `codex/simulator-v1`** — Sprint 3 Simulator refactor: rebuild `/simulator` around saved calculator baseline hydration, sticky rate/gap header with non-removable `AT THESE ASSUMPTIONS`, live comparison levers, trajectory chart, observation panel, and saved-scenario affordances. Scope: `simulator/index.html`, `lib/simulator/` modules if needed, `netlify/functions/scenario.js` only if hydration/save contracts require it.
 
 ## Recently shipped
 
