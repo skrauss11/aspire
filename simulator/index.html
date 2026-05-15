@@ -98,12 +98,16 @@
     .pattern h3, .saved-card h3 { margin:0; font:650 20px/1.1 Fraunces,serif; }
     .pattern p, .saved-card p { color:#b8b0a2; font-size:12px; margin:8px 0 0; }
     .pattern button { margin-top:12px; min-height:34px; border-radius:999px; background:#29241f; color:var(--paper); font-weight:800; }
+    .card-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+    .card-actions button { min-height:30px; border-radius:999px; padding:0 10px; background:#29241f; color:var(--paper); font-size:11px; font-weight:800; }
     .save-modal { position:fixed; inset:0; display:none; place-items:center; padding:20px; background:rgba(0,0,0,.58); z-index:30; }
     .save-modal.open { display:grid; }
     .modal-card { width:min(470px,100%); background:var(--paper); color:#0f0e0c; border-radius:8px; padding:22px; }
     .modal-card h2 { font:650 28px/1 Fraunces,serif; margin:0 0 14px; }
     .modal-card label { display:block; font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.1em; margin-top:12px; }
     .modal-card input { background:#fffaf2; color:#0f0e0c; border-color:#c9bead; }
+    .modal-card .check-row { display:flex; gap:9px; align-items:flex-start; margin-top:14px; font-weight:700; }
+    .modal-card .check-row input { width:auto; min-height:auto; margin-top:2px; }
     .modal-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
     .modal-actions .primary { min-height:40px; border-radius:999px; padding:0 16px; }
     .modal-actions .ghost { min-height:40px; border-radius:999px; padding:0 16px; background:transparent; border:1px solid #c9bead; color:#0f0e0c; }
@@ -289,7 +293,11 @@
       <input id="modalName" placeholder="Untitled scenario">
       <label for="modalEmail">Email</label>
       <input id="modalEmail" type="email" placeholder="you@example.com">
-      <p class="helper">Anyone with your private simulator link can open this scenario. Public sharing comes in the next save/share pass.</p>
+      <label class="check-row" for="modalPublic">
+        <input id="modalPublic" type="checkbox">
+        <span>Make this scenario shareable via public link</span>
+      </label>
+      <p class="helper">Anyone with the link can see this scenario. They won't see your email or any other scenarios.</p>
       <div class="modal-actions">
         <button class="primary" type="button" id="modalSave">Save</button>
         <button class="ghost" type="button" id="modalCancel">Cancel</button>
@@ -338,6 +346,12 @@
     let scenarioName = "Untitled scenario";
     let controls;
     let baselineControls;
+    let savedScenarios = [];
+    let maxScenarios = 10;
+    let currentScenarioId = "";
+    let currentShareUrl = "";
+    let currentIsPublic = false;
+    let currentEmail = "";
 
     const $ = id => document.getElementById(id);
 
@@ -385,7 +399,16 @@
       const fallback = params.get("s");
       if (token) {
         const res = await fetch(`/api/scenario?t=${encodeURIComponent(token)}`);
-        if (res.ok) return fromPersisted(await res.json());
+        if (res.ok) {
+          const payload = await res.json();
+          savedScenarios = payload.scenarios || [];
+          maxScenarios = payload.maxScenarios || maxScenarios;
+          currentScenarioId = payload.id || "";
+          currentShareUrl = payload.shareUrl || "";
+          currentIsPublic = Boolean(payload.isPublic);
+          scenarioName = payload.name || scenarioName;
+          return fromPersisted(payload);
+        }
       }
       if (fallback) return decodeFallbackToken(fallback);
       const draft = localStorage.getItem(DRAFT_KEY);
@@ -561,21 +584,43 @@
     }
 
     function renderSavedScenarios() {
-      $("savedRow").innerHTML = `
-        <article class="saved-card">
+      const currentCard = savedScenarios.length ? "" : `
+        <article class="saved-card" data-current-card>
           <div>
             <h3>${escapeHtml(scenarioName)}</h3>
             <p>${currentResultBundle(activeScenario).displayedGap.toFixed(1)} pts at these assumptions</p>
           </div>
           <p>Last edited now</p>
-        </article>
+        </article>`;
+      const savedCards = savedScenarios.map(item => {
+        const delta = (Number(item.derived?.aspireGap ?? item.aspireGap ?? item.basket?.computed?.gap ?? 0) - currentResultBundle(baselineScenario).displayedGap);
+        const updated = item.updatedAt ? timeAgo(item.updatedAt) : "Last edited recently";
+        return `
+          <article class="saved-card" data-scenario-id="${item.id}">
+            <div>
+              <h3>${escapeHtml(item.name || "Untitled scenario")}</h3>
+              <p>${Number(item.derived?.aspireGap ?? item.aspireGap ?? 0).toFixed(1)} pts at these assumptions</p>
+              <p>${Math.abs(delta) < 0.05 ? "0.0 unchanged" : `${delta >= 0 ? "+" : "−"}${Math.abs(delta).toFixed(1)} vs. baseline`}</p>
+            </div>
+            <div class="card-actions">
+              <button type="button" data-load-scenario="${item.id}">Load</button>
+              <button type="button" data-rename-scenario="${item.id}">Rename</button>
+              <button type="button" data-baseline-scenario="${item.id}">Make baseline</button>
+              <button type="button" data-share-scenario="${item.id}">Share link</button>
+              <button type="button" data-delete-scenario="${item.id}">Delete</button>
+            </div>
+            <p>${updated}</p>
+          </article>
+        `;
+      }).join("");
+      const empty = savedScenarios.length ? "" : `
         <article class="saved-card">
           <div>
             <h3>No saved scenarios yet.</h3>
             <p>Tinker, then hit Save.</p>
           </div>
-        </article>
-      `;
+        </article>`;
+      $("savedRow").innerHTML = `${currentCard}${savedCards}${empty}`;
     }
 
     function renderAll() {
@@ -691,17 +736,36 @@
           closeSave();
           return;
         }
-        const res = await fetch("/api/score", {
-          method: "POST",
+        const method = currentScenarioId ? "PATCH" : "POST";
+        const res = await fetch("/api/scenario", {
+          method,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, token: scenarioToken, basket: scenario.basket })
+          body: JSON.stringify({
+            id: currentScenarioId || undefined,
+            email,
+            token: scenarioToken,
+            name: $("modalName").value,
+            basket: scenario.basket,
+            isPublic: $("modalPublic").checked
+          })
         });
-        if (!res.ok) throw new Error("Save failed");
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || "Save failed");
+        }
         const data = await res.json();
-        scenarioToken = data.t || scenarioToken;
+        const saved = data.scenario || {};
+        scenarioToken = saved.token || scenarioToken;
+        currentScenarioId = saved.id || currentScenarioId;
+        currentShareUrl = saved.shareUrl || "";
+        currentIsPublic = Boolean(saved.isPublic);
+        currentEmail = email || currentEmail;
+        savedScenarios = data.scenarios || savedScenarios;
+        maxScenarios = data.maxScenarios || maxScenarios;
         if (scenarioToken) history.replaceState(null, "", `/simulator/?t=${scenarioToken}`);
         showToast("Saved. Find it under Your Scenarios below.");
         closeSave();
+        renderSavedScenarios();
       } catch {
         $("saveStatus").textContent = "Save failed. Check the email or try again.";
       }
@@ -709,7 +773,9 @@
 
     function openSave() {
       $("modalName").value = $("scenarioName").value || "Untitled scenario";
+      $("modalPublic").checked = currentIsPublic;
       $("saveStatus").textContent = scenarioToken ? "Save to this private scenario link." : "Enter an email to save remotely, or leave it blank to keep a browser link.";
+      if (savedScenarios.length >= maxScenarios && !currentScenarioId) $("saveStatus").textContent = "Delete one to save another. (Cap: 10.)";
       $("saveModal").classList.add("open");
       $("modalName").focus();
     }
@@ -725,6 +791,61 @@
       applyControls();
       renderShell();
       showToast("Reset to your current state.");
+    }
+
+    function loadSavedScenario(id) {
+      const item = savedScenarios.find(scenario => scenario.id === id);
+      if (!item) return;
+      scenarioName = item.name || "Untitled scenario";
+      currentScenarioId = item.id;
+      currentShareUrl = item.shareUrl || "";
+      currentIsPublic = Boolean(item.isPublic);
+      scenarioToken = item.token || scenarioToken;
+      controls = inferControls(fromPersisted(item));
+      renderShell();
+      if (scenarioToken) history.replaceState(null, "", `/simulator/?t=${scenarioToken}`);
+      showToast(`Picking up where you left off — ${scenarioName}.`);
+    }
+
+    async function updateSavedScenario(id, patch) {
+      const res = await fetch("/api/scenario", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: scenarioToken, id, ...patch })
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Scenario update failed");
+      const data = await res.json();
+      savedScenarios = data.scenarios || savedScenarios;
+      if (data.scenario?.id === currentScenarioId || data.scenario?.id === id) {
+        currentShareUrl = data.scenario.shareUrl || "";
+        currentIsPublic = Boolean(data.scenario.isPublic);
+        scenarioName = data.scenario.name || scenarioName;
+      }
+      renderSavedScenarios();
+      return data.scenario;
+    }
+
+    async function deleteSavedScenario(id) {
+      const res = await fetch("/api/scenario", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: scenarioToken, id })
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      const data = await res.json();
+      savedScenarios = data.scenarios || [];
+      if (currentScenarioId === id) currentScenarioId = "";
+      renderSavedScenarios();
+    }
+
+    function timeAgo(value) {
+      const elapsed = Math.max(0, Date.now() - new Date(value).getTime());
+      const minutes = Math.round(elapsed / 60000);
+      if (minutes < 2) return "Last edited now";
+      if (minutes < 60) return `Last edited ${minutes} min ago`;
+      const hours = Math.round(minutes / 60);
+      if (hours < 24) return `Last edited ${hours} hr ago`;
+      return `Last edited ${Math.round(hours / 24)} days ago`;
     }
 
     function signedPoints(value) {
@@ -800,6 +921,38 @@
         if (pattern) {
           const found = patterns.find(item => item.id === pattern.dataset.pattern);
           if (found) loadPattern(found);
+        }
+        const load = event.target.closest("[data-load-scenario]");
+        if (load) loadSavedScenario(load.dataset.loadScenario);
+        const rename = event.target.closest("[data-rename-scenario]");
+        if (rename) {
+          const item = savedScenarios.find(scenario => scenario.id === rename.dataset.renameScenario);
+          const name = window.prompt("Rename", item?.name || "Untitled scenario");
+          if (name) updateSavedScenario(rename.dataset.renameScenario, { name }).then(() => showToast("Renamed.")).catch(() => showToast("Rename failed."));
+        }
+        const baseline = event.target.closest("[data-baseline-scenario]");
+        if (baseline && window.confirm("Make this scenario your new baseline? Future Δ Closed numbers will compare against this scenario instead of your original Calculator inputs.")) {
+          const id = baseline.dataset.baselineScenario;
+          loadSavedScenario(id);
+          baselineScenario = clone(activeScenario);
+          baselineControls = clone(controls);
+          updateSavedScenario(id, { makeBaseline: true }).then(() => {
+            renderShell();
+            showToast("Baseline updated.");
+          }).catch(() => showToast("Baseline update failed."));
+        }
+        const share = event.target.closest("[data-share-scenario]");
+        if (share) {
+          updateSavedScenario(share.dataset.shareScenario, { isPublic: true }).then(scenario => {
+            const url = scenario.shareUrl || `${location.origin}/simulator/s/${scenario.shareId}`;
+            navigator.clipboard?.writeText(url).catch(() => {});
+            window.prompt("Public link", url);
+            showToast("Copied.");
+          }).catch(() => showToast("Share failed."));
+        }
+        const del = event.target.closest("[data-delete-scenario]");
+        if (del && window.confirm("Delete this scenario?")) {
+          deleteSavedScenario(del.dataset.deleteScenario).then(() => showToast("Deleted.")).catch(() => showToast("Delete failed."));
         }
       });
     }

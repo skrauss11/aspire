@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shared Aspire Scenario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#0a0908; --paper:#f5f1ea; --muted:#9f9688; --rule:#302b25; --accent:#c8451f; --gain:#7fb98a; --loss:#f0b35b; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--ink); color:var(--paper); font-family:Inter,system-ui,sans-serif; line-height:1.5; }
+    a { color:inherit; text-decoration:none; }
+    .wrap { width:min(980px, calc(100% - 36px)); margin:0 auto; }
+    nav { height:72px; display:flex; align-items:center; justify-content:space-between; }
+    .logo, h1 { font-family:Fraunces,serif; font-weight:650; letter-spacing:0; }
+    .logo { font-size:25px; }
+    .logo span { color:var(--accent); }
+    .banner, .panel { background:#1a1816; border:1px solid var(--rule); border-radius:8px; }
+    .banner { padding:14px 16px; display:flex; justify-content:space-between; gap:16px; align-items:center; flex-wrap:wrap; }
+    .pill { border:0; min-height:40px; border-radius:999px; padding:0 16px; display:inline-flex; align-items:center; justify-content:center; background:var(--accent); color:var(--paper); font-weight:800; cursor:pointer; }
+    .hero { padding:42px 0 24px; }
+    .label { color:var(--muted); font-size:11px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
+    h1 { font-size:clamp(42px,8vw,80px); line-height:.95; margin:10px 0 16px; }
+    .metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px; }
+    .metric { background:#11100e; border:1px solid var(--rule); border-radius:8px; padding:16px; }
+    .metric strong { display:block; font-size:34px; line-height:1; margin-top:8px; font-variant-numeric:tabular-nums; }
+    .assumptions { color:var(--loss); font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; margin-top:6px; }
+    .panel { padding:20px; margin:18px 0 34px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .item { background:#11100e; border-radius:8px; padding:14px; }
+    .item strong { display:block; margin-bottom:6px; }
+    .muted { color:#b8b0a2; }
+    .error { display:none; padding:70px 0; }
+    @media (max-width:720px) { .metrics, .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a class="logo" href="/">Aspire<span aria-hidden="true">Δ</span></a>
+      <a href="/manifesto">Manifesto</a>
+    </nav>
+    <section class="error" id="errorState">
+      <h1>Scenario not found.</h1>
+      <p class="muted">This share link may have been revoked.</p>
+      <p><a class="pill" href="/simulator/">Open the Simulator</a></p>
+    </section>
+    <main id="shareView" hidden>
+      <div class="banner">
+        <div>
+          <strong>You're viewing someone's scenario.</strong>
+          <div class="muted">This scenario was shared anonymously.</div>
+        </div>
+        <button class="pill" type="button" id="startButton">Make it your starting point →</button>
+      </div>
+      <section class="hero">
+        <div class="label">Shared scenario</div>
+        <h1 id="scenarioName">Untitled scenario</h1>
+        <div class="metrics">
+          <div class="metric">
+            <div class="label">Aspire Rate</div>
+            <strong id="aspireRate">—</strong>
+            <div class="assumptions">AT THESE ASSUMPTIONS</div>
+          </div>
+          <div class="metric"><div class="label">Aspire Gap</div><strong id="aspireGap">—</strong></div>
+          <div class="metric"><div class="label">Horizon</div><strong id="horizon">—</strong></div>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="label">Basket components</div>
+        <div class="grid" id="goals"></div>
+      </section>
+      <section class="panel">
+        <div class="label">Resources</div>
+        <div class="grid" id="holdings"></div>
+      </section>
+    </main>
+  </div>
+  <script type="module">
+    import { encodeFallbackToken, fromPersisted } from "/lib/schema.js";
+    import { project } from "/lib/aspire.js";
+    import { money, pct } from "/lib/format.js";
+
+    const id = new URLSearchParams(location.search).get("id") || location.pathname.split("/").filter(Boolean).pop();
+    const res = await fetch(`/api/scenario?share=${encodeURIComponent(id || "")}`);
+    if (!res.ok) {
+      document.getElementById("errorState").style.display = "block";
+    } else {
+      const payload = await res.json();
+      const scenario = fromPersisted(payload);
+      const metrics = project(scenario.basket.goals, scenario.basket.holdings);
+      document.getElementById("shareView").hidden = false;
+      document.getElementById("scenarioName").textContent = payload.name || "Untitled scenario";
+      document.getElementById("aspireRate").textContent = pct(metrics.costRate);
+      document.getElementById("aspireGap").textContent = `${metrics.gap >= 0 ? "+" : "−"}${Math.abs(metrics.gap).toFixed(1)} pts`;
+      document.getElementById("horizon").textContent = `${Math.round(metrics.horizon)} yr`;
+      document.getElementById("goals").innerHTML = scenario.basket.goals.map(goal => `
+        <article class="item"><strong>${escapeHtml(goal.label)}</strong><span>${money(goal.amount)} today · ${Math.round(goal.horizon)} yr · ${pct(goal.growth)}</span></article>
+      `).join("");
+      document.getElementById("holdings").innerHTML = scenario.basket.holdings.map(asset => `
+        <article class="item"><strong>${escapeHtml(asset.label)}</strong><span>${money(asset.amount)} · ${money(asset.monthly)}/mo · ${pct(asset.growth)}</span></article>
+      `).join("");
+      document.getElementById("startButton").addEventListener("click", () => {
+        location.href = `/simulator/?s=${encodeFallbackToken(scenario)}`;
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[char]));
+    }
+  </script>
+</body>
+</html>
