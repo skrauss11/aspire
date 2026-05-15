@@ -8,10 +8,11 @@ _Last updated: 2026-05-15 ET_
 
 ## Currently in flight
 
-- **Codex — `codex/simulator-v1`** — Sprint 3 Simulator refactor: rebuild `/simulator` around saved calculator baseline hydration, sticky rate/gap header with non-removable `AT THESE ASSUMPTIONS`, live comparison levers, trajectory chart, observation panel, and saved-scenario affordances. Scope: `simulator/index.html`, `lib/simulator/` modules if needed, `netlify/functions/scenario.js` only if hydration/save contracts require it.
+_None._
 
 ## Recently shipped
 
+- 2026-05-15 — **Codex** — PR #11 (`aspire`): Sprint 3 Simulator v1 refactor. Rebuilt `/simulator` around saved calculator baseline hydration, sticky rate/gap header with non-removable `AT THESE ASSUMPTIONS`, live comparison levers, trajectory chart, comparison patterns, save modal, and a compliance-safe Shape of Your Gap observation panel.
 - 2026-05-15 — **Codex** — PR #9 (`aspire`): Sprint 2 Calculator v2 refactor. Rebuilt `/` around the canonical 7-input Calculator, reveal panel with non-removable "AT THESE ASSUMPTIONS" pairing, email gate, encrypted `/api/score` handoff, compliance label corrections, server-authoritative score metrics, and Agent Lab/Hermes instruction sync.
 - 2026-05-15 — **Codex** — PR #8 (`aspire`): encrypted scenario persistence foundation. Added Supabase-backed private scenario storage, encrypted calculator state fields, schema/migration support, RLS tests, and `/api/scenario` hydration groundwork.
 - 2026-05-14 — **Claude** — PR #7 (`aspire`): "Methodology + explainer: lock all Family-basket sources via multi-agent audit" — canon update to `content/methodology/index.mdx` §3–4 and `content/explainers/savings-account-losing-points.mdx` against the locked basket ([audit thread](../aspire-gtm/70_AGENT_LAB/threads/2026-05-13-basket-component-source-audit.md)): Housing 6.48% (Case-Shiller `CSUSHPINSA`), S&P 500 13.14% (`SPXTR` total return, labeled "equity-linked aspiration"), Childcare 4.83% (BLS `CUUR0000SEEB03`), K–12 3.94% (BLS `CUUR0000SEEB02`), Healthcare 2.44% (BLS `CUUR0000SAM`); Family-basket aggregate 7.03%; HYSA reframed as illustrative 4% with FDIC context (national savings rate 0.38%, rate cap 4.39%).
