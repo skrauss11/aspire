@@ -123,6 +123,7 @@ When the user switches to `Target`, the sticky-header label changes to `TARGET A
   - **Aspire Gap** — Inter 600 28px tabular, color is `--loss` if negative (typical case — user is behind), `--gain` if positive (rare — user is ahead). Format: signed (`−3.6 pts` / `+1.2 pts`). Sign: positive = ahead, negative = behind.
   - **vs. Current** — Inter 600 24px tabular, color is `--gain` if the user has made progress (i.e., the gap moved up — closer to zero or further into positive territory) or `--loss` if the gap moved down (further into negative). Format: signed (`+2.4 closed` / `−1.1 widened`). This is the single most important number on the page — it tells the user whether their tinkering is helping.
 - Each number has a small caps Inter 12px label underneath (tracking 0.08em).
+- **Goal coverage (fourth metric, conditional — added 2026-05-16 per §11 Conflict 21 reversal).** Renders only when ≥1 priced goal exists (the default state for any user arriving from the Calculator). Definition: `min(1, projected_portfolio_at_target_year / total_future_cost_at_target_year)`; with multiple goals at different years, weight by future value. Display: `94%` (or `100%` when ≥1.0). Color: `--gain` tint when ≥100%, `--loss` tint when <70%, neutral cream in between. Carries the `AT THESE ASSUMPTIONS` pairing per `COMPLIANCE.md`. Tooltip: *"Your projected portfolio at the goal's target year, divided by the goal's inflated cost. At these assumptions."* When this metric renders, the sticky header grid becomes four columns on desktop; tablet/mobile stack per existing breakpoints in `simulator/index.html` line 122.
 - View toggle:
   - `View: Required ▾` / `View: Target ▾` — small dropdown/button below the scenario name. Default: Required.
   - When opened, shows: a radio toggle (Required / Target) and, for Target, a numerical margin input (default 1.0%, range 0.0%–5.0%, step 0.1%).
@@ -140,14 +141,15 @@ When the user switches to `Target`, the sticky-header label changes to `TARGET A
 
 ## 5. The lever stack
 
-Six levers in the left rail (desktop) or vertical stack (mobile), in this fixed order:
+Seven levers in the left rail (desktop) or vertical stack (mobile), in this fixed order (**Lever 5 — Goals** added 2026-05-16 per `_DRIFT_REPORT_2026-05-11.md` §11 Conflict 21; design ancestor V3.1 build spec at `aspire-gtm/20_PRODUCT_ENGINE/SITE_V3.1_REVIEW/07_V3.1_BUILD_SPEC_PHASE_1.md`):
 
 1. Savings rate
 2. Allocation mix
 3. Timeline
 4. Target basket
-5. Geography
-6. Configurable CAGR
+5. Goals
+6. Geography
+7. Configurable CAGR
 
 Each lever sits in its own card on `--surface-elevated`, 16px padding, 12px gap between cards.
 
@@ -187,7 +189,7 @@ The user's portfolio split across the four buckets from the Calculator.
 - Beneath the bar: 4 numerical inputs (one per bucket), each with its assumed return shown in muted gray underneath:
   > *"Cash 25% — assumed 4.0%"*
 - Auto-balance: when one input changes, the others adjust proportionally to maintain 100%. Small lock icon next to each — clicking locks that bucket so the others bear all adjustments.
-- Each bucket's assumed return is editable via Lever 6 (Configurable CAGR), not here.
+- Each bucket's assumed return is editable via Lever 7 (Configurable CAGR), not here.
 
 ### Lever 3 — Timeline
 
@@ -210,7 +212,86 @@ Which preset basket the user is pricing.
 - Changing the basket fully resets the component weights to the new preset's defaults.
 - Adding new components (e.g., "add private K-12 tuition") is **not** in v1. Component set is fixed; only weights are editable.
 
-### Lever 5 — Geography
+### Lever 5 — Goals
+
+_Added 2026-05-16. The Calculator's priced goal (Input A4) arrives as the first row. The lever lets the user edit it, delete it, or append additional priced goals. The Aspire Rate without a priced Goal is a number without an anchor — see `10_CANONICAL/Vocabulary.md` for the canonical `Goal` definition._
+
+The list of priced goals the user is pricing. Each goal has a name, an amount in today's dollars, a target year, and an inflation vector that determines how the amount inflates to its future value.
+
+**Populated state (the default — every user arriving from the Calculator has at least one priced goal):**
+
+```
+GOALS                          Δ +1.2 closed
+
+  A home
+  $420,000 today · 7 yr · housing       [⋯][×]
+  NAR median existing-home price — edit to yours
+
+  Wedding
+  $80,000 today · 2 yr · CPI            [⋯][×]
+
+  [ + Add a goal ]
+
+  Total future cost: $2.10M at these assumptions
+
+  current: 1 goal priced
+```
+
+Seeded rows display the italic source-label helper. User-edited and user-added rows omit it. On first edit of a seeded row, the helper drops and the row converts to user-owned (the row's `seeded` flag flips to `false` in the persisted schema).
+
+**Empty state** (renders only after every priced goal has been deleted; in practice rare because the Calculator always submits one):
+
+```
+GOALS                              0.0 unchanged
+
+  No priced goals.
+  The basket above shapes how costs grow.
+  A goal turns that shape into a number.
+
+  [ + Add a goal ]
+```
+
+**Add-a-goal form** — inline on desktop, bottom sheet on mobile per `creative-direction.md` §7:
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| Name | text, ≤40 chars | yes | placeholder: *"e.g. Home in Brooklyn"* |
+| Amount in today's dollars | $ number, comma separators | yes | range $1k–$50M; reject negative |
+| Years out | integer | yes | range 1–40; capped by Timeline lever |
+| Inflation vector | dropdown | yes | Options: `Housing (geography CAGR)`, `Equity-linked`, `CPI`, `Healthcare`, `Childcare`, `Private K-12`, `Custom %` |
+| Custom CAGR | % number | only if `Custom %` selected | range -5% to 25% |
+
+`[⋯]` opens the same form prefilled for edit. `[×]` deletes with a 250ms collapse, no modal.
+
+**Basket-chip switch behavior** (mirrors Calculator Input A4): if the user changes the Target Basket lever and the Calculator-seeded goal is still in its seeded state, reseed amount, years out, and inflation vector to match the new basket. If the user has edited the row, keep their edit. Same rule as the Calculator's chip-switch behavior.
+
+**Math:**
+
+- Each goal: `future_value = amount × (1 + cagr)^years_out` where `cagr` is the resolved rate for the chosen inflation vector (housing resolves through Geography lever).
+- "Total future cost" line at lever bottom = `Σ future_value` across all goals — paired with *"at these assumptions"*, non-removable.
+- "Required CAGR for this goal" is computed for use in the §8 observation panel only; never surfaced as a primary metric (reads too easily as a recommendation).
+
+**Schema:** `scenario.basket.goals[]` already supports priced goals. One additive field — `seeded: boolean` — tells the lever whether to render the source-label helper. Round-trips through `toPersisted` / `fromPersisted` without schema migration.
+
+**Seeded values (Hermes-grounded 2026-05-15, full thread at `aspire-gtm/70_AGENT_LAB/threads/2026-05-15-goals-seed-defaults-grounding.md`):**
+
+| Calculator chip → Simulator first row | Amount | Years out | Source-label copy |
+|---|---:|---:|---|
+| A home | **$420,000** | matches Timeline lever | *NAR median existing-home price — edit to yours* |
+| A family | **$330,000** | 18 | *USDA estimate, CPI-inflated — edit to yours* |
+| Freedom | **$2,000,000** | matches Timeline lever | *25× BLS average spending — edit to yours* |
+
+Sources: NAR Existing-Home Sales Apr 2026 release ($417,700, rounded). USDA *Expenditures on Children by Families, 2015* baseline $233,610 × BLS CPI-U All Items NSA 2015→Apr 2026 (237.017 → 333.020) = $328,233, rounded. BLS Consumer Expenditure Survey 2024 average annual expenditures $78,535 × 25 per 4% rule (Bengen 1994 / Trinity 1998) = $1,963,375, rounded.
+
+**Compliance:**
+
+- "Total future cost" line is paired with *"at these assumptions"* — non-removable.
+- Per-row hover tooltip showing inflated future value carries the same pairing.
+- Source-label italics on seeded rows serve as implicit pairing for the seeded numbers.
+- Banned patterns: *"You can afford…"*, *"You'll have enough"*, *"Recommended price"*, *"Locked in"*. Existing pattern *"You reach your goal at year N"* on the chart's crossover marker is allowed (descriptive of the line, not a promise).
+- Run `npm run check:compliance` before merging.
+
+### Lever 6 — Geography
 
 The metro/zip used for housing CAGR.
 
@@ -219,7 +300,7 @@ The metro/zip used for housing CAGR.
 - Resolved metro shown beneath the input in muted gray italic: *"Resolved: Austin–Round Rock MSA — 5-yr CAGR 9.2%"*.
 - A small "Compare to..." secondary action opens a side-by-side metro picker (this is the lever that powers the *"Move to a cheaper city"* preset).
 
-### Lever 6 — Configurable CAGR
+### Lever 7 — Configurable CAGR
 
 Per-asset-class expected return overrides. The data-dense lever.
 
@@ -263,7 +344,7 @@ The center-right of the workspace. The single most-watched element after the sti
 A line chart over the timeline (x-axis: years from today, scaled to the Timeline lever value). Two lines:
 
 1. **"What you're building"** — projected portfolio value over time, given current assets, savings rate, and allocation mix.
-2. **"What you need"** — projected cost of the basket over time, given basket components and their CAGRs.
+2. **"What you need"** — projected cost of the priced goals over time. Per the 2026-05-16 amendment (§11 Conflict 21 reversal), this is rendered as a **step function**: it jumps up at each priced goal's target year by that goal's inflated future value, and between goal years it grows at the relevant inflation vector's CAGR. Goals are the priced rows in Lever 5 (Goals).
 
 The area between the two lines is shaded:
 - `--loss` (semi-transparent ~15%) when "What you need" > "What you're building" — the typical case.
@@ -271,7 +352,8 @@ The area between the two lines is shaded:
 
 ### Annotations
 
-- **Crossover point:** if "What you're building" overtakes "What you need" within the timeline, mark the year with a small terracotta Δ marker and a label: *"You reach your goal at year 23"*. This is the most rewarding visual moment in the product.
+- **Crossover point:** if "What you're building" overtakes "What you need" within the timeline, mark the year with a small terracotta Δ marker. Label varies by goal count (per 2026-05-16 amendment): single priced goal → *"Clears {goal name} at year {N} at these assumptions"*; multiple priced goals → *"Clears all priced goals at year {N} at these assumptions"*. The legacy single-goal phrasing *"You reach your goal at year 23"* is replaced. This is the most rewarding visual moment in the product.
+- **Goal-year ticks (added 2026-05-16):** at each priced goal's target year, render a small x-axis tick with the goal name (Inter 500 11px muted, truncated to 14 chars + ellipsis). Hover tooltip: *"{goal name} — ${future_value} in {N} yr at these assumptions"*. Goals are sourced from Lever 5.
 - **Endpoint values:** the dollar value at the end of the timeline for both lines, shown as right-edge annotations.
 - **Today (year 0):** small marker on the y-axis with the user's current asset value.
 
@@ -327,6 +409,7 @@ The cards are generated from the user's data via a pure function — **no LLM, n
 | Low money growth | Computed money growth < 5% | *"Your money is growing at {X.X}% — close to the cash-only baseline of 4.0%."* | → Move the Allocation lever |
 | Big gap | Gap < −15 pts | *"Your gap is {X} pts. At these assumptions, no single lever closes it alone — moving several together is the realistic path to explore."* | (No pointer — this card stands alone as compassionate framing) |
 | User is ahead | Gap > 0 | *"At these assumptions, you're ahead by {X.X} pts. Markets and rates move quarterly — worth checking back."* | → See the Configurable CAGR lever (test stress assumptions) |
+| Goal short _(added 2026-05-16 per §11 Conflict 21)_ | ≥1 priced goal AND projected_portfolio < goal_future_value at goal's target year | *"At your target year, your projected portfolio covers {X}% of {goal name} at these assumptions. The shortfall is ${Y}."* | (No pointer — descriptive; the levers above are where the user moves. Do **not** add a "Goal cleared" celebration card — preserves the editorial-not-promissory posture; the chart's crossover Δ marker is sufficient.) |
 
 Each template has 2–3 copy variants so the panel doesn't feel templated. Variants live in `aspire/lib/simulator/observations.js`.
 
