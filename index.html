@@ -64,6 +64,12 @@
     .range-wrap { display:grid; grid-template-columns:minmax(0,1fr) 76px; gap:12px; align-items:center; }
     input[type="range"] { width:100%; accent-color:var(--accent); }
     .range-value { min-height:48px; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule); border-radius:8px; background:rgba(255,255,255,.28); font-weight:800; font-variant-numeric:tabular-nums; }
+    .priced-goal { margin-top:18px; border-top:1px solid var(--rule); padding-top:18px; }
+    .priced-goal-row { display:grid; grid-template-columns:auto minmax(220px, 1fr) auto 110px auto; gap:10px; align-items:start; }
+    .priced-goal-label, .priced-goal-join, .priced-goal-unit { min-height:48px; display:flex; align-items:center; color:var(--muted); font-size:14px; font-weight:800; }
+    .priced-goal-label { color:var(--ink); }
+    .priced-goal .field input { font-variant-numeric:tabular-nums; }
+    .source-helper[hidden] { display:none; }
     .allocation-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
     .allocation input { text-align:right; font-variant-numeric:tabular-nums; }
     .allocation small { display:block; min-height:32px; margin-top:6px; color:var(--muted); font-size:11px; line-height:1.3; }
@@ -115,6 +121,8 @@
       .step-grid, .reveal-inner { grid-template-columns:1fr; }
       .control-grid, .control-grid.life-controls, .control-grid.two, .allocation-grid { grid-template-columns:1fr; }
       .chip-row { grid-template-columns:1fr; }
+      .priced-goal-row { grid-template-columns:1fr; gap:8px; }
+      .priced-goal-label, .priced-goal-join, .priced-goal-unit { min-height:0; }
       .gate-form { grid-template-columns:1fr; }
       .nav-links a:not(.nav-cta) { display:none; }
       .driver-row { grid-template-columns:1fr 1fr 52px; }
@@ -157,27 +165,46 @@
           <p class="step-kicker">STEP 1 — THE LIFE YOU WANT</p>
           <h2 class="step-title">What basket are you pricing?</h2>
         </div>
-        <div class="control-grid life-controls">
-          <div class="field">
-            <label>Life</label>
-            <div class="chip-row" id="lifeChips">
-              <button class="life-chip" type="button" data-life="home">A home<span>A house in your zip, plus a normal life around it.</span></button>
-              <button class="life-chip" type="button" data-life="family">A family<span>Kids, school, healthcare, and the house to fit them.</span></button>
-              <button class="life-chip" type="button" data-life="freedom">Freedom<span>Stop working when you want to, in the zip you want to.</span></button>
+        <div>
+          <div class="control-grid life-controls">
+            <div class="field">
+              <label>Life</label>
+              <div class="chip-row" id="lifeChips">
+                <button class="life-chip" type="button" data-life="home">A home<span>A house in your zip, plus a normal life around it.</span></button>
+                <button class="life-chip" type="button" data-life="family">A family<span>Kids, school, healthcare, and the house to fit them.</span></button>
+                <button class="life-chip" type="button" data-life="freedom">Freedom<span>Stop working when you want to, in the zip you want to.</span></button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="geography">Where?</label>
+              <input id="geography" autocomplete="postal-code" placeholder="Zip code or metro">
+              <p class="helper" id="geoHelper">Using national average — enter a US zip for local data.</p>
+            </div>
+            <div class="field">
+              <label for="timeline">When?</label>
+              <div class="range-wrap">
+                <input id="timeline" type="range" min="5" max="30" step="1" value="10">
+                <div class="range-value"><span id="timelineValue">10</span>&nbsp;years</div>
+              </div>
+              <p class="helper">Used in the Simulator to project your trajectory. Doesn't change today's number.</p>
             </div>
           </div>
-          <div class="field">
-            <label for="geography">Where?</label>
-            <input id="geography" autocomplete="postal-code" placeholder="Zip code or metro">
-            <p class="helper" id="geoHelper">Using national average — enter a US zip for local data.</p>
-          </div>
-          <div class="field">
-            <label for="timeline">When?</label>
-            <div class="range-wrap">
-              <input id="timeline" type="range" min="5" max="30" step="1" value="10">
-              <div class="range-value"><span id="timelineValue">10</span>&nbsp;years</div>
+          <div class="priced-goal" aria-label="Priced goal">
+            <div class="priced-goal-row">
+              <div class="priced-goal-label">I'm aiming at:</div>
+              <div class="field">
+                <label for="pricedGoalAmount">Amount</label>
+                <input id="pricedGoalAmount" inputmode="numeric" placeholder="$0">
+                <p class="helper source-helper" id="pricedGoalSource"><em></em></p>
+              </div>
+              <div class="priced-goal-join">in</div>
+              <div class="field">
+                <label for="pricedGoalYears">When</label>
+                <input id="pricedGoalYears" inputmode="numeric">
+              </div>
+              <div class="priced-goal-unit">years</div>
             </div>
-            <p class="helper">Used in the Simulator to project your trajectory. Doesn't change today's number.</p>
+            <p class="helper">One goal sets the headline. You'll add the rest in the Simulator.</p>
           </div>
         </div>
       </div>
@@ -257,8 +284,8 @@
 
     <section class="gate" id="gate">
       <div class="wrap">
-        <h2>Explore your gap</h2>
-        <p>The Simulator lets you measure how your gap responds to different assumptions — savings rate, allocation, timeline, geography — at these assumptions.</p>
+        <h2>Open the Simulator</h2>
+        <p>Open the Simulator to add goals, tune assumptions, and run scenarios.</p>
         <form class="gate-form" id="gateForm">
           <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required>
           <button type="submit">Open the Simulator</button>
@@ -291,6 +318,14 @@
     const PRESETS = {
       home: {
         label: "A home",
+        primaryInflationKey: "home",
+        goal: {
+          label: "A home",
+          amount: 420000,
+          yearsMode: "timeline",
+          defaultYears: 10,
+          source: "NAR median existing-home price — edit to yours"
+        },
         components: [
           { key: "home", label: "Housing", weight: .5 },
           { key: "sp500", label: "S&P 500 Total Return", weight: .25 },
@@ -300,6 +335,14 @@
       },
       family: {
         label: "A family",
+        primaryInflationKey: "cpi",
+        goal: {
+          label: "Raise a child to 18",
+          amount: 330000,
+          yearsMode: "fixed",
+          defaultYears: 18,
+          source: "USDA estimate, CPI-inflated — edit to yours"
+        },
         components: [
           { key: "home", label: "Housing", weight: .3 },
           { key: "sp500", label: "S&P 500 Total Return", weight: .25 },
@@ -310,6 +353,14 @@
       },
       freedom: {
         label: "Freedom",
+        primaryInflationKey: "sp500",
+        goal: {
+          label: "Financial freedom",
+          amount: 2000000,
+          yearsMode: "timeline",
+          defaultYears: 25,
+          source: "25× BLS average spending — edit to yours"
+        },
         components: [
           { key: "sp500", label: "S&P 500 Total Return", weight: .35 },
           { key: "home", label: "Housing", weight: .3 },
@@ -324,6 +375,9 @@
       geoHelper: document.getElementById("geoHelper"),
       timeline: document.getElementById("timeline"),
       timelineValue: document.getElementById("timelineValue"),
+      pricedGoalAmount: document.getElementById("pricedGoalAmount"),
+      pricedGoalYears: document.getElementById("pricedGoalYears"),
+      pricedGoalSource: document.getElementById("pricedGoalSource"),
       totalAssets: document.getElementById("totalAssets"),
       monthlyContribution: document.getElementById("monthlyContribution"),
       cashPct: document.getElementById("cashPct"),
@@ -347,6 +401,7 @@
     let selectedLife = FALLBACK_LIFE;
     let lastResult = null;
     let shouldPersistState = false;
+    let pricedGoalState = { amountSeeded: true, yearsSeeded: true, amountSourceVisible: true };
 
     await loadRates();
     rateMap = await ratesByKey();
@@ -357,7 +412,17 @@
     document.addEventListener("input", event => {
       if (event.target.matches("input")) {
         shouldPersistState = true;
-        if (["totalAssets", "monthlyContribution"].includes(event.target.id)) formatMoneyInput(event.target);
+        if (event.target === els.pricedGoalAmount) {
+          pricedGoalState.amountSeeded = false;
+          pricedGoalState.amountSourceVisible = false;
+          formatMoneyInput(event.target);
+        } else if (event.target === els.pricedGoalYears) {
+          pricedGoalState.yearsSeeded = false;
+        } else if (event.target === els.timeline) {
+          syncBoundGoalYears();
+        } else if (["totalAssets", "monthlyContribution"].includes(event.target.id)) {
+          formatMoneyInput(event.target);
+        }
         recompute();
       }
     });
@@ -365,7 +430,7 @@
       const chip = event.target.closest("[data-life]");
       if (!chip) return;
       shouldPersistState = true;
-      selectedLife = chip.dataset.life;
+      selectLife(chip.dataset.life);
       recompute();
     });
     els.openGate.addEventListener("click", () => {
@@ -383,6 +448,8 @@
       selectedLife = FALLBACK_LIFE;
       els.geography.value = "";
       els.timeline.value = "10";
+      pricedGoalState = { amountSeeded: true, yearsSeeded: true, amountSourceVisible: true };
+      applyGoalSeed(selectedLife, { updateTimeline: false });
       els.totalAssets.value = "";
       els.monthlyContribution.value = "";
       els.cashPct.value = "25";
@@ -401,15 +468,17 @@
       const monthlyContribution = parseMoney(els.monthlyContribution.value);
       const timeline = Number(els.timeline.value) || 10;
       const components = componentsForLife(selectedLife);
-      const aspireRate = weightedComponentRate(components);
+      const pricedGoal = readPricedGoal();
+      const aspireRate = pricedGoal.growth;
       const moneyRate = weightedMoneyRate(allocation);
       const gap = moneyRate - aspireRate;
-      const valid = Boolean(selectedLife && totalAssets > 0 && Math.round(allocationTotal) === 100);
-      lastResult = { allocation, allocationTotal, totalAssets, monthlyContribution, timeline, components, aspireRate, moneyRate, gap, valid };
+      const valid = Boolean(selectedLife && totalAssets > 0 && Math.round(allocationTotal) === 100 && pricedGoal.valid);
+      lastResult = { allocation, allocationTotal, totalAssets, monthlyContribution, timeline, components, pricedGoal, aspireRate, moneyRate, gap, valid };
 
       els.timelineValue.textContent = timeline;
       updateLifeChips();
       updateGeography();
+      updatePricedGoalHelper();
       updateAllocationWarning(allocationTotal);
       renderReveal(lastResult);
       persistState();
@@ -420,10 +489,6 @@
         ...component,
         rate: rateForKey(rateMap, component.key, "trailing")
       }));
-    }
-
-    function weightedComponentRate(components) {
-      return components.reduce((sum, component) => sum + component.weight * component.rate, 0);
     }
 
     function weightedMoneyRate(allocation) {
@@ -463,9 +528,18 @@
         if (Math.round(result.allocationTotal) !== 100) return `Allocations should add up to 100%. Currently ${result.allocationTotal.toFixed(0)}%.`;
         return "Choose a basket and enter your assets to see your Aspire Rate and Aspire Gap.";
       }
-      if (Math.abs(result.gap) < .05) return "At these assumptions, your money is keeping pace with the life you're building.";
-      if (result.gap > 0) return `At these assumptions, your money is growing at ~${result.moneyRate.toFixed(1)}% — outpacing the life you're building by ${Math.abs(result.gap).toFixed(1)} points a year. Watch the rates change every quarter.`;
-      return `At these assumptions, your money is growing at ~${result.moneyRate.toFixed(1)}%. You're ${Math.abs(result.gap).toFixed(1)} points behind the rate the life you want requires.`;
+      const goal = result.pricedGoal;
+      if (!goal) {
+        console.error("Missing priced goal for Calculator reveal", result);
+        const points = Math.abs(result.gap).toFixed(1);
+        return `At these assumptions, your money is growing at ~${result.moneyRate.toFixed(1)}%. You're ${points} points behind the rate the life you're pricing requires.`;
+      }
+      const goalPhrase = goalLabelPhrase(goal.label);
+      const horizonClause = suppressHorizonClause(goal.label) ? "" : ` in ${goal.horizon} years`;
+      const futureCost = formatFutureCost(goal.amount * Math.pow(1 + goal.growth / 100, goal.horizon));
+      if (Math.abs(result.gap) < .05) return `At these assumptions, ${goalPhrase} will cost ~${futureCost}${horizonClause}. Your money is growing at exactly the rate that gets you there.`;
+      if (result.gap > 0) return `At these assumptions, ${goalPhrase} will cost ~${futureCost}${horizonClause}. Your money is growing at ~${result.moneyRate.toFixed(1)}% — outpacing that by ${Math.abs(result.gap).toFixed(1)} points a year. Watch the rates change every quarter.`;
+      return `At these assumptions, ${goalPhrase} will cost ~${futureCost}${horizonClause}. Your money is growing at ~${result.moneyRate.toFixed(1)}% — about ${Math.abs(result.gap).toFixed(1)} points behind the rate that gets you there.`;
     }
 
     async function submitEmail(event) {
@@ -501,20 +575,23 @@
     }
 
     function buildBasket() {
+      const priced = readPricedGoal();
       const amountBase = Math.max(lastResult.totalAssets, 1);
       const monthly = lastResult.monthlyContribution;
       return {
         lifeChip: selectedLife,
         geography: els.geography.value.trim() || "US national",
-        goals: lastResult.components.map(component => ({
+        goals: [{
+          id: "goal-priced",
           goalType: PRESETS[selectedLife].label,
           goalMode: "life",
-          label: component.label,
-          amount: Math.round(amountBase * component.weight),
-          horizon: lastResult.timeline,
-          asset: component.key,
-          growth: component.rate
-        })),
+          label: priced.label,
+          amount: priced.amount,
+          horizon: priced.horizon,
+          asset: priced.asset,
+          growth: priced.growth,
+          seeded: priced.seeded
+        }],
         holdings: [
           holding("Cash & savings", "cash", lastResult.allocation.cash, CASH_RATE, amountBase, monthly),
           holding("Stocks & index funds", "sp500", lastResult.allocation.stocks, rateForKey(rateMap, "sp500", "trailing"), amountBase, monthly),
@@ -554,6 +631,65 @@
       };
     }
 
+    function selectLife(life) {
+      const shouldReseed = pricedGoalState.amountSeeded && pricedGoalState.yearsSeeded;
+      selectedLife = life;
+      if (shouldReseed) applyGoalSeed(life, { updateTimeline: true });
+    }
+
+    function applyGoalSeed(life, options = {}) {
+      const seed = goalSeedFor(life);
+      if (options.updateTimeline && seed.yearsMode === "timeline") els.timeline.value = String(seed.defaultYears);
+      els.pricedGoalAmount.value = formatMoney(seed.amount);
+      els.pricedGoalYears.value = String(seed.yearsMode === "fixed" ? seed.defaultYears : (Number(els.timeline.value) || seed.defaultYears));
+      pricedGoalState = { amountSeeded: true, yearsSeeded: true, amountSourceVisible: true };
+    }
+
+    function syncBoundGoalYears() {
+      const seed = goalSeedFor(selectedLife);
+      if (seed.yearsMode === "timeline" && pricedGoalState.yearsSeeded) {
+        els.pricedGoalYears.value = String(Number(els.timeline.value) || seed.defaultYears);
+      }
+    }
+
+    function readPricedGoal() {
+      const preset = PRESETS[selectedLife] || PRESETS[FALLBACK_LIFE];
+      const seed = goalSeedFor(selectedLife);
+      const rawAmount = parseMoney(els.pricedGoalAmount.value);
+      const rawHorizon = Number(String(els.pricedGoalYears.value || "").replace(/[^\d.]/g, "")) || 0;
+      const amount = Math.min(50000000, Math.max(0, rawAmount));
+      const horizon = Math.min(40, Math.max(0, Math.round(rawHorizon)));
+      const asset = preset.primaryInflationKey;
+      return {
+        label: seed.label,
+        amount,
+        horizon,
+        asset,
+        growth: rateForKey(rateMap, asset, "trailing"),
+        seeded: pricedGoalState.amountSeeded && pricedGoalState.yearsSeeded,
+        valid: rawAmount >= 1000 && rawAmount <= 50000000 && rawHorizon >= 1 && rawHorizon <= 40
+      };
+    }
+
+    function updatePricedGoalHelper() {
+      const source = goalSeedFor(selectedLife).source;
+      els.pricedGoalSource.querySelector("em").textContent = source;
+      els.pricedGoalSource.hidden = !pricedGoalState.amountSourceVisible;
+    }
+
+    function goalSeedFor(life) {
+      return (PRESETS[life] || PRESETS[FALLBACK_LIFE]).goal;
+    }
+
+    function goalLabelPhrase(label = "") {
+      if (label === "Raise a child to 18") return "raising a child to 18";
+      return String(label || "the life you're pricing").replace(/^./, char => char.toLowerCase());
+    }
+
+    function suppressHorizonClause(label = "") {
+      return label === "Raise a child to 18";
+    }
+
     function readPct(input) {
       return Math.max(0, Number(String(input.value).replace(/[^\d.]/g, "")) || 0);
     }
@@ -582,6 +718,11 @@
         selectedLife,
         geography: els.geography.value,
         timeline: els.timeline.value,
+        pricedGoal: {
+          amount: els.pricedGoalAmount.value,
+          years: els.pricedGoalYears.value,
+          ...pricedGoalState
+        },
         totalAssets: els.totalAssets.value,
         monthlyContribution: els.monthlyContribution.value,
         allocation: readAllocation()
@@ -594,6 +735,7 @@
       const saved = localStorage.getItem(STORAGE_KEY);
       if (!saved) {
         selectedLife = FALLBACK_LIFE;
+        applyGoalSeed(selectedLife, { updateTimeline: false });
         return;
       }
       try {
@@ -601,6 +743,17 @@
         selectedLife = state.selectedLife || FALLBACK_LIFE;
         els.geography.value = state.geography || "";
         els.timeline.value = state.timeline || "10";
+        if (state.pricedGoal) {
+          els.pricedGoalAmount.value = state.pricedGoal.amount || "";
+          els.pricedGoalYears.value = state.pricedGoal.years || "";
+          pricedGoalState = {
+            amountSeeded: state.pricedGoal.amountSeeded !== false,
+            yearsSeeded: state.pricedGoal.yearsSeeded !== false,
+            amountSourceVisible: state.pricedGoal.amountSourceVisible !== false
+          };
+        } else {
+          applyGoalSeed(selectedLife, { updateTimeline: false });
+        }
         els.totalAssets.value = state.totalAssets || "";
         els.monthlyContribution.value = state.monthlyContribution || "";
         els.cashPct.value = state.allocation?.cash ?? "25";
@@ -612,6 +765,7 @@
       } catch {
         localStorage.removeItem(STORAGE_KEY);
         selectedLife = FALLBACK_LIFE;
+        applyGoalSeed(selectedLife, { updateTimeline: false });
       }
     }
 
@@ -621,7 +775,18 @@
 
     function formatMoneyInput(input) {
       const raw = parseMoney(input.value);
-      input.value = raw ? `$${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(raw)}` : "";
+      input.value = raw ? formatMoney(raw) : "";
+    }
+
+    function formatMoney(value) {
+      return `$${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(Number(value) || 0)}`;
+    }
+
+    function formatFutureCost(value) {
+      const n = Number(value) || 0;
+      const abs = Math.abs(n);
+      if (abs >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
+      return formatMoney(Math.round(n));
     }
 
     function signedPts(value) {

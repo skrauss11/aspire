@@ -1,6 +1,7 @@
 {
   "type": "module",
   "scripts": {
+    "check:compliance": "bash scripts/check-compliance.sh",
     "test": "node --test",
     "test:rls": "node --test tests/rls.test.js"
   },
