@@ -7,6 +7,7 @@
 - **Aspire Rate** — the required money-growth rate to cover the priced future at the user's current assumptions. Equivalent to the 5-yr trailing CAGR of the goals basket. The *floor* — what you need to break even.
 - **Target Aspire Rate** — Aspire Rate + margin of safety (default +1%, tunable in the Simulator). The *aspirational target* — hitting it means you're ahead of the floor.
 - **Aspire Gap** — `(your money growth rate) − Aspire Rate`. **Positive = ahead, negative = behind.** Most first-time users see negative.
+- **Goal** — a priced future cost anchored to the user's life. Required fields: a name, an amount in today's dollars, a target year. Resolved field: an inflation vector (housing / equity-linked / CPI / healthcare / childcare / private K-12 / custom %) that determines how the today's-dollar amount inflates to its future value. Goals are user-editable on both the Calculator (one goal, pre-filled from basket choice) and the Simulator (Goals lever, multi-goal). The Aspire Rate without a priced Goal is a number without an anchor. Per the 2026-05-15 reversal in `_DRIFT_REPORT_2026-05-11.md` §11 Conflict 21. *"Goal"* does not collide with *"Target Aspire Rate"* — "Target" there is a rate; "Goal" here is a dollar anchor.
 - **money growth** — descriptive term for the user's portfolio expected return rate. Used in copy when explaining Aspire Gap.
 - **cost growth** — descriptive term for the basket's CAGR. Used in copy when explaining what Aspire Rate represents.
 

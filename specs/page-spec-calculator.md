@@ -81,7 +81,7 @@ That's the entire hero. No CTA buttons. The CTA is the calculator itself, immedi
 Section eyebrow: `STEP 1 — THE LIFE YOU WANT` (small caps, terracotta).
 Section heading (Fraunces 500, display-md): *"What basket are you pricing?"*
 
-Three inputs, side-by-side on desktop, stacked on mobile.
+Four inputs (per 2026-05-16 amendment — Input A4 priced goal added). Inputs A1–A3 side-by-side on desktop, stacked on mobile; Input A4 (priced goal row) sits beneath them as a full-width row.
 
 ### Input A1 — Life chip
 **Single-select pill chips:** `A home` · `A family` · `Freedom`
@@ -113,6 +113,64 @@ Slider from 5 to 30 years, default 10.
 
 Timeline doesn't affect the Aspire Rate (that's a CAGR), but it affects the projection chart users see on the next page (Simulator). Document this in copy under the slider:
 > *"Used in the Simulator to project your trajectory. Doesn't change today's number."*
+
+### Input A4 — Priced goal
+
+_Added 2026-05-16 per `_DRIFT_REPORT_2026-05-11.md` §11 Conflict 21. Reverses the May 11 implicit drop of per-goal pricing. Design ancestor: V3.1 build spec at `aspire-gtm/20_PRODUCT_ENGINE/SITE_V3.1_REVIEW/07_V3.1_BUILD_SPEC_PHASE_1.md`._
+
+A single editable dollar-amount field, pre-filled with a source-anchored median that matches the user's Life chip choice (Input A1). This is the anchor that turns the Aspire Rate from abstract math into felt pain — *"there isn't a lot of pain without a dollar shortage"* (Scott, 2026-05-15).
+
+**Anatomy:**
+
+```
+I'm aiming at:  [ $420,000 ]   in   [ 7 ] years
+                ↑ amount (editable)        ↑ years (editable; also bound to Input A3 Timeline)
+
+helper (under amount, italic, muted; drops on first user edit):
+  NAR median existing-home price — edit to yours
+
+helper (under row, regular muted):
+  One goal sets the headline. You'll add the rest in the Simulator.
+```
+
+**Field details:**
+
+| Field | Default | Range | Notes |
+|---|---|---|---|
+| Amount in today's dollars | seeded per chip (table below) | $1k – $50M; comma-separated; reject negative | Editable. On first edit the source-label helper hides; the field becomes user-owned. |
+| Years out | seeded per chip (table below) | 1–40 integer | Editable. Bound to Input A3 Timeline by default for the Home and Freedom chips; hardcoded to 18 for Family. |
+
+**Seeded defaults (sources resolved 2026-05-15 by Hermes — full thread: `aspire-gtm/70_AGENT_LAB/threads/2026-05-15-goals-seed-defaults-grounding.md`):**
+
+| Life chip | Seeded amount | Seeded years out | Source-label helper copy (italic, drops on edit) |
+|---|---:|---:|---|
+| A home | **$420,000** | matches Timeline (default 10) | *NAR median existing-home price — edit to yours* |
+| A family | **$330,000** | 18 (USDA scope: birth through age 17) | *USDA estimate, CPI-inflated — edit to yours* |
+| Freedom | **$2,000,000** | matches Timeline (default 25 for Freedom) | *25× BLS average spending — edit to yours* |
+
+Sources behind the seeds:
+
+- **Home** — NAR Existing-Home Sales, median sale price, April 2026 ($417,700 actual, rounded). Refresh: monthly.
+- **Family** — USDA *Expenditures on Children by Families, 2015* baseline ($233,610) × BLS CPI-U All Items NSA inflation 2015 (237.017) → Apr 2026 (333.020). $328,233 calculated, rounded to $330k. Refresh: monthly via CPI.
+- **Freedom** — BLS Consumer Expenditure Survey 2024 average annual expenditures ($78,535) × 25 per the 4% withdrawal-rate rule (Bengen 1994 / Trinity 1998). $1,963,375 calculated, rounded to $2.0M. Refresh: annual via BLS CE.
+
+**Behavior:**
+
+- **Chip switch:** if the amount field is still in its seeded state (user has not edited it), reseed amount and years-out to the new chip's median. If the user has edited the amount, **keep their edit** — chip switch must not silently overwrite user data.
+- **Effect on Aspire Rate computation:** the priced goal is the cost target — Aspire Rate is computed against `amount × (1 + cagr)^years_out`, not the prior `totalAssets × component.weight` derivation. The cost growth rate (`cagr`) is still the basket-weighted blend at the user's geography — basket sets the inflation vector; the priced goal sets the price.
+- **Submit / email-gate flow:** the priced goal lands in `scenario.basket.goals[0]` with a `seeded: boolean` flag indicating whether the user edited it. Persisted through the existing `/api/score` payload and `toPersisted` / `fromPersisted` flow without schema migration.
+- **Future cost display on reveal (Block C):** the post-reveal interpretation line now references the priced goal explicitly — see §6 "What the reveal contains" updates.
+
+**Compliance:**
+
+- The seeded amount is paired implicitly by the italic source-label citation (NAR / USDA / BLS). The citation serves as the "at these assumptions" pairing for a seeded number.
+- Any rendered future cost (e.g. on the Block C reveal) carries the explicit *"at these assumptions"* pairing per `COMPLIANCE.md`.
+- Banned patterns to avoid in surrounding copy: *"You can afford…"*, *"You'll have enough"*, *"Recommended price"*. Run `npm run check:compliance` before merging.
+
+**Helper copy on this input (per `copy.md` §1.1):**
+
+- Under the row: *"One goal sets the headline. You'll add the rest in the Simulator."*
+- Under the seeded amount (italic, muted): the source-label string from the table above, per chip. Drops on first user edit.
 
 ---
 
@@ -207,10 +265,13 @@ The "AT THESE ASSUMPTIONS" eyebrow under the hero number is **non-removable.** I
   - Bar color: gradient from `--gain` to `--loss` based on rate magnitude relative to the user's money growth. Or simpler: all bars `--paper` semi-transparent, with the value label in `--paper`. (Pick the simpler treatment first; reserve gradient for v2.)
   - Bar order: descending CAGR (highest at top).
   - Each bar labeled left (component name in Inter 500 14px) and right (CAGR in Inter 600 16px tabular).
-- **Interpretation line** — Inter 400 18px, `--paper` cream, max-width 480px, centered. Templated to always include "at these assumptions":
-  > *"At these assumptions, your money is growing at ~{X.X}%. You're {Y} points behind the rate the life you want requires."*
-  - If gap is positive (rare): *"At these assumptions, your money is growing at ~{X.X}% — outpacing the life you're building by {Y} points a year. Watch the rates change every quarter."*
-  - If gap is exactly 0 (rare): *"At these assumptions, your money is keeping pace with the life you're building."*
+- **Interpretation line** — Inter 400 18px, `--paper` cream, max-width 480px, centered. Templated to always include "at these assumptions" and (per 2026-05-16 amendment, §11 Conflict 21 reversal) to name the priced goal's future cost so the dollar pain lands on the first impression:
+  > *"At these assumptions, {goal label} will cost ~${future_value} in {N} years. Your money is growing at ~{X.X}% — about {Y} points behind the rate that gets you there."*
+  - If gap is positive (rare): *"At these assumptions, {goal label} will cost ~${future_value} in {N} years. Your money is growing at ~{X.X}% — outpacing that by {Y} points a year. Watch the rates change every quarter."*
+  - If gap is exactly 0 (rare): *"At these assumptions, {goal label} will cost ~${future_value} in {N} years. Your money is growing at exactly the rate that gets you there."*
+  - **Goal label** is the priced-goal `label` field, taken from Input A4 / `scenario.basket.goals[0].label`. Default values per chip: `A home` / `Raise a child to 18` / `Financial freedom`. Inserted lowercase into the sentence as a noun phrase ("a home will cost…", "raising a child to 18 will cost…", "financial freedom will cost…"). When the goal label itself implies a horizon (e.g. *"Raise a child to 18"*), Codex may suppress the `in {N} years` clause to avoid redundancy; otherwise always render it.
+  - **${future_value}** is the priced goal's inflated cost: `amount × (1 + cagr)^years_out` per Input A4 math. Round per existing money-format rules (e.g. `$994,000`, `$3.3M`). Carries the `at these assumptions` pairing already in the sentence — no second pairing needed.
+  - **Defensive fallback** — if `scenario.basket.goals[0]` is somehow absent (should not occur post-this-amendment because Input A4 always seeds a value): fall back to the legacy rate-only line *"At these assumptions, your money is growing at ~{X.X}%. You're {Y} points behind the rate the life you're pricing requires."* Treat this as a bug surface — log it.
 - **CTA button** — primary terracotta pill, label `Open the Simulator →`. Triggers the email gate.
 
 ---
@@ -224,9 +285,7 @@ The reveal does NOT fade or get covered. The user has already seen their numbers
 ```
                   Open the Simulator
 
-   The Simulator lets you model what changes — savings rate,
-   allocation, timeline, geography — and watch your gap close
-   in real time.
+   Open the Simulator to add goals, tune assumptions, and run scenarios.
 
    ┌─────────────────────────────┐  ┌──────────────────┐
    │ you@example.com             │  │ Open the Simulator │

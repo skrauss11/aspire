@@ -50,6 +50,16 @@ The Calculator, the Simulator, and `/account`. Quiet, precise, units always show
 - Unit: `years`
 - Helper: `Used in the Simulator to project your trajectory. Doesn't change today's number.`
 
+**Priced-goal row (Input A4, added 2026-05-16 per `_DRIFT_REPORT_2026-05-11.md` §11 Conflict 21):**
+- Row label: `I'm aiming at:`
+- Amount field placeholder (when not seeded): `$0`
+- Years field unit: `years`
+- Row helper (regular, under the row): `One goal sets the headline. You'll add the rest in the Simulator.`
+- Source-label helper per chip (italic, muted, drops on first user edit):
+  - When chip = `A home`: *NAR median existing-home price — edit to yours*
+  - When chip = `A family`: *USDA estimate, CPI-inflated — edit to yours*
+  - When chip = `Freedom`: *25× BLS average spending — edit to yours*
+
 ### Block B — What you're working with
 
 - Eyebrow: `STEP 2 — WHAT YOU'RE WORKING WITH`
@@ -81,18 +91,25 @@ The Calculator, the Simulator, and `/account`. Quiet, precise, units always show
 - Bar chart heading (small caps eyebrow): `WHAT'S DRIVING IT`
 - Bar chart row label format: `{Component name}` (left) / `{X.X}%` (right)
 
-**Interpretation line — three variants by case (all carry the "at these assumptions" pairing):**
+**Interpretation line — three variants by case (per 2026-05-16 amendment, now names the priced goal's future cost; all carry the "at these assumptions" pairing):**
 
-- **Negative gap (typical):** *At these assumptions, your money is growing at ~{X.X}%. You're {Y} points behind the rate the life you want requires.*
-- **Positive gap (rare):** *At these assumptions, your money is growing at ~{X.X}% — outpacing the life you're building by {Y} points a year. Watch the rates change every quarter.*
-- **Zero gap (rare):** *At these assumptions, your money is keeping pace with the life you're building.*
+- **Negative gap (typical):** *At these assumptions, {goal label} will cost ~${future_value} in {N} years. Your money is growing at ~{X.X}% — about {Y} points behind the rate that gets you there.*
+- **Positive gap (rare):** *At these assumptions, {goal label} will cost ~${future_value} in {N} years. Your money is growing at ~{X.X}% — outpacing that by {Y} points a year. Watch the rates change every quarter.*
+- **Zero gap (rare):** *At these assumptions, {goal label} will cost ~${future_value} in {N} years. Your money is growing at exactly the rate that gets you there.*
+
+**Templating notes:**
+
+- `{goal label}` = `scenario.basket.goals[0].label`, inserted lowercase as a noun phrase. Defaults per Calculator chip: `a home`, `raising a child to 18`, `financial freedom`. The first character is lowercase (sentence-internal).
+- `{future_value}` = priced goal inflated to year `N` (`amount × (1 + cagr)^years_out`). Format per existing money rules: e.g. `$994,000`, `$3.3M`.
+- `{N} years` may be suppressed when the goal label already implies a horizon (e.g. *"raising a child to 18"*). Otherwise always rendered.
+- **Defensive fallback** if `goals[0]` is absent (should not occur post-this-amendment): *At these assumptions, your money is growing at ~{X.X}%. You're {Y} points behind the rate the life you're pricing requires.* Treat as a bug surface.
 
 **Primary CTA (after reveal):** `Open the Simulator →` (or alt: `Explore your gap →`. Both avoid the "what closes the gap" framing — the Simulator is a measurement tool, not an answer engine.)
 
 ### Email gate
 
-- Heading: `Explore your gap`
-- Sub: `The Simulator lets you measure how your gap responds to different assumptions — savings rate, allocation, timeline, geography — at these assumptions.`
+- Heading: `Open the Simulator`
+- Sub (supporting line, per 2026-05-16 amendment): `Open the Simulator to add goals, tune assumptions, and run scenarios.`
 - Email input placeholder: `you@example.com`
 - Button label: `Open the Simulator`
 - Privacy line (small, muted): `We'll send you the Aspire Report. One email a week. Unsubscribe anytime.`
@@ -129,6 +146,7 @@ Each lever card has a name, a Δ-change tag (when moved), and a *current: …* r
 - `ALLOCATION MIX`
 - `TIMELINE`
 - `TARGET BASKET`
+- `GOALS` _(added 2026-05-16 per `_DRIFT_REPORT_2026-05-11.md` §11 Conflict 21)_
 - `GEOGRAPHY`
 - `CONFIGURABLE CAGR`
 
@@ -144,6 +162,7 @@ Each lever card has a name, a Δ-change tag (when moved), and a *current: …* r
 - **Allocation mix** — `Drag to rebalance. Locked buckets won't move.` (Plus per-bucket: `assumed {X.X}% — set in Configurable CAGR`)
 - **Timeline** — `Used to project your trajectory. Doesn't change your Aspire Rate today.`
 - **Target basket** — `Pick a life. Refine the components below if you want to tune the weights.`
+- **Goals** — `Price the things you want. We'll inflate them at the rate that matches.` (Per 2026-05-16 amendment.)
 - **Geography** — `Drives the housing CAGR. Try a comparable metro to see the swing.`
 - **Configurable CAGR** — `Smooth out volatility by choosing a longer window. Or set a custom rate if you have a stronger view.`
 
@@ -158,12 +177,42 @@ Each lever card has a name, a Δ-change tag (when moved), and a *current: …* r
 - Source dropdown options: `5-yr trailing` / `10-yr trailing` / `20-yr trailing` / `Custom %`
 - Reset link: `Reset all to defaults`
 
+**Goals lever (added 2026-05-16 per `_DRIFT_REPORT_2026-05-11.md` §11 Conflict 21):**
+
+- Lever name (small caps): `GOALS`
+- Lever helper (under the goal list): `Price the things you want. We'll inflate them at the rate that matches.`
+- Empty state (renders only when every priced goal has been deleted; first-time visitors arrive with the Calculator's priced goal already loaded):
+  > No priced goals.
+  > The basket above shapes how costs grow. A goal turns that shape into a number.
+- Source labels per Calculator chip (italic, muted; drops on first user edit of the seeded row):
+  - *NAR median existing-home price — edit to yours*
+  - *USDA estimate, CPI-inflated — edit to yours*
+  - *25× BLS average spending — edit to yours*
+- Add button: `+ Add a goal`
+- Add-goal form labels:
+  - `What is this?` (name)
+  - `In today's dollars` (amount)
+  - `When do you want it?` (years out)
+  - `How does this cost grow?` (inflation vector)
+- Inflation-vector dropdown options: `Housing (geography CAGR)` / `Equity-linked` / `CPI` / `Healthcare` / `Childcare` / `Private K-12` / `Custom %`
+- Form helper (below inflation dropdown): *We inflate this goal at the rate that matches it — housing at your zip's CAGR, education at K–12 CPI, etc. Change the basket above to change the menu.*
+- Goal row hover tooltip (on amount): `${amount} today → ${future_value} in {N} yr at these assumptions`
+- Total line (lever bottom, non-removable compliance pairing): `Total future cost: ${X.XM} at these assumptions`
+- Current-state reference line: `current: {N} goal{s} priced`
+- Header metric (sticky header, conditional — only renders when ≥1 goal priced):
+  - Label: `GOAL COVERAGE`
+  - Tooltip: *Your projected portfolio at the goal's target year, divided by the goal's inflated cost. At these assumptions.*
+
 ### Trajectory chart
 
 - Default-state caption (above chart, small caps): `TRAJECTORY OVER {N} YEARS`
 - Two line labels (in legend): `What you're building` / `What you need`
 - Reference line label (italic, muted): `Your current trajectory`
 - Crossover annotation format: *You reach your goal at year {N}.*
+- Crossover annotation when ≥2 priced goals exist (per 2026-05-16 amendment): *Clears all priced goals at year {N} at these assumptions.*
+- Crossover annotation when 1 priced goal (per 2026-05-16 amendment): *Clears {goal name} at year {N} at these assumptions.*
+- Goal-year tick label on x-axis (per 2026-05-16 amendment): `{goal name truncated to 14 chars}`
+- Goal-year tick tooltip (per 2026-05-16 amendment): `{goal name} — ${future_value} in {N} yr at these assumptions`
 - Toggle: `Show as %` / `Show as $`
 - Tooltip format: `Year {N} — Building: ${X}M • Need: ${X}M • Gap: ${X}M`
 
