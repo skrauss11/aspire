@@ -463,3 +463,21 @@ Refresh cadence: NAR monthly, CPI monthly (Family seed recomputed automatically)
 - Existing `scenario.basket.goals[]` schema shape (already supports priced goals; a `seeded` boolean flag is the only addition).
 - The Calculator's email gate, the `/api/score` payload contract beyond a single new optional field, the Simulator's existing six levers.
 - The May 11 terminology and gap-sign decisions (Conflicts 1, 2, 3). Those remain canonical.
+
+**Sub-resolution 2026-05-16 — Aspire Rate computation deviation canonized:**
+
+PR #28 (Codex's implementation of `codex/calculator-priced-goal`) implemented the Aspire Rate as the **priced goal's primary inflation vector** rather than the basket-weighted blend specified in PR #27. Specifically:
+
+- **Spec intent (PR #27):** Aspire Rate = weighted blend of basket components (e.g. for Home: 50% housing + 25% S&P + 15% CPI + 10% childcare-family).
+- **PR #28 implementation:** Aspire Rate = the priced goal's primary inflation vector alone (e.g. for Home: housing CAGR at the user's geography; Family: CPI; Freedom: equity-linked).
+
+Reviewed 2026-05-16 by Claude + Scott. **The deviation is canonized as the correct model going forward.** Rationale: the basket-weighted blend was a V2-era stand-in for not knowing what the user was actually pricing. Now that the user prices a specific goal, the goal's own inflation vector is the honest rate — a home inflates at housing, child-rearing inflates at CPI, financial freedom inflates against equities. The blend was *artifactual*, not foundational.
+
+The blended basket weights remain visible in Block C's bar chart as **inflation context** (showing what's driving the cost growth), but no longer compute the Aspire Rate.
+
+Affected canon, updated in the same review pass:
+- `specs/page-spec-calculator.md` §4.4 — "Effect on Aspire Rate computation" paragraph rewritten.
+- `10_CANONICAL/Vocabulary.md` — Aspire Rate definition updated; prior "5-yr trailing CAGR of the goals basket" framing superseded.
+- `specs/page-spec-simulator-amendment-goals-lever-v3.md` §Math — Aspire Rate clarification added covering single-goal (Calculator) and multi-goal (Simulator dollar-weighted) cases.
+
+Codex's PR #28 ships as-is. No code change required from this canonization.

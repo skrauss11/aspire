@@ -182,6 +182,7 @@ If user switches Target Basket and the Calculator-seeded goal is still in its se
 - Each goal: `future_value = amount × (1 + cagr)^years_out` where `cagr` is the resolved rate for the chosen inflation vector (housing resolves through Geography lever).
 - "Total future cost" line at lever bottom = `Σ future_value` across all goals — paired with *"at these assumptions"*.
 - "Required CAGR for this goal" computed for observation panel use only; never surfaced as a primary metric (reads too easily as a recommendation).
+- **Aspire Rate (sticky header) — clarified 2026-05-16:** the Aspire Rate metric reflects the **priced goal's primary inflation vector**, not a basket-weighted blend across all components. On the Calculator (single priced goal) it equals that goal's vector. On the Simulator (multi-goal) it is the **dollar-weighted CAGR across priced goals' vectors** — each goal contributes its own inflation vector weighted by its inflated future value. The basket weights remain visible in Block C's bar chart as inflation context, but no longer compute the rate. _Per the deviation-canonized review of PR #28; full provenance in `_DRIFT_REPORT_2026-05-11.md` §11 Conflict 21 sub-resolution._
 
 ---
 
