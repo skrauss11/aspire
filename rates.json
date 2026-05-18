@@ -1,116 +1,102 @@
 {
-  "updated": "2026-05-13T00:00:00.000Z",
-  "methodology": "Baseline product components use trailing 5-year compound annual growth rate (CAGR) per the May 2026 source audit. Family preset locked 2026-05-13: 30% housing, 25% S&P 500 Total Return, 20% childcare, 15% private K-12 tuition, 10% healthcare. Legacy long-window market and metro series remain available for advanced assumptions.",
-  "presets": {
-    "family": {
-      "label": "Family",
-      "cagr": 7.03,
-      "retrieved": "2026-05-13",
-      "weights": [
-        { "key": "home", "weight": 0.3 },
-        { "key": "sp500", "weight": 0.25 },
-        { "key": "childcare", "weight": 0.2 },
-        { "key": "tuition_k12_private", "weight": 0.15 },
-        { "key": "health", "weight": 0.1 }
-      ]
-    }
-  },
+  "updated": "2026-05-18T11:00:46.555Z",
+  "methodology": "Trailing 10-year compound annual growth rate (CAGR). Equities/gold/BTC: monthly closes from Yahoo Finance, adjusted for dividends. CPI sub-indices + national home: FRED monthly series. Metro-level homes: Zillow ZHVI (single-family, smoothed, seasonally adjusted). Tuition: College Board Trends in College Pricing (annual).",
   "rates": [
     {
       "key": "sp500",
-      "label": "S&P 500 Total Return",
-      "source": "S&P Dow Jones Indices",
-      "symbol": "SPXTR",
-      "cagr": 13.14,
-      "start": "2021-04-01",
-      "end": "2026-04-01",
-      "years": 5,
-      "retrieved": "2026-05-13",
-      "note": "Locked via multi-agent source audit; total return index, Apr 2021 to Apr 2026."
+      "label": "S&P 500 / broad index",
+      "source": "Yahoo Finance",
+      "symbol": "SPY",
+      "cagr": 15.38,
+      "start": "2016-06-01",
+      "end": "2026-05-15",
+      "startValue": 177.972,
+      "endValue": 739.17,
+      "years": 9.95
     },
     {
       "key": "qqq",
       "label": "Nasdaq 100 / tech",
       "source": "Yahoo Finance",
       "symbol": "QQQ",
-      "cagr": 21.81,
+      "cagr": 21.72,
       "start": "2016-06-01",
-      "end": "2026-05-08",
+      "end": "2026-05-15",
       "startValue": 100.1929,
-      "endValue": 711.06,
-      "years": 9.93
+      "endValue": 708.93,
+      "years": 9.95
     },
     {
       "key": "single",
       "label": "Single-name mega-cap (NVDA)",
       "source": "Yahoo Finance",
       "symbol": "NVDA",
-      "cagr": 69.26,
+      "cagr": 69.87,
       "start": "2016-06-01",
-      "end": "2026-05-08",
+      "end": "2026-05-15",
       "startValue": 1.1538,
-      "endValue": 215.22,
-      "years": 9.93
+      "endValue": 225.32,
+      "years": 9.95
     },
     {
       "key": "gold",
       "label": "Gold",
       "source": "Yahoo Finance",
       "symbol": "GLD",
-      "cagr": 13.21,
+      "cagr": 12.74,
       "start": "2016-06-01",
-      "end": "2026-05-08",
+      "end": "2026-05-15",
       "startValue": 126.47,
-      "endValue": 433.77,
-      "years": 9.93
+      "endValue": 417.29,
+      "years": 9.95
     },
     {
       "key": "btc",
       "label": "Bitcoin",
       "source": "Yahoo Finance",
       "symbol": "BTC-USD",
-      "cagr": 61.89,
+      "cagr": 60.86,
       "start": "2016-06-01",
-      "end": "2026-05-11",
+      "end": "2026-05-18",
       "startValue": 673.337,
-      "endValue": 80963.99,
-      "years": 9.94
+      "endValue": 76700.1,
+      "years": 9.96
     },
     {
       "key": "cpi",
       "label": "Cost of living (CPI)",
       "source": "FRED",
       "id": "CPIAUCSL",
-      "cagr": 3.33,
-      "start": "2016-03-01",
-      "end": "2026-03-01",
-      "startValue": 238.08,
-      "endValue": 330.293,
+      "cagr": 3.35,
+      "start": "2016-04-01",
+      "end": "2026-04-01",
+      "startValue": 238.992,
+      "endValue": 332.407,
       "years": 10
     },
     {
       "key": "home",
       "label": "Home — US national (Case-Shiller)",
-      "source": "S&P CoreLogic Case-Shiller U.S. National Home Price NSA Index",
+      "source": "FRED",
       "id": "CSUSHPINSA",
-      "cagr": 6.48,
-      "start": "2021-02-01",
+      "cagr": 6.45,
+      "start": "2016-02-01",
       "end": "2026-02-01",
-      "years": 5,
-      "retrieved": "2026-05-13",
-      "note": "Locked via multi-agent source audit."
+      "startValue": 175.26,
+      "endValue": 327.311,
+      "years": 10
     },
     {
       "key": "health",
       "label": "Healthcare",
-      "source": "BLS CPI-U Medical care",
-      "id": "CUUR0000SAM",
-      "cagr": 2.44,
-      "start": "2021-04-01",
+      "source": "FRED",
+      "id": "CPIMEDSL",
+      "cagr": 2.56,
+      "start": "2016-04-01",
       "end": "2026-04-01",
-      "years": 5,
-      "retrieved": "2026-05-13",
-      "note": "Locked via multi-agent source audit."
+      "startValue": 459.245,
+      "endValue": 591.202,
+      "years": 10
     },
     {
       "key": "car",
@@ -118,10 +104,10 @@
       "source": "FRED",
       "id": "CUSR0000SETA01",
       "cagr": 1.98,
-      "start": "2016-03-01",
-      "end": "2026-03-01",
-      "startValue": 147.443,
-      "endValue": 179.465,
+      "start": "2016-04-01",
+      "end": "2026-04-01",
+      "startValue": 147.213,
+      "endValue": 179.174,
       "years": 10
     },
     {
@@ -129,9 +115,9 @@
       "label": "Home — New York, NY",
       "source": "Zillow ZHVI",
       "metro": "New York, NY",
-      "cagr": 5.18,
-      "startValue": 431841,
-      "endValue": 715584,
+      "cagr": 5.19,
+      "startValue": 433068,
+      "endValue": 718397,
       "years": 10
     },
     {
@@ -139,9 +125,9 @@
       "label": "Home — Los Angeles, CA",
       "source": "Zillow ZHVI",
       "metro": "Los Angeles, CA",
-      "cagr": 6.26,
-      "startValue": 527217,
-      "endValue": 967836,
+      "cagr": 6.06,
+      "startValue": 538334,
+      "endValue": 969589,
       "years": 10
     },
     {
@@ -149,9 +135,9 @@
       "label": "Home — San Francisco, CA",
       "source": "Zillow ZHVI",
       "metro": "San Francisco, CA",
-      "cagr": 3.73,
-      "startValue": 792694,
-      "endValue": 1143246,
+      "cagr": 3.67,
+      "startValue": 798578,
+      "endValue": 1145541,
       "years": 10
     },
     {
@@ -159,9 +145,9 @@
       "label": "Home — Seattle, WA",
       "source": "Zillow ZHVI",
       "metro": "Seattle, WA",
-      "cagr": 6.87,
-      "startValue": 386700,
-      "endValue": 751552,
+      "cagr": 6.69,
+      "startValue": 395180,
+      "endValue": 755116,
       "years": 10
     },
     {
@@ -169,9 +155,9 @@
       "label": "Home — Boston, MA",
       "source": "Zillow ZHVI",
       "metro": "Boston, MA",
-      "cagr": 5.84,
-      "startValue": 414488,
-      "endValue": 731139,
+      "cagr": 5.78,
+      "startValue": 420140,
+      "endValue": 736881,
       "years": 10
     },
     {
@@ -179,9 +165,9 @@
       "label": "Home — Chicago, IL",
       "source": "Zillow ZHVI",
       "metro": "Chicago, IL",
-      "cagr": 5.19,
-      "startValue": 207876,
-      "endValue": 344687,
+      "cagr": 5.18,
+      "startValue": 211171,
+      "endValue": 349901,
       "years": 10
     },
     {
@@ -189,9 +175,9 @@
       "label": "Home — Austin, TX",
       "source": "Zillow ZHVI",
       "metro": "Austin, TX",
-      "cagr": 4.24,
-      "startValue": 281996,
-      "endValue": 427045,
+      "cagr": 4.11,
+      "startValue": 287794,
+      "endValue": 430490,
       "years": 10
     },
     {
@@ -199,9 +185,9 @@
       "label": "Home — Dallas, TX",
       "source": "Zillow ZHVI",
       "metro": "Dallas, TX",
-      "cagr": 6.03,
-      "startValue": 203136,
-      "endValue": 364734,
+      "cagr": 5.89,
+      "startValue": 206887,
+      "endValue": 366743,
       "years": 10
     },
     {
@@ -209,9 +195,9 @@
       "label": "Home — Houston, TX",
       "source": "Zillow ZHVI",
       "metro": "Houston, TX",
-      "cagr": 4.48,
-      "startValue": 198366,
-      "endValue": 307493,
+      "cagr": 4.42,
+      "startValue": 199914,
+      "endValue": 308211,
       "years": 10
     },
     {
@@ -219,9 +205,9 @@
       "label": "Home — Denver, CO",
       "source": "Zillow ZHVI",
       "metro": "Denver, CO",
-      "cagr": 5.19,
-      "startValue": 345646,
-      "endValue": 573363,
+      "cagr": 5.03,
+      "startValue": 352197,
+      "endValue": 575130,
       "years": 10
     },
     {
@@ -229,9 +215,9 @@
       "label": "Home — Miami, FL",
       "source": "Zillow ZHVI",
       "metro": "Miami, FL",
-      "cagr": 7,
-      "startValue": 240504,
-      "endValue": 472937,
+      "cagr": 6.91,
+      "startValue": 242758,
+      "endValue": 473725,
       "years": 10
     },
     {
@@ -239,9 +225,9 @@
       "label": "Home — Phoenix, AZ",
       "source": "Zillow ZHVI",
       "metro": "Phoenix, AZ",
-      "cagr": 6.8,
-      "startValue": 232085,
-      "endValue": 448160,
+      "cagr": 6.73,
+      "startValue": 233957,
+      "endValue": 448933,
       "years": 10
     },
     {
@@ -249,9 +235,9 @@
       "label": "Home — Nashville, TN",
       "source": "Zillow ZHVI",
       "metro": "Nashville, TN",
-      "cagr": 7.1,
-      "startValue": 228510,
-      "endValue": 453873,
+      "cagr": 7,
+      "startValue": 231273,
+      "endValue": 455068,
       "years": 10
     },
     {
@@ -259,9 +245,9 @@
       "label": "Home — Atlanta, GA",
       "source": "Zillow ZHVI",
       "metro": "Atlanta, GA",
-      "cagr": 7.09,
-      "startValue": 191350,
-      "endValue": 379509,
+      "cagr": 7,
+      "startValue": 194140,
+      "endValue": 381835,
       "years": 10
     },
     {
@@ -269,34 +255,10 @@
       "label": "Home — Washington, DC",
       "source": "Zillow ZHVI",
       "metro": "Washington, DC",
-      "cagr": 4.09,
-      "startValue": 388860,
-      "endValue": 580335,
+      "cagr": 4.07,
+      "startValue": 390911,
+      "endValue": 582461,
       "years": 10
-    },
-    {
-      "key": "childcare",
-      "label": "Childcare",
-      "source": "BLS CPI-U Day care and preschool",
-      "id": "CUUR0000SEEB03",
-      "cagr": 4.83,
-      "start": "2021-04-01",
-      "end": "2026-04-01",
-      "years": 5,
-      "retrieved": "2026-05-13",
-      "note": "Locked via multi-agent source audit."
-    },
-    {
-      "key": "tuition_k12_private",
-      "label": "Private K-12 tuition",
-      "source": "BLS CPI-U Elementary and high school tuition and fees",
-      "id": "CUUR0000SEEB02",
-      "cagr": 3.94,
-      "start": "2021-04-01",
-      "end": "2026-04-01",
-      "years": 5,
-      "retrieved": "2026-05-13",
-      "note": "Locked via multi-agent source audit."
     },
     {
       "key": "tuition_private",
@@ -304,7 +266,7 @@
       "source": "College Board Trends 2024",
       "cagr": 4.2,
       "years": 10,
-      "note": "Legacy college tuition assumption; not used in the locked Family preset."
+      "note": "10yr average annualized increase in published tuition + fees"
     },
     {
       "key": "tuition_public_in",
