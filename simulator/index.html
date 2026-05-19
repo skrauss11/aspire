@@ -40,6 +40,7 @@
     .margin-row { display:grid; gap:5px; }
     .margin-row input { border:1px solid #c9bead; background:#fffaf2; color:#0f0e0c; border-radius:8px; min-height:36px; padding:0 10px; }
     .metric-grid { display:grid; grid-template-columns:minmax(108px,.8fr) minmax(128px,.9fr) minmax(210px,1.2fr); gap:12px; }
+    .metric-grid.has-goals { grid-template-columns:minmax(108px,.8fr) minmax(128px,.9fr) minmax(210px,1.2fr) minmax(128px,.9fr); }
     .metric { min-width:0; }
     .metric strong { display:block; color:var(--paper); font-size:clamp(24px, 2.2vw, 30px); line-height:1; font-variant-numeric:tabular-nums; white-space:nowrap; }
     .metric .label { margin-top:8px; }
@@ -75,6 +76,24 @@
     .chip-row { display:flex; gap:8px; flex-wrap:wrap; }
     .chip { min-height:36px; border-radius:999px; padding:0 13px; background:#141210; color:#d7cfc2; border:1px solid var(--grid); font-weight:800; }
     .chip.active { background:var(--paper); color:#0f0e0c; border-color:var(--paper); }
+    .goal-list { display:grid; gap:10px; }
+    .goal-row { display:grid; gap:6px; padding:10px; border:1px solid var(--rule); border-radius:8px; background:#141210; }
+    .goal-row-head { display:flex; justify-content:space-between; gap:10px; align-items:start; }
+    .goal-name { color:var(--paper); font-weight:800; overflow-wrap:anywhere; }
+    .goal-actions { display:flex; gap:6px; }
+    .icon-button { width:30px; height:30px; border-radius:999px; background:#29241f; color:var(--paper); font-weight:900; }
+    .goal-meta { color:#d7cfc2; font-size:12px; }
+    .goal-source { color:var(--muted); font-size:12px; font-style:italic; }
+    .goal-empty { color:#d7cfc2; font-size:14px; display:grid; gap:4px; }
+    .goal-total { margin-top:10px; color:#d7cfc2; font-weight:800; font-size:13px; }
+    .goal-form { display:none; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid var(--rule); }
+    .goal-form.open { display:grid; }
+    .goal-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .goal-form label { display:grid; gap:5px; color:var(--muted); font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .goal-form-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .goal-form-actions button { min-height:34px; border-radius:999px; padding:0 12px; font-weight:800; }
+    .goal-form-actions .primary { background:var(--accent); color:var(--paper); }
+    .goal-form-actions .ghost { background:#29241f; color:var(--paper); }
     details { border-top:1px solid var(--rule); margin-top:12px; padding-top:12px; }
     summary { cursor:pointer; color:#d7cfc2; font-weight:800; }
     .weight-row, .cagr-row { display:grid; grid-template-columns:1fr 86px; gap:8px; align-items:center; padding:8px 0; border-top:1px solid #28241f; }
@@ -186,6 +205,11 @@
           <strong id="vsCurrent">—</strong>
           <div class="label">vs. Current</div>
         </div>
+        <div class="metric hidden" id="goalCoverageMetric" title="Your projected portfolio at the goal's target year, divided by the goal's inflated cost. At these assumptions.">
+          <strong id="goalCoverage">—</strong>
+          <div class="label">Goal coverage</div>
+          <div class="assumptions">AT THESE ASSUMPTIONS</div>
+        </div>
       </div>
       <div class="header-actions">
         <button class="pill primary" type="button" id="saveScenario">Save scenario</button>
@@ -233,6 +257,39 @@
           <div id="basketWeights"></div>
         </details>
         <div class="reference" id="basketReference">current: —</div>
+      </section>
+
+      <section class="lever" id="lever-goals">
+        <div class="lever-head"><div class="label">Goals</div><div class="delta-tag" data-delta="goals">0.0 unchanged</div></div>
+        <div class="goal-list" id="goalList"></div>
+        <p class="helper">Price the things you want. We'll inflate them at the rate that matches.</p>
+        <button class="chip" type="button" id="addGoal">+ Add a goal</button>
+        <form class="goal-form" id="goalForm">
+          <div class="goal-form-grid">
+            <label>What is this?
+              <input id="goalName" maxlength="40" placeholder="e.g. Home in Brooklyn">
+            </label>
+            <label>In today's dollars
+              <input id="goalAmount" inputmode="numeric" placeholder="$0">
+            </label>
+            <label>When do you want it?
+              <input id="goalYears" type="number" min="1" max="40" step="1">
+            </label>
+            <label>How does this cost grow?
+              <select id="goalVector"></select>
+            </label>
+            <label class="hidden" id="goalCustomWrap">Custom %
+              <input id="goalCustom" type="number" min="-5" max="25" step="0.1" value="3.0">
+            </label>
+          </div>
+          <p class="helper">We inflate this goal at the rate that matches it — housing at your zip's CAGR, education at K–12 CPI, etc. Change the basket above to change the menu.</p>
+          <div class="goal-form-actions">
+            <button class="primary" type="submit" id="goalSave">Save goal</button>
+            <button class="ghost" type="button" id="goalCancel">Cancel</button>
+          </div>
+        </form>
+        <div class="goal-total" id="goalTotal"></div>
+        <div class="reference" id="goalsReference">current: —</div>
       </section>
 
       <section class="lever" id="lever-geography">
@@ -310,7 +367,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite">Saved.</div>
 
   <script type="module">
-    import { project, projectionSeries } from "/lib/aspire.js";
+    import { futureGoalCost, project, projectionSeries } from "/lib/aspire.js";
     import { DRAFT_KEY, decodeFallbackToken, encodeFallbackToken, fromPersisted, toPersisted } from "/lib/schema.js";
     import { money, pct, shortMoney } from "/lib/format.js";
     import { renderDollarChart, renderRateChart } from "/lib/chart-rate.js";
@@ -322,6 +379,20 @@
       family: { label: "Family", weights: { housing: 30, stocks: 25, childcare: 20, tuition: 15, healthcare: 10 } },
       freedom: { label: "Freedom", weights: { cpi: 40, housing: 20, healthcare: 20, stocks: 20 } }
     };
+    const goalSeeds = {
+      home: { label:"A home", amount:420000, horizon:10, vector:"housing", sourceLabel:"NAR median existing-home price — edit to yours" },
+      family: { label:"Raise a child to 18", amount:330000, horizon:18, vector:"cpi", sourceLabel:"USDA estimate, CPI-inflated — edit to yours" },
+      freedom: { label:"Financial freedom", amount:2000000, horizon:25, vector:"equity", sourceLabel:"25× BLS average spending — edit to yours" }
+    };
+    const goalVectorOptions = [
+      { value:"housing", label:"Housing (geography CAGR)", asset:"home" },
+      { value:"equity", label:"Equity-linked", asset:"sp500" },
+      { value:"cpi", label:"CPI", asset:"cpi" },
+      { value:"health", label:"Healthcare", asset:"health" },
+      { value:"childcare", label:"Childcare", asset:"childcare" },
+      { value:"tuition", label:"Private K-12", asset:"tuition_k12_private" },
+      { value:"custom", label:"Custom %", asset:"custom" }
+    ];
     const patterns = [
       { id:"aggressive", title:"Aggressive", copy:"Higher savings and higher equity weighting. See how it compares to your current.", patch:{ savingsMultiplier:1.25, stocks:70, cash:10, realEstate:15, other:5 } },
       { id:"conservative", title:"Conservative", copy:"Lower equity, longer timeline. See how it compares to your current.", patch:{ timelineDelta:5, stocks:35, cash:40, realEstate:20, other:5 } },
@@ -353,6 +424,7 @@
     let currentShareUrl = "";
     let currentIsPublic = false;
     let currentEmail = "";
+    let editingGoalIndex = null;
 
     const $ = id => document.getElementById(id);
     const AUTH_KEY = "aspire:auth";
@@ -380,19 +452,6 @@
 
     function totalAssets(scenario) {
       return scenario.basket.holdings.reduce((sum, asset) => sum + (Number(asset.amount) || 0), 0);
-    }
-
-    function weightedGoalRate(weights) {
-      const map = {
-        housing: rateForKey(rates, controls.geography || "home"),
-        cpi: rateForKey(rates, "cpi"),
-        healthcare: rateForKey(rates, "health"),
-        stocks: rateForKey(rates, "sp500"),
-        childcare: rateForKey(rates, "childcare"),
-        tuition: rateForKey(rates, "tuition_k12_private")
-      };
-      const total = Object.values(weights).reduce((sum, value) => sum + (Number(value) || 0), 0) || 100;
-      return Object.entries(weights).reduce((sum, [key, value]) => sum + (Number(value) || 0) / total * (map[key] || 0), 0);
     }
 
     function scenarioRate(scenario) {
@@ -442,19 +501,87 @@
       normalizeAllocation(allocation);
       const firstGoal = scenario.basket.goals[0] || {};
       const geography = firstGoal.asset && String(firstGoal.asset).startsWith("home") ? firstGoal.asset : "home";
+      const goals = (scenario.basket.goals || []).map(goal => normalizeGoalControl(goal, geography));
+      const maxGoalHorizon = Math.max(...goals.map(goal => goal.horizon || 0), 0);
       return {
         savings: totalMonthly(scenario),
         allocation,
-        timeline: Math.max(1, Math.round(project(scenario.basket.goals, scenario.basket.holdings).horizon || 10)),
+        timeline: Math.max(1, Math.round(Math.max(maxGoalHorizon, project(scenario.basket.goals, scenario.basket.holdings).horizon || 10))),
         basket: inferBasket(firstGoal.goalType || firstGoal.label),
         weights: clone(basketPresets[inferBasket(firstGoal.goalType || firstGoal.label)].weights),
         geography,
+        goals,
         cagr: {
           cash: growthForAsset(assets, "cash", 4),
           stocks: growthForAsset(assets, "sp500", rateForKey(rates, "sp500")),
           realEstate: rateForKey(rates, geography),
           other: growthForAsset(assets, "gold", 6)
         }
+      };
+    }
+
+    function normalizeGoalControl(goal = {}, geography = controls?.geography || "home") {
+      const vector = vectorForGoal(goal);
+      const resolved = resolveGoalVector(vector, Number(goal.customGrowth ?? goal.growth) || 0, geography);
+      return {
+        id: goal.id || `goal-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        label: String(goal.label || goal.name || "Goal").slice(0, 40),
+        amount: Math.min(50000000, Math.max(0, Number(goal.amount) || 0)),
+        horizon: Math.min(40, Math.max(1, Math.round(Number(goal.horizon) || Number(goal.years) || controls?.timeline || 10))),
+        vector,
+        asset: resolved.asset,
+        growth: resolved.growth,
+        customGrowth: vector === "custom" ? Number(goal.customGrowth ?? goal.growth) || 0 : undefined,
+        vectorLabel: resolved.label,
+        goalType: goal.goalType || basketPresets[inferBasket(goal.goalType || goal.label)].label,
+        goalMode: goal.goalMode || "life",
+        seeded: goal.seeded === true,
+        sourceLabel: goal.sourceLabel || sourceForGoal(goal)
+      };
+    }
+
+    function vectorForGoal(goal = {}) {
+      if (goal.vector) return goal.vector;
+      if (goal.asset === "custom") return "custom";
+      if (String(goal.asset || "").startsWith("home")) return "housing";
+      if (goal.asset === "sp500") return "equity";
+      if (goal.asset === "health") return "health";
+      if (goal.asset === "childcare") return "childcare";
+      if (goal.asset === "tuition_k12_private") return "tuition";
+      return "cpi";
+    }
+
+    function resolveGoalVector(vector, customGrowth = 0, geography = controls?.geography || "home") {
+      const option = goalVectorOptions.find(item => item.value === vector) || goalVectorOptions[2];
+      if (option.value === "custom") return { asset:"custom", growth: Math.min(25, Math.max(-5, Number(customGrowth) || 0)), label: "Custom %" };
+      const asset = option.value === "housing" ? geography || "home" : option.asset;
+      return { asset, growth: rateForKey(rates, asset), label: option.label.replace(" (geography CAGR)", "") };
+    }
+
+    function sourceForGoal(goal = {}) {
+      const text = `${goal.goalType || ""} ${goal.label || ""}`.toLowerCase();
+      if (text.includes("home")) return goalSeeds.home.sourceLabel;
+      if (text.includes("child") || text.includes("family")) return goalSeeds.family.sourceLabel;
+      if (text.includes("freedom")) return goalSeeds.freedom.sourceLabel;
+      return "";
+    }
+
+    function seededGoalForBasket(basket) {
+      const seed = goalSeeds[basket] || goalSeeds.home;
+      const resolved = resolveGoalVector(seed.vector, 0, controls?.geography || "home");
+      return {
+        id: "goal-priced",
+        label: seed.label,
+        amount: seed.amount,
+        horizon: Math.min(40, Math.max(1, seed.horizon)),
+        vector: seed.vector,
+        asset: resolved.asset,
+        growth: resolved.growth,
+        goalType: basketPresets[basket]?.label || "Home",
+        goalMode: "life",
+        seeded: true,
+        sourceLabel: seed.sourceLabel,
+        vectorLabel: resolved.label
       };
     }
 
@@ -501,14 +628,22 @@
         asset: bucket.asset,
         growth: controls.cagr[bucket.id] ?? rateForKey(rates, bucket.asset)
       })).filter(asset => asset.amount > 0 || asset.monthly > 0);
-      const goalRate = weightedGoalRate(controls.weights);
-      activeScenario.basket.goals = activeScenario.basket.goals.map(goal => ({
-        ...goal,
-        horizon: controls.timeline,
-        asset: controls.geography,
-        growth: goalRate || Number(goal.growth) || 0,
-        goalType: basketPresets[controls.basket].label
-      }));
+      activeScenario.basket.goals = controls.goals.map(goal => {
+        const resolved = resolveGoalVector(goal.vector, goal.customGrowth, controls.geography);
+        return {
+          id: goal.id,
+          goalType: goal.goalType || basketPresets[controls.basket].label,
+          goalMode: goal.goalMode || "life",
+          label: goal.label,
+          amount: Math.min(50000000, Math.max(0, Number(goal.amount) || 0)),
+          horizon: Math.min(40, Math.max(1, Math.round(Number(goal.horizon) || controls.timeline))),
+          asset: resolved.asset,
+          growth: resolved.growth,
+          vectorLabel: resolved.label,
+          ...(goal.vector === "custom" ? { customGrowth: resolved.growth } : {}),
+          ...(goal.seeded ? { seeded: true, sourceLabel: goal.sourceLabel || sourceForGoal(goal) } : { seeded: false })
+        };
+      }).filter(goal => goal.amount > 0 && goal.horizon > 0);
     }
 
     function renderShell() {
@@ -524,6 +659,8 @@
       $("timelineReference").textContent = `current: ${baselineControls.timeline} yr`;
       renderAllocationInputs();
       renderBasketControls();
+      renderGoalVectorOptions();
+      renderGoals();
       renderGeography();
       renderCagrInputs();
       renderPatterns();
@@ -560,6 +697,51 @@
         if (input) input.value = Math.round(value);
       });
       $("basketReference").textContent = `current: ${basketPresets[baselineControls.basket].label}`;
+    }
+
+    function renderGoals() {
+      const goals = controls.goals || [];
+      if (!goals.length) {
+        $("goalList").innerHTML = `
+          <div class="goal-empty">
+            <strong>No priced goals.</strong>
+            <span>The basket above shapes how costs grow. A goal turns that shape into a number.</span>
+          </div>
+        `;
+      } else {
+        $("goalList").innerHTML = goals.map((goal, index) => {
+          const resolved = resolveGoalVector(goal.vector, goal.customGrowth, controls.geography);
+          const displayGoal = { ...goal, growth: resolved.growth };
+          const future = futureGoalCost(displayGoal);
+          const amount = money(goal.amount);
+          const tooltip = `${amount} today → ${shortMoney(future)} in ${goal.horizon} yr at these assumptions`;
+          return `
+            <article class="goal-row" data-goal-index="${index}">
+              <div class="goal-row-head">
+                <div>
+                  <div class="goal-name">${escapeHtml(goal.label)}</div>
+                  <div class="goal-meta" title="${escapeHtml(tooltip)}">${amount} today · ${goal.horizon} yr · ${escapeHtml(resolved.label)}</div>
+                </div>
+                <div class="goal-actions">
+                  <button class="icon-button" type="button" data-edit-goal="${index}" aria-label="Edit ${escapeHtml(goal.label)}">⋯</button>
+                  <button class="icon-button" type="button" data-delete-goal="${index}" aria-label="Delete ${escapeHtml(goal.label)}">×</button>
+                </div>
+              </div>
+              ${goal.seeded && goal.sourceLabel ? `<div class="goal-source">${escapeHtml(goal.sourceLabel)}</div>` : ""}
+            </article>
+          `;
+        }).join("");
+      }
+      const totalFuture = goals.reduce((sum, goal) => {
+        const resolved = resolveGoalVector(goal.vector, goal.customGrowth, controls.geography);
+        return sum + futureGoalCost({ ...goal, growth: resolved.growth });
+      }, 0);
+      $("goalTotal").textContent = goals.length ? `Total future cost: ${shortMoney(totalFuture)} at these assumptions` : "";
+      $("goalsReference").textContent = `current: ${baselineControls.goals.length} goal${baselineControls.goals.length === 1 ? "" : "s"} priced`;
+    }
+
+    function renderGoalVectorOptions() {
+      $("goalVector").innerHTML = goalVectorOptions.map(option => `<option value="${option.value}">${option.label}</option>`).join("");
     }
 
     function labelForWeight(key) {
@@ -658,15 +840,22 @@
       $("vsCurrent").textContent = Math.abs(vs) < 0.05 ? "0.0 unchanged" : `${vs >= 0 ? "+" : "−"}${Math.abs(vs).toFixed(1)} closed`;
       $("vsCurrent").classList.toggle("gain", vs > 0);
       $("vsCurrent").classList.toggle("loss", vs < 0);
+      const hasGoals = activeScenario.basket.goals.length > 0;
+      document.querySelector(".metric-grid").classList.toggle("has-goals", hasGoals);
+      $("goalCoverageMetric").classList.toggle("hidden", !hasGoals);
+      $("goalCoverage").textContent = `${Math.min(100, Math.round(Math.max(0, current.coverage)))}%`;
+      $("goalCoverage").classList.toggle("gain", current.coverage >= 100);
+      $("goalCoverage").classList.toggle("loss", current.coverage < 70);
       $("futureCost").textContent = shortMoney(current.totalGoals);
       $("projectedResources").textContent = shortMoney(current.totalAssets);
       $("dollarGap").textContent = shortMoney(current.dollarGap);
       $("coverage").textContent = `${Math.round(Math.max(0, current.coverage))}%`;
       $("chartCaption").textContent = `Trajectory over ${Math.round(current.horizon)} years`;
-      const series = projectionSeries(activeScenario.basket.goals, activeScenario.basket.holdings, current.horizon);
+      const chartYears = Math.max(controls.timeline, ...activeScenario.basket.goals.map(goal => Number(goal.horizon) || 0), 1);
+      const series = projectionSeries(activeScenario.basket.goals, activeScenario.basket.holdings, chartYears);
       const baselineSeries = projectionSeries(baselineScenario.basket.goals, baselineScenario.basket.holdings, baseline.horizon);
       if (chartMode === "dollars") {
-        renderDollarChart($("trajectoryChart"), series, { height: 360, baseline: baselineSeries });
+        renderDollarChart($("trajectoryChart"), series, { height: 360, baseline: baselineSeries, goals: activeScenario.basket.goals });
       } else {
         renderRateChart($("trajectoryChart"), series, { height: 360 });
       }
@@ -674,6 +863,7 @@
       renderObservations();
       updateDeltaTags();
       renderAllocationInputs();
+      renderGoals();
       renderCagrInputs();
       renderSavedScenarios();
     }
@@ -703,6 +893,7 @@
         allocation: bucketMeta.some(bucket => Math.abs(controls.allocation[bucket.id] - baselineControls.allocation[bucket.id]) > 0.5),
         timeline: Math.abs(controls.timeline - baselineControls.timeline) >= 1,
         basket: controls.basket !== baselineControls.basket,
+        goals: JSON.stringify((controls.goals || []).map(goal => [goal.label, Math.round(goal.amount), goal.horizon, goal.vector, goal.seeded])) !== JSON.stringify((baselineControls.goals || []).map(goal => [goal.label, Math.round(goal.amount), goal.horizon, goal.vector, goal.seeded])),
         geography: controls.geography !== baselineControls.geography,
         cagr: bucketMeta.some(bucket => Math.abs(controls.cagr[bucket.id] - baselineControls.cagr[bucket.id]) > 0.05)
       };
@@ -736,12 +927,81 @@
       if (patch.basket) {
         controls.basket = patch.basket;
         controls.weights = clone(basketPresets[patch.basket].weights);
+        reseedFirstGoalIfSeeded();
       }
       for (const bucket of bucketMeta) {
         if (patch[bucket.id] != null) controls.allocation[bucket.id] = patch[bucket.id];
       }
       normalizeAllocation(controls.allocation);
       if (shouldRender) renderShell();
+    }
+
+    function reseedFirstGoalIfSeeded() {
+      if (!controls.goals?.[0]?.seeded) return;
+      const seeded = seededGoalForBasket(controls.basket);
+      controls.goals[0] = seeded;
+      controls.timeline = Math.max(controls.timeline, seeded.horizon);
+    }
+
+    function openGoalForm(index = null) {
+      editingGoalIndex = index;
+      const goal = index == null
+        ? { label:"", amount:"", horizon:Math.min(controls.timeline, 10), vector:"cpi", customGrowth:3 }
+        : controls.goals[index];
+      $("goalName").value = goal.label || "";
+      $("goalAmount").value = goal.amount ? money(goal.amount) : "";
+      $("goalYears").value = Math.min(controls.timeline, Math.max(1, Number(goal.horizon) || controls.timeline));
+      $("goalYears").max = controls.timeline;
+      $("goalVector").value = goal.vector || "cpi";
+      $("goalCustom").value = Number(goal.customGrowth ?? goal.growth ?? 3).toFixed(1);
+      toggleGoalCustom();
+      $("goalForm").classList.add("open");
+      $("goalName").focus();
+    }
+
+    function closeGoalForm() {
+      editingGoalIndex = null;
+      $("goalForm").classList.remove("open");
+    }
+
+    function saveGoalFromForm(event) {
+      event.preventDefault();
+      const vector = $("goalVector").value;
+      const amount = parseMoney($("goalAmount").value);
+      const horizon = Math.min(controls.timeline, Math.max(1, Math.round(Number($("goalYears").value) || 1)));
+      const resolved = resolveGoalVector(vector, Number($("goalCustom").value) || 0, controls.geography);
+      if (!String($("goalName").value).trim() || amount < 1000 || amount > 50000000) {
+        showToast("Add a name and a dollar amount between $1k and $50M.");
+        return;
+      }
+      const existing = editingGoalIndex == null ? {} : controls.goals[editingGoalIndex];
+      const goal = {
+        id: existing.id || `goal-${Date.now()}`,
+        label: String($("goalName").value).trim().slice(0, 40),
+        amount,
+        horizon,
+        vector,
+        asset: resolved.asset,
+        growth: resolved.growth,
+        customGrowth: vector === "custom" ? resolved.growth : undefined,
+        vectorLabel: resolved.label,
+        goalType: existing.goalType || basketPresets[controls.basket].label,
+        goalMode: "life",
+        seeded: false,
+        sourceLabel: ""
+      };
+      if (editingGoalIndex == null) controls.goals.push(goal);
+      else controls.goals[editingGoalIndex] = goal;
+      closeGoalForm();
+      renderAll();
+    }
+
+    function toggleGoalCustom() {
+      $("goalCustomWrap").classList.toggle("hidden", $("goalVector").value !== "custom");
+    }
+
+    function parseMoney(value) {
+      return Number(String(value || "").replace(/[^\d.]/g, "")) || 0;
     }
 
     async function saveScenario() {
@@ -928,6 +1188,14 @@
       $("saveScenario").addEventListener("click", openSave);
       $("modalCancel").addEventListener("click", closeSave);
       $("modalSave").addEventListener("click", saveScenario);
+      $("addGoal").addEventListener("click", () => openGoalForm());
+      $("goalForm").addEventListener("submit", saveGoalFromForm);
+      $("goalCancel").addEventListener("click", closeGoalForm);
+      $("goalVector").addEventListener("change", toggleGoalCustom);
+      $("goalAmount").addEventListener("input", event => {
+        const value = parseMoney(event.target.value);
+        event.target.value = value ? money(value) : "";
+      });
       document.addEventListener("input", event => {
         if (event.target.dataset.allocation) {
           controls.allocation[event.target.dataset.allocation] = Number(event.target.value) || 0;
@@ -948,7 +1216,16 @@
         if (basket) {
           controls.basket = basket.dataset.basket;
           controls.weights = clone(basketPresets[controls.basket].weights);
+          reseedFirstGoalIfSeeded();
           renderShell();
+        }
+        const editGoal = event.target.closest("[data-edit-goal]");
+        if (editGoal) openGoalForm(Number(editGoal.dataset.editGoal));
+        const deleteGoal = event.target.closest("[data-delete-goal]");
+        if (deleteGoal) {
+          controls.goals.splice(Number(deleteGoal.dataset.deleteGoal), 1);
+          closeGoalForm();
+          renderAll();
         }
         const pattern = event.target.closest("[data-pattern]");
         if (pattern) {
@@ -1013,6 +1290,7 @@
 
     function setTimeline(value) {
       controls.timeline = Math.min(40, Math.max(1, Math.round(Number(value) || 1)));
+      controls.goals = (controls.goals || []).map(goal => ({ ...goal, horizon: Math.min(goal.horizon, controls.timeline) }));
       $("timelineRange").value = controls.timeline;
       $("timelineInput").value = controls.timeline;
       renderAll();
