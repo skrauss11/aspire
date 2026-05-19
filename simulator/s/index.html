@@ -76,7 +76,7 @@
         </div>
       </section>
       <section class="panel">
-        <div class="label">Basket components</div>
+        <div class="label">Priced goals</div>
         <div class="grid" id="goals"></div>
       </section>
       <section class="panel">
@@ -104,7 +104,7 @@
       document.getElementById("aspireGap").textContent = `${metrics.gap >= 0 ? "+" : "−"}${Math.abs(metrics.gap).toFixed(1)} pts`;
       document.getElementById("horizon").textContent = `${Math.round(metrics.horizon)} yr`;
       document.getElementById("goals").innerHTML = scenario.basket.goals.map(goal => `
-        <article class="item"><strong>${escapeHtml(goal.label)}</strong><span>${money(goal.amount)} today · ${Math.round(goal.horizon)} yr · ${pct(goal.growth)}</span></article>
+        <article class="item"><strong>${escapeHtml(goal.label)}</strong><span>${money(goal.amount)} today · ${Math.round(goal.horizon)} yr · ${pct(goal.growth)} at these assumptions</span></article>
       `).join("");
       document.getElementById("holdings").innerHTML = scenario.basket.holdings.map(asset => `
         <article class="item"><strong>${escapeHtml(asset.label)}</strong><span>${money(asset.amount)} · ${money(asset.monthly)}/mo · ${pct(asset.growth)}</span></article>
